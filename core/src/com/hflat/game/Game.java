@@ -14,18 +14,19 @@ import java.io.File;
 import java.io.FileNotFoundException;
 
 public class Game extends ApplicationAdapter {
-	GameState state = GameState.LOADING;
-	SpriteBatch batch;
-	Texture logo;
-	BitmapFont pixelFont;
+	private GameState state = GameState.LOADING;
+	public ChartManager charts;
+	private SpriteBatch batch;
+	private Texture logo;
+	private BitmapFont pixelFont20;
+	private BitmapFont pixelFont12;
+	private BitmapFont pixelFont40;
+	private int selectedSongIndex = 0;
 
 	@Override
 	public void create () {
-        try {
-            Chart testChart = Chart.parseChart(new File("charts/Relative Fiction.sm"));
-        } catch (FileNotFoundException e) {
-            throw new RuntimeException(e);
-        }
+		charts = new ChartManager(new File("charts"), this);
+
         batch = new SpriteBatch();
 		logo = new Texture("hflatlogo.png");
 
@@ -36,7 +37,15 @@ public class Game extends ApplicationAdapter {
 		parameter.shadowOffsetX = 1;
 		parameter.shadowOffsetY = 1;
 		parameter.shadowColor = new Color(0, 0, 0, 0.75f);
-		pixelFont = generator.generateFont(parameter);
+		pixelFont20 = generator.generateFont(parameter);
+
+		parameter.size = 12;
+		pixelFont12 = generator.generateFont(parameter);
+
+		parameter.size = 40;
+		parameter.shadowOffsetX = 2;
+		parameter.shadowOffsetY = 2;
+		pixelFont40 = generator.generateFont(parameter);
 		generator.dispose();
 	}
 
@@ -44,9 +53,17 @@ public class Game extends ApplicationAdapter {
 	public void render () {
 		ScreenUtils.clear(1, 1, 1, 1);
 		batch.begin();
-		batch.draw(logo, (float) Gdx.graphics.getWidth() /2 - (float) logo.getWidth() /2, (float) Gdx.graphics.getHeight() /2 - (float) logo.getHeight() /2 + 70);
-		drawCentredText(batch, pixelFont, "Uses unlicensed assets!", (float) Gdx.graphics.getHeight() /2 - 100);
-		drawCentredText(batch, pixelFont, "Loading...", (float) Gdx.graphics.getHeight() /2 - 150);
+		switch (state) {
+			case LOADING:
+				batch.draw(logo, (float) Gdx.graphics.getWidth() / 2 - (float) logo.getWidth() / 2, (float) Gdx.graphics.getHeight() / 2 - (float) logo.getHeight() / 2 + 70);
+				drawCentredText(batch, pixelFont20, "Uses unlicensed assets!", (float) Gdx.graphics.getHeight() / 2 - 100);
+				drawCentredText(batch, pixelFont12, charts.getCurrentTask(), (float) Gdx.graphics.getHeight() / 2 - 150);
+				break;
+			case SONG_SELECT:
+				drawCentredText(batch, pixelFont40, "Song Select", (float) Gdx.graphics.getHeight() - 30);
+				batch.draw(charts.getChart(selectedSongIndex).getTexture(), 25, 50, 350, 350);
+				break;
+		}
 		batch.end();
 	}
 	
@@ -54,7 +71,9 @@ public class Game extends ApplicationAdapter {
 	public void dispose () {
 		batch.dispose();
 		logo.dispose();
-		pixelFont.dispose();
+		pixelFont20.dispose();
+		pixelFont12.dispose();
+		pixelFont40.dispose();
 	}
 
 	public static float getCentreTextOffset(BitmapFont font, String text) {
@@ -67,5 +86,8 @@ public class Game extends ApplicationAdapter {
 		GlyphLayout layout = new GlyphLayout();
 		layout.setText(font, text);
 		font.draw(batch, text, (float) Gdx.graphics.getWidth() /2 - layout.width / 2, y);
+	}
+	public void setState(GameState state) {
+		this.state = state;
 	}
 }

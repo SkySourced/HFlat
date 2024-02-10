@@ -2,18 +2,22 @@ package com.hflat.game;
 
 import java.io.File;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Objects;
 
 public class ChartManager {
     private ArrayList<File> chartFiles;
     private ArrayList<Chart> charts;
+    private String currentTask;
 
-    public ChartManager(File chartDirectory) {
+    public ChartManager(File chartDirectory, Game game) {
+        System.out.println(Arrays.toString(chartDirectory.listFiles()));
         chartFiles = new ArrayList<File>();
         try {
-            for (File file : Objects.requireNonNull(chartDirectory.listFiles())) {
+            for (File file : chartDirectory.listFiles()) {
                 if (file.getName().endsWith(".sm")) {
                     chartFiles.add(file);
+                    System.out.println("Found chart: " + file.getName());
                 }
             }
         } catch (NullPointerException e) {
@@ -21,12 +25,22 @@ public class ChartManager {
         }
         charts = new ArrayList<>();
         for (File chart : chartFiles) {
+            currentTask = "Parsing " + chart.getName();
             try {
                 charts.add(Chart.parseChart(chart));
             } catch (Exception e) {
+                System.out.println(e);
                 System.out.println("Error parsing chart: " + chart.getName());
             }
         }
+        game.setState(GameState.SONG_SELECT);
+        currentTask = "";
+    }
+    public String getCurrentTask() {
+        return currentTask;
     }
 
+    public Chart getChart(int index) {
+        return charts.get(index);
+    }
 }

@@ -1,5 +1,7 @@
 package com.hflat.game;
 
+import com.badlogic.gdx.graphics.Texture;
+
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.util.ArrayList;
@@ -14,6 +16,7 @@ public class Chart {
     private String bgPath;
     private String path;
     private float offset;
+    private Texture banner;
     private int difficulty;
     private String difficultyString;
     private String stepAuthor;
@@ -21,7 +24,7 @@ public class Chart {
 
     private ArrayList<Note> notes;
 
-    public Chart(String name, String subtitle, String artist, String soundPath, String bgPath, String path, int difficulty, String difficultyString, String stepAuthor, float bpm, float offset) {
+    public Chart(String name, String subtitle, String artist, String soundPath, String bgPath, String path, int difficulty, String difficultyString, String stepAuthor, float bpm, float offset, String bannerPath) {
         this.name = name;
         this.subtitle = subtitle;
         this.artist = artist;
@@ -29,6 +32,7 @@ public class Chart {
         this.soundPath = soundPath;
         this.bgPath = bgPath;
         this.path = path;
+        this.banner = new Texture(bannerPath);
         this.difficultyString = difficultyString;
         this.stepAuthor = stepAuthor;
         this.bpm = bpm;
@@ -57,6 +61,7 @@ public class Chart {
         String difficultyString = "";
         String stepAuthor = "";
         String bgPath = "";
+        String banner = "";
 
         for (String line : fileLines) {
             while (!line.startsWith("#")){
@@ -69,6 +74,8 @@ public class Chart {
                 subtitle = line.substring(10);
             } else if (line.startsWith("#ARTIST:")) {
                 artist = line.substring(8);
+            } else if (line.startsWith("#BANNER:")) {
+                banner = "charts/" + line.substring(8);
             } else if (line.startsWith("#MUSIC:")) {
                 soundPath = line.substring(7);
             } else if (line.startsWith("#OFFSET:")){
@@ -86,21 +93,14 @@ public class Chart {
                 difficulty = Integer.parseInt(rawNoteInfo[4]);
                 String noteData = rawNoteInfo[6];
 
-
+                // Note parsing
 
             } else if (line.startsWith("#BPMS:")) {
                 bpm = Float.parseFloat(line.split("=")[1]);
             }
         }
 
-        System.out.println("Chart parsed: " + name + " by " + artist + " (" + difficultyString + " " + difficulty + ")");
-        System.out.println("Chart path: " + path);
-        System.out.println("Chart sound path: " + soundPath);
-        System.out.println("Chart bg path: " + bgPath);
-        System.out.println("Chart bpm: " + bpm);
-        System.out.println("Chart step author: " + stepAuthor);
-        System.out.println("Chart subtitle: " + subtitle);
-        return new Chart(name, subtitle, artist, soundPath, bgPath, path, difficulty, difficultyString, stepAuthor, bpm, offset);
+        return new Chart(name, subtitle, artist, soundPath, bgPath, path, difficulty, difficultyString, stepAuthor, bpm, offset, banner);
     }
 
     public String getName() {
@@ -134,5 +134,9 @@ public class Chart {
 
     public float getBpm() {
         return bpm;
+    }
+
+    public Texture getTexture() {
+        return banner;
     }
 }
