@@ -37,7 +37,7 @@ public class Game extends ApplicationAdapter {
 		ScreenUtils.clear(1, 1, 1, 1);
 		batch.begin();
 		batch.draw(logo, (float) Gdx.graphics.getWidth() /2 - (float) logo.getWidth() /2, (float) Gdx.graphics.getHeight() /2 - (float) logo.getHeight() /2 + 70);
-		drawCentredText(batch, pixelFont, "Uses unlicenced assets!", (float) Gdx.graphics.getHeight() /2 - 100);
+		drawCentredText(batch, pixelFont, "Uses unlicensed assets!", (float) Gdx.graphics.getHeight() /2 - 100);
 		drawCentredText(batch, pixelFont, "Loading...", (float) Gdx.graphics.getHeight() /2 - 150);
 		batch.end();
 	}
