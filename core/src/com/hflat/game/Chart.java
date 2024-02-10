@@ -1,24 +1,106 @@
 package com.hflat.game;
 
+import java.io.File;
+import java.io.FileNotFoundException;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Scanner;
 
 public class Chart {
-    public String name;
-    public String subtitle;
-    public String artist;
-    public String path;
-    public int difficulty;
-    private int bpm;
+    private final String name;
+    private final String subtitle;
+    private final String artist;
+    private String soundPath;
+    private String bgPath;
+    private String path;
+    private float offset;
+    private int difficulty;
+    private String difficultyString;
+    private String stepAuthor;
+    private float bpm;
 
     private ArrayList<Note> notes;
 
-    public Chart(String name, String subtitle, String artist, int difficulty, String path) {
+    public Chart(String name, String subtitle, String artist, String soundPath, String bgPath, String path, int difficulty, String difficultyString, String stepAuthor, float bpm, float offset) {
         this.name = name;
         this.subtitle = subtitle;
         this.artist = artist;
         this.difficulty = difficulty;
+        this.soundPath = soundPath;
+        this.bgPath = bgPath;
         this.path = path;
+        this.difficultyString = difficultyString;
+        this.stepAuthor = stepAuthor;
+        this.bpm = bpm;
+        this.offset = offset;
         this.notes = new ArrayList<>();
+    }
+
+    public static Chart parseChart(File chart) throws FileNotFoundException {
+        Scanner fileReader = new Scanner(chart);
+        StringBuilder file = new StringBuilder();
+        while (fileReader.hasNextLine()) {
+            String data = fileReader.nextLine();
+            file.append(data);
+        }
+        fileReader.close();
+        String[] fileLines = file.toString().split(";");
+
+        String name = "";
+        String subtitle = "";
+        String artist = "";
+        String soundPath = "";
+        String path = chart.getPath();
+        int difficulty = 0;
+        float bpm = 0;
+        float offset = 0;
+        String difficultyString = "";
+        String stepAuthor = "";
+        String bgPath = "";
+
+        for (String line : fileLines) {
+            while (!line.startsWith("#")){
+                line = line.substring(1);
+            }
+            System.out.println("Parsing line: " + line);
+            if (line.startsWith("#TITLE:")) {
+                name = line.substring(7);
+            } else if (line.startsWith("#SUBTITLE:")) {
+                subtitle = line.substring(10);
+            } else if (line.startsWith("#ARTIST:")) {
+                artist = line.substring(8);
+            } else if (line.startsWith("#MUSIC:")) {
+                soundPath = line.substring(7);
+            } else if (line.startsWith("#OFFSET:")){
+                offset = Float.parseFloat(line.substring(8));
+            } else if (line.startsWith("#BACKGROUND:")){
+                bgPath = line.substring(12);
+            } else if (line.startsWith("#NOTES:")) {
+                String[] rawNoteInfo = line.split(":");
+
+                for (int i = 0; i < rawNoteInfo.length; i++) rawNoteInfo[i] = rawNoteInfo[i].trim();
+
+                System.out.println(Arrays.toString(rawNoteInfo));
+                stepAuthor = rawNoteInfo[2];
+                difficultyString = rawNoteInfo[3];
+                difficulty = Integer.parseInt(rawNoteInfo[4]);
+                String noteData = rawNoteInfo[6];
+
+
+
+            } else if (line.startsWith("#BPMS:")) {
+                bpm = Float.parseFloat(line.split("=")[1]);
+            }
+        }
+
+        System.out.println("Chart parsed: " + name + " by " + artist + " (" + difficultyString + " " + difficulty + ")");
+        System.out.println("Chart path: " + path);
+        System.out.println("Chart sound path: " + soundPath);
+        System.out.println("Chart bg path: " + bgPath);
+        System.out.println("Chart bpm: " + bpm);
+        System.out.println("Chart step author: " + stepAuthor);
+        System.out.println("Chart subtitle: " + subtitle);
+        return new Chart(name, subtitle, artist, soundPath, bgPath, path, difficulty, difficultyString, stepAuthor, bpm, offset);
     }
 
     public String getName() {
@@ -40,5 +122,17 @@ public class Chart {
 
     public String getPath() {
         return path;
+    }
+
+    public String getDifficultyString() {
+        return difficultyString;
+    }
+
+    public String getStepAuthor() {
+        return stepAuthor;
+    }
+
+    public float getBpm() {
+        return bpm;
     }
 }
