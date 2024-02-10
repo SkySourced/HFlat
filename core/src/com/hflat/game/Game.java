@@ -10,6 +10,9 @@ import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.freetype.FreeTypeFontGenerator;
 import com.badlogic.gdx.utils.ScreenUtils;
 
+import java.io.File;
+import java.io.FileNotFoundException;
+
 public class Game extends ApplicationAdapter {
 	GameState state = GameState.LOADING;
 	SpriteBatch batch;
@@ -18,7 +21,12 @@ public class Game extends ApplicationAdapter {
 
 	@Override
 	public void create () {
-		batch = new SpriteBatch();
+        try {
+            Chart testChart = Chart.parseChart(new File("charts/Relative Fiction.sm"));
+        } catch (FileNotFoundException e) {
+            throw new RuntimeException(e);
+        }
+        batch = new SpriteBatch();
 		logo = new Texture("hflatlogo.png");
 
 		FreeTypeFontGenerator generator = new FreeTypeFontGenerator(Gdx.files.internal("fonts/5x5.ttf"));
