@@ -28,9 +28,9 @@ public class ChartManager {
             currentTask = "Parsing " + chart.getName();
             try {
                 charts.add(Chart.parseChart(chart));
+                System.out.println("Parsed chart: " + chart.getName());
             } catch (Exception e) {
-                System.out.println(e);
-                System.out.println("Error parsing chart: " + chart.getName());
+                System.out.println("Error parsing chart: " + chart.getName() + " - " + e.getMessage());
             }
         }
         game.setState(GameState.SONG_SELECT);
@@ -42,5 +42,9 @@ public class ChartManager {
 
     public Chart getChart(int index) {
         return charts.get(index);
+    }
+
+    public int getChartCount() {
+        return charts.size();
     }
 }

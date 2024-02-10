@@ -25,6 +25,8 @@ public class Chart {
     private ArrayList<Note> notes;
 
     public Chart(String name, String subtitle, String artist, String soundPath, String bgPath, String path, int difficulty, String difficultyString, String stepAuthor, float bpm, float offset, String bannerPath) {
+        if (bannerPath == null || bannerPath.equals("charts/")) bannerPath = "defaultbanner.png";
+
         this.name = name;
         this.subtitle = subtitle;
         this.artist = artist;
@@ -32,12 +34,12 @@ public class Chart {
         this.soundPath = soundPath;
         this.bgPath = bgPath;
         this.path = path;
-        this.banner = new Texture(bannerPath);
         this.difficultyString = difficultyString;
         this.stepAuthor = stepAuthor;
         this.bpm = bpm;
         this.offset = offset;
         this.notes = new ArrayList<>();
+        this.banner = new Texture(bannerPath);
     }
 
     public static Chart parseChart(File chart) throws FileNotFoundException {
@@ -67,7 +69,6 @@ public class Chart {
             while (!line.startsWith("#")){
                 line = line.substring(1);
             }
-            System.out.println("Parsing line: " + line);
             if (line.startsWith("#TITLE:")) {
                 name = line.substring(7);
             } else if (line.startsWith("#SUBTITLE:")) {
@@ -87,7 +88,6 @@ public class Chart {
 
                 for (int i = 0; i < rawNoteInfo.length; i++) rawNoteInfo[i] = rawNoteInfo[i].trim();
 
-                System.out.println(Arrays.toString(rawNoteInfo));
                 stepAuthor = rawNoteInfo[2];
                 difficultyString = rawNoteInfo[3];
                 difficulty = Integer.parseInt(rawNoteInfo[4]);

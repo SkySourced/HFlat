@@ -2,6 +2,7 @@ package com.hflat.game;
 
 import com.badlogic.gdx.ApplicationAdapter;
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.Input;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
@@ -21,6 +22,7 @@ public class Game extends ApplicationAdapter {
 	private BitmapFont pixelFont20;
 	private BitmapFont pixelFont12;
 	private BitmapFont pixelFont40;
+	private BitmapFont serifFont20;
 	private int selectedSongIndex = 0;
 
 	@Override
@@ -30,23 +32,31 @@ public class Game extends ApplicationAdapter {
         batch = new SpriteBatch();
 		logo = new Texture("hflatlogo.png");
 
-		FreeTypeFontGenerator generator = new FreeTypeFontGenerator(Gdx.files.internal("fonts/5x5.ttf"));
+		FreeTypeFontGenerator pixelGenerator = new FreeTypeFontGenerator(Gdx.files.internal("fonts/5x5.ttf"));
+		FreeTypeFontGenerator serifGenerator = new FreeTypeFontGenerator(Gdx.files.internal("fonts/Newsreader.ttf"));
 		FreeTypeFontGenerator.FreeTypeFontParameter parameter = new FreeTypeFontGenerator.FreeTypeFontParameter();
 		parameter.color = Color.BLACK;
 		parameter.size = 20;
 		parameter.shadowOffsetX = 1;
 		parameter.shadowOffsetY = 1;
 		parameter.shadowColor = new Color(0, 0, 0, 0.75f);
-		pixelFont20 = generator.generateFont(parameter);
+		pixelFont20 = pixelGenerator.generateFont(parameter);
 
 		parameter.size = 12;
-		pixelFont12 = generator.generateFont(parameter);
+		pixelFont12 = pixelGenerator.generateFont(parameter);
 
 		parameter.size = 40;
 		parameter.shadowOffsetX = 2;
 		parameter.shadowOffsetY = 2;
-		pixelFont40 = generator.generateFont(parameter);
-		generator.dispose();
+		pixelFont40 = pixelGenerator.generateFont(parameter);
+
+		parameter.size = 20;
+		parameter.shadowOffsetX = 1;
+		parameter.shadowOffsetY = 1;
+		serifFont20 = serifGenerator.generateFont(parameter);
+
+		pixelGenerator.dispose();
+		serifGenerator.dispose();
 	}
 
 	@Override
@@ -60,8 +70,17 @@ public class Game extends ApplicationAdapter {
 				drawCentredText(batch, pixelFont12, charts.getCurrentTask(), (float) Gdx.graphics.getHeight() / 2 - 150);
 				break;
 			case SONG_SELECT:
+				if(Gdx.input.isKeyJustPressed(Input.Keys.LEFT)) {
+					selectedSongIndex--;
+					if(selectedSongIndex < 0) selectedSongIndex = charts.getChartCount() - 1;
+				} else if (Gdx.input.isKeyPressed(Input.Keys.RIGHT)) {
+					selectedSongIndex++;
+					if(selectedSongIndex >= charts.getChartCount()) selectedSongIndex = 0;
+				}
+				Chart selectedChart = charts.getChart(selectedSongIndex);
 				drawCentredText(batch, pixelFont40, "Song Select", (float) Gdx.graphics.getHeight() - 30);
-				batch.draw(charts.getChart(selectedSongIndex).getTexture(), 25, 50, 350, 350);
+				batch.draw(selectedChart.getTexture(), 25, 630, 350, 350);
+				serifFont20.draw(batch, selectedChart.getName(), 20, 550);
 				break;
 		}
 		batch.end();
