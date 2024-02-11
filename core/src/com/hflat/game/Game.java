@@ -12,12 +12,10 @@ import com.badlogic.gdx.graphics.g2d.GlyphLayout;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.graphics.g2d.freetype.FreeTypeFontGenerator;
-import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.utils.ScreenUtils;
 import space.earlygrey.shapedrawer.ShapeDrawer;
 
 import java.io.File;
-import java.io.FileNotFoundException;
 
 public class Game extends ApplicationAdapter {
 	private GameState state = GameState.LOADING;
@@ -31,8 +29,9 @@ public class Game extends ApplicationAdapter {
 	private BitmapFont pixelFont40;
 	private BitmapFont serifFont20;
 	private int selectedSongIndex = 0;
+	private long lastMenuAction;
 
-	@Override
+    @Override
 	public void create () {
 		charts = new ChartManager(new File("charts"), this);
 
@@ -92,18 +91,21 @@ public class Game extends ApplicationAdapter {
 		batch.setProjectionMatrix(camera.combined);
 
 		batch.begin();
-		switch (state) {
+        long menuActionDelay = 160000000L;
+        switch (state) {
 			case LOADING:
 				batch.draw(logo, (float) Gdx.graphics.getWidth() / 2 - (float) logo.getWidth() / 2, (float) Gdx.graphics.getHeight() / 2 - (float) logo.getHeight() / 2 + 70);
 				drawCentredText(batch, pixelFont20, "Uses unlicensed assets!", (float) Gdx.graphics.getHeight() / 2 - 100);
 				drawCentredText(batch, pixelFont12, charts.getCurrentTask(), (float) Gdx.graphics.getHeight() / 2 - 150);
 				break;
 			case SONG_SELECT:
-				if(Gdx.input.isKeyJustPressed(Input.Keys.LEFT)) {
+				if(Gdx.input.isKeyJustPressed(Input.Keys.LEFT) && lastMenuAction + menuActionDelay < System.nanoTime()) {
 					selectedSongIndex--;
+					lastMenuAction = System.nanoTime();
 					if(selectedSongIndex < 0) selectedSongIndex = charts.getChartCount() - 1;
-				} else if (Gdx.input.isKeyPressed(Input.Keys.RIGHT)) {
+				} else if (Gdx.input.isKeyPressed(Input.Keys.RIGHT) && lastMenuAction + menuActionDelay < System.nanoTime()) {
 					selectedSongIndex++;
+					lastMenuAction = System.nanoTime();
 					if(selectedSongIndex >= charts.getChartCount()) selectedSongIndex = 0;
 				}
 				Chart selectedChart = charts.getChart(selectedSongIndex);

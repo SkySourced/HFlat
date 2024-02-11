@@ -4,5 +4,5 @@ public enum GameState {
     LOADING,
     SONG_SELECT,
     PLAYING,
-    RESULTS;
+    RESULTS
 }

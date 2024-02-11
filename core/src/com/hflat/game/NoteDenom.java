@@ -21,29 +21,20 @@ public enum NoteDenom {
         this.length = length;
     }
 
+    // might not be necessary but copilot made it, and it's here just in case
     public static NoteDenom fromString(String s) {
-        switch (s) {
-            case "4th":
-                return FOURTH;
-            case "8th":
-                return EIGHTH;
-            case "12th":
-                return TWELFTH;
-            case "16th":
-                return SIXTEENTH;
-            case "24th":
-                return TWENTYFOURTH;
-            case "32nd":
-                return THIRTYSECOND;
-            case "64th":
-                return SIXTYFOURTH;
-            case "128th":
-                return ONEHUNDREDTWENTYEIGHTH;
-            case "192nd":
-                return ONEHUNDREDNINETYSECOND;
-            default:
-                return null;
-        }
+        return switch (s) {
+            case "4th" -> FOURTH;
+            case "8th" -> EIGHTH;
+            case "12th" -> TWELFTH;
+            case "16th" -> SIXTEENTH;
+            case "24th" -> TWENTYFOURTH;
+            case "32nd" -> THIRTYSECOND;
+            case "64th" -> SIXTYFOURTH;
+            case "128th" -> ONEHUNDREDTWENTYEIGHTH;
+            case "192nd" -> ONEHUNDREDNINETYSECOND;
+            default -> null;
+        };
     }
 
     public static NoteDenom fromLength(float length) {

@@ -3,16 +3,14 @@ package com.hflat.game;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Objects;
 
 public class ChartManager {
-    private ArrayList<File> chartFiles;
     private ArrayList<Chart> charts;
     private String currentTask;
 
     public ChartManager(File chartDirectory, Game game) {
         System.out.println(Arrays.toString(chartDirectory.listFiles()));
-        chartFiles = new ArrayList<>();
+        ArrayList<File> chartFiles = new ArrayList<>();
         try {
             for (File file : chartDirectory.listFiles()) {
                 if (file.getName().endsWith(".sm")) {

@@ -6,24 +6,23 @@ import com.badlogic.gdx.graphics.Texture;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Scanner;
 
 public class Chart {
     private final String name;
     private final String subtitle;
     private final String artist;
-    private String soundPath;
-    private String bgPath;
-    private String path;
-    private float offset;
-    private Texture banner;
-    private int difficulty;
-    private String difficultyString;
-    private String stepAuthor;
-    private float bpm;
-    private Color backgroundColour;
-    private Color difficultyColour;
+    private final String soundPath;
+    private final String bgPath;
+    private final String path;
+    private final float offset;
+    private final Texture banner;
+    private final int difficulty;
+    private final String difficultyString;
+    private final String stepAuthor;
+    private final float bpm;
+    private final Color backgroundColour;
+    private final Color difficultyColour;
 
     private ArrayList<Note> notes;
 
