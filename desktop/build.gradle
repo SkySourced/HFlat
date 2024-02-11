@@ -20,7 +20,7 @@ tasks.register('run', JavaExec) {
     }
 }
 
-tasks.register('debug', JavaExec) {
+/*tasks.register('debug', JavaExec) {
     dependsOn classes
     mainClass = project.mainClassName
     classpath = sourceSets.main.runtimeClasspath
@@ -28,7 +28,7 @@ tasks.register('debug', JavaExec) {
     workingDir = project.assetsDir
     ignoreExitValue = true as JavaExecSpec
     debug = true as JavaExec
-}
+}*/
 
 tasks.register('dist', Jar) {
     duplicatesStrategy(DuplicatesStrategy.EXCLUDE)

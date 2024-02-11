@@ -5,8 +5,7 @@ import com.badlogic.gdx.graphics.Texture;
 
 import java.io.File;
 import java.io.FileNotFoundException;
-import java.util.ArrayList;
-import java.util.Scanner;
+import java.util.*;
 
 public class Chart {
     private final String name;
@@ -98,6 +97,13 @@ public class Chart {
                 String noteData = rawNoteInfo[6];
 
                 // Note parsing
+                ArrayList<String> noteLines = new ArrayList<String>(List.of(noteData.split(",")));
+
+                for(String block: noteLines){
+                    System.out.println(block);
+                    ArrayList<String> lines = new ArrayList<String>(List.of(block.split(new String(Arrays.toString(new Byte[]{0x0D, 0x0A})))));
+                    System.out.println(lines.toString());
+                }
 
             } else if (line.startsWith("#BPMS:")) {
                 bpm = Float.parseFloat(line.split("=")[1]);
