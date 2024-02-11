@@ -31,6 +31,13 @@ public class Game extends ApplicationAdapter {
 	private int selectedSongIndex = 0;
 	private long lastMenuAction;
 
+	public enum GameState {
+		LOADING,
+		SONG_SELECT,
+		PLAYING,
+		RESULTS
+	}
+
     @Override
 	public void create () {
 		charts = new ChartManager(new File("charts"), this);

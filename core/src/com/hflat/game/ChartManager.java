@@ -3,6 +3,7 @@ package com.hflat.game;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.Arrays;
+import com.hflat.game.Game.GameState;
 
 public class ChartManager {
     private ArrayList<Chart> charts;
