@@ -4,21 +4,28 @@ import com.badlogic.gdx.ApplicationAdapter;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
 import com.badlogic.gdx.graphics.Color;
+import com.badlogic.gdx.graphics.OrthographicCamera;
+import com.badlogic.gdx.graphics.Pixmap;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.GlyphLayout;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.graphics.g2d.freetype.FreeTypeFontGenerator;
+import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.utils.ScreenUtils;
+import space.earlygrey.shapedrawer.ShapeDrawer;
 
 import java.io.File;
 import java.io.FileNotFoundException;
 
 public class Game extends ApplicationAdapter {
 	private GameState state = GameState.LOADING;
+	private OrthographicCamera camera;
 	public ChartManager charts;
 	private SpriteBatch batch;
 	private Texture logo;
+	private ShapeDrawer drawer;
 	private BitmapFont pixelFont20;
 	private BitmapFont pixelFont12;
 	private BitmapFont pixelFont40;
@@ -29,7 +36,20 @@ public class Game extends ApplicationAdapter {
 	public void create () {
 		charts = new ChartManager(new File("charts"), this);
 
-        batch = new SpriteBatch();
+		camera = new OrthographicCamera();
+		camera.setToOrtho(false, 400, 1080);
+
+		Pixmap pixmap = new Pixmap(1, 1, Pixmap.Format.RGBA8888);
+		pixmap.setColor(Color.WHITE);
+		pixmap.drawPixel(0, 0);
+		Texture texture = new Texture(pixmap);
+		pixmap.dispose();
+		TextureRegion region = new TextureRegion(texture, 0, 0, 1, 1);
+
+		batch = new SpriteBatch();
+
+		drawer = new ShapeDrawer(batch, region);
+
 		logo = new Texture("hflatlogo.png");
 
 		FreeTypeFontGenerator pixelGenerator = new FreeTypeFontGenerator(Gdx.files.internal("fonts/5x5.ttf"));
@@ -61,7 +81,16 @@ public class Game extends ApplicationAdapter {
 
 	@Override
 	public void render () {
-		ScreenUtils.clear(1, 1, 1, 1);
+		if (charts.getChart(selectedSongIndex).getBackgroundColour() != null) {
+			ScreenUtils.clear(charts.getChart(selectedSongIndex).getBackgroundColour());
+		} else {
+			ScreenUtils.clear(Color.WHITE);
+		}
+
+		camera.update();
+
+		batch.setProjectionMatrix(camera.combined);
+
 		batch.begin();
 		switch (state) {
 			case LOADING:
@@ -78,8 +107,21 @@ public class Game extends ApplicationAdapter {
 					if(selectedSongIndex >= charts.getChartCount()) selectedSongIndex = 0;
 				}
 				Chart selectedChart = charts.getChart(selectedSongIndex);
-				drawCentredText(batch, pixelFont40, "Song Select", (float) Gdx.graphics.getHeight() - 30);
-				batch.draw(selectedChart.getTexture(), 25, 630, 350, 350);
+
+				// Draw album art
+				batch.draw(selectedChart.getTexture(), 25, 600, 350, 350);
+
+				drawCentredText(batch, pixelFont40, "Song Select", 1050);
+
+				// Draw difficulty backgrounds
+				drawer.filledRectangle(25, 320, 60, 60, selectedChart.getDifficultyColour());
+				drawer.filledRectangle(85, 320, 290, 60, Color.WHITE);
+
+				// Draw difficulty text
+				pixelFont40.draw(batch, selectedChart.getDifficultyString(), 100, 365);
+				pixelFont40.draw(batch, String.valueOf(selectedChart.getDifficulty()), 25 + Game.getCentreTextOffset(pixelFont40, String.valueOf(selectedChart.getDifficulty())), 365);
+
+
 				serifFont20.draw(batch, selectedChart.getName(), 20, 550);
 				break;
 		}

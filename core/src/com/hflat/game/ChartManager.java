@@ -12,7 +12,7 @@ public class ChartManager {
 
     public ChartManager(File chartDirectory, Game game) {
         System.out.println(Arrays.toString(chartDirectory.listFiles()));
-        chartFiles = new ArrayList<File>();
+        chartFiles = new ArrayList<>();
         try {
             for (File file : chartDirectory.listFiles()) {
                 if (file.getName().endsWith(".sm")) {

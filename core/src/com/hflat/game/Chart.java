@@ -1,5 +1,6 @@
 package com.hflat.game;
 
+import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.Texture;
 
 import java.io.File;
@@ -21,6 +22,8 @@ public class Chart {
     private String difficultyString;
     private String stepAuthor;
     private float bpm;
+    private Color backgroundColour;
+    private Color difficultyColour;
 
     private ArrayList<Note> notes;
 
@@ -40,6 +43,8 @@ public class Chart {
         this.offset = offset;
         this.notes = new ArrayList<>();
         this.banner = new Texture(bannerPath);
+        this.backgroundColour = hashColor(name + artist);
+        this.difficultyColour = hashColor(difficultyString.toLowerCase());
     }
 
     public static Chart parseChart(File chart) throws FileNotFoundException {
@@ -138,5 +143,21 @@ public class Chart {
 
     public Texture getTexture() {
         return banner;
+    }
+
+    public Color getBackgroundColour() {
+        return backgroundColour;
+    }
+
+    public Color getDifficultyColour() {
+        return difficultyColour;
+    }
+
+    private static Color hashColor(String s) {
+        int hash = s.hashCode();
+        float r = (hash & 0xFF0000) >> 16;
+        float g = (hash & 0x00FF00) >> 8;
+        float b = hash & 0x0000FF;
+        return new Color(r / 255, g / 255, b / 255, 0.3f);
     }
 }
