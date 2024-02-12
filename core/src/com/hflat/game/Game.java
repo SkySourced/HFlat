@@ -28,6 +28,7 @@ public class Game extends ApplicationAdapter {
 	private BitmapFont pixelFont12;
 	private BitmapFont pixelFont40;
 	private BitmapFont serifFont20;
+	private BitmapFont serifFont12;
 	private int selectedSongIndex = 0;
 	private long lastMenuAction;
 
@@ -43,7 +44,7 @@ public class Game extends ApplicationAdapter {
 		charts = new ChartManager(new File("charts"), this);
 
 		camera = new OrthographicCamera();
-		camera.setToOrtho(false, 400, 1080);
+		camera.setToOrtho(false, 400, 700);
 
 		Pixmap pixmap = new Pixmap(1, 1, Pixmap.Format.RGBA8888);
 		pixmap.setColor(Color.WHITE);
@@ -80,6 +81,9 @@ public class Game extends ApplicationAdapter {
 		parameter.shadowOffsetX = 1;
 		parameter.shadowOffsetY = 1;
 		serifFont20 = serifGenerator.generateFont(parameter);
+
+		parameter.size = 12;
+		serifFont12 = serifGenerator.generateFont(parameter);
 
 		pixelGenerator.dispose();
 		serifGenerator.dispose();
@@ -118,20 +122,21 @@ public class Game extends ApplicationAdapter {
 				Chart selectedChart = charts.getChart(selectedSongIndex);
 
 				// Draw album art
-				batch.draw(selectedChart.getTexture(), 25, 600, 350, 350);
+				batch.draw(selectedChart.getTexture(), 25, 300, 350, 350);
 
-				drawCentredText(batch, pixelFont40, "Song Select", 1050);
+				drawCentredText(batch, pixelFont40, "Song Select", 690);
 
 				// Draw difficulty backgrounds
-				drawer.filledRectangle(25, 320, 60, 60, selectedChart.getDifficultyColour());
-				drawer.filledRectangle(85, 320, 290, 60, Color.WHITE);
+				drawer.filledRectangle(25, 240, 60, 60, selectedChart.getDifficultyColour());
+				drawer.filledRectangle(85, 240, 290, 60, Color.WHITE);
 
 				// Draw difficulty text
-				pixelFont40.draw(batch, selectedChart.getDifficultyString(), 100, 365);
-				pixelFont40.draw(batch, String.valueOf(selectedChart.getDifficulty()), 25 + Game.getCentreTextOffset(pixelFont40, String.valueOf(selectedChart.getDifficulty())), 365);
+				pixelFont40.draw(batch, selectedChart.getDifficultyString(), 100, 285);
+				pixelFont40.draw(batch, String.valueOf(selectedChart.getDifficulty()), 25 + Game.getCentreTextOffset(pixelFont40, String.valueOf(selectedChart.getDifficulty())), 285);
 
 
-				serifFont20.draw(batch, selectedChart.getName(), 20, 550);
+				serifFont20.draw(batch, selectedChart.getName(), 30, 230);
+				serifFont12.draw(batch, selectedChart.getSubtitle(), 30, 210);
 				break;
 		}
 		batch.end();

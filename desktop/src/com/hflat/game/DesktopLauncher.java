@@ -13,7 +13,7 @@ public class DesktopLauncher {
 		config.useVsync(false);
 
 		// set window size
-		config.setWindowedMode(400, 1080);
+		config.setWindowedMode(400, 700);
 
 		config.setTitle("HFlat");
 		new Lwjgl3Application(new Game(), config);
