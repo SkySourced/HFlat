@@ -100,9 +100,8 @@ public class Chart {
                 ArrayList<String> noteLines = new ArrayList<String>(List.of(noteData.split(",")));
 
                 for(String block: noteLines){
-                    System.out.println(block);
-                    ArrayList<String> lines = new ArrayList<String>(List.of(block.split(new String(Arrays.toString(new Byte[]{0x0D, 0x0A})))));
-                    System.out.println(lines.toString());
+                    ArrayList<String> lines = new ArrayList<String>(List.of(block.split("\n")));
+                    for(String l : lines) System.out.println(l);
                 }
 
             } else if (line.startsWith("#BPMS:")) {
