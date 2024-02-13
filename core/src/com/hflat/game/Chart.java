@@ -66,7 +66,7 @@ public class Chart {
         String difficultyString = "";
         String stepAuthor = "";
         String bgPath = "";
-        String banner = "";
+        String bannerPath = "";
 
         for (String line : fileLines) {
             while (!line.startsWith("#")){
@@ -79,7 +79,7 @@ public class Chart {
             } else if (line.startsWith("#ARTIST:")) {
                 artist = line.substring(8);
             } else if (line.startsWith("#BANNER:")) {
-                banner = "charts/" + line.substring(8);
+                bannerPath = "charts/" + line.substring(8);
             } else if (line.startsWith("#MUSIC:")) {
                 soundPath = line.substring(7);
             } else if (line.startsWith("#OFFSET:")){
@@ -96,20 +96,26 @@ public class Chart {
                 difficulty = Integer.parseInt(rawNoteInfo[4]);
                 String noteData = rawNoteInfo[6];
 
-                // Note parsing
-                ArrayList<String> noteLines = new ArrayList<String>(List.of(noteData.split(",")));
+                // Note parsing (could this be done later when the chart is played?)
+                String[] bars = noteData.split(","); // Split the note data into bars
+                for (String s : bars) {
+                    System.out.println(s);
+                        String[] beats = s.split(""); // TODO: Split the line into individual beats
+                        for (String b : beats) {
 
-                for(String block: noteLines){
-                    ArrayList<String> lines = new ArrayList<String>(List.of(block.split("\n")));
-                    for(String l : lines) System.out.println(l);
+                            // TODO: Split the beats into lanes & types and calculate quantisation
+
+                            System.out.println(b);
+                        }
                 }
+
 
             } else if (line.startsWith("#BPMS:")) {
                 bpm = Float.parseFloat(line.split("=")[1]);
             }
         }
 
-        return new Chart(name, subtitle, artist, soundPath, bgPath, path, difficulty, difficultyString, stepAuthor, bpm, offset, banner);
+        return new Chart(name, subtitle, artist, soundPath, bgPath, path, difficulty, difficultyString, stepAuthor, bpm, offset, bannerPath);
     }
 
     public String getName() {
@@ -164,4 +170,16 @@ public class Chart {
         float b = hash & 0x0000FF;
         return new Color(r / 255, g / 255, b / 255, 0.3f);
     }
+
+    private static String hexToAscii(String hexStr) {
+        StringBuilder output = new StringBuilder();
+
+        for (int i = 0; i < hexStr.length(); i += 2) {
+            String str = hexStr.substring(i, i + 2);
+            output.append((char) Integer.parseInt(str, 16));
+        }
+
+        return output.toString();
+    }
+
 }
