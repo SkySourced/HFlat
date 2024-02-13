@@ -30,6 +30,8 @@ public class ChartManager {
                 System.out.println("Parsed chart: " + chart.getName());
             } catch (Exception e) {
                 System.out.println("Error parsing chart: " + chart.getName() + " - " + e.getMessage());
+                System.out.println("Stack trace:");
+                e.printStackTrace();
             }
         }
         game.setState(GameState.SONG_SELECT);
