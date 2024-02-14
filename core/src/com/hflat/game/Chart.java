@@ -5,6 +5,10 @@ import com.badlogic.gdx.graphics.Texture;
 
 import java.io.File;
 import java.io.FileNotFoundException;
+import java.nio.charset.Charset;
+import java.nio.CharBuffer;
+import java.nio.ByteBuffer;
+import java.nio.charset.StandardCharsets;
 import java.util.*;
 
 public class Chart {
@@ -53,7 +57,8 @@ public class Chart {
             file.append(data);
         }
         fileReader.close();
-        String[] fileLines = file.toString().split(";");
+
+        String[] fileLines = file.toString().split(";", -1);
 
         String name = "";
         String subtitle = "";
@@ -66,9 +71,10 @@ public class Chart {
         String difficultyString = "";
         String stepAuthor = "";
         String bgPath = "";
-        String bannerPath = "";
+        String banner = "";
 
         for (String line : fileLines) {
+            System.out.println(Arrays.toString(line.getBytes(Charset.defaultCharset())));
             while (!line.startsWith("#")){
                 line = line.substring(1);
             }
@@ -79,7 +85,7 @@ public class Chart {
             } else if (line.startsWith("#ARTIST:")) {
                 artist = line.substring(8);
             } else if (line.startsWith("#BANNER:")) {
-                bannerPath = "charts/" + line.substring(8);
+                banner = "charts/" + line.substring(8);
             } else if (line.startsWith("#MUSIC:")) {
                 soundPath = line.substring(7);
             } else if (line.startsWith("#OFFSET:")){
@@ -87,7 +93,7 @@ public class Chart {
             } else if (line.startsWith("#BACKGROUND:")){
                 bgPath = line.substring(12);
             } else if (line.startsWith("#NOTES:")) {
-                String[] rawNoteInfo = line.split(":");
+                String[] rawNoteInfo = line.split(":", -1);
 
                 for (int i = 0; i < rawNoteInfo.length; i++) rawNoteInfo[i] = rawNoteInfo[i].trim();
 
@@ -96,17 +102,50 @@ public class Chart {
                 difficulty = Integer.parseInt(rawNoteInfo[4]);
                 String noteData = rawNoteInfo[6];
 
-                // Note parsing (could this be done later when the chart is played?)
-                String[] bars = noteData.split(","); // Split the note data into bars
-                for (String s : bars) {
-                    System.out.println(s);
-                        String[] beats = s.split(""); // TODO: Split the line into individual beats
-                        for (String b : beats) {
+                // Note parsing
+                /*ArrayList<String> noteLines = new ArrayList<String>(List.of(noteData.split(",")));
 
-                            // TODO: Split the beats into lanes & types and calculate quantisation
+                for(String block: noteLines){
+                    ArrayList<String> lines = new ArrayList<String>(List.of(block.split("\n")));
+                    for(String l : lines) System.out.println(l);
+                }*/
+                byte[] byteArray = toBytes(noteData.toCharArray());
+                ArrayList<Byte> noteDataBytes = new ArrayList<Byte>();
+                for(byte b: byteArray){
+                    if (b != 0x20) noteDataBytes.add(b);
+                }
 
-                            System.out.println(b);
+                /*
+                 char - hex - dec
+                    / - 2F  - 47
+                    M - 4D  - 77
+                    0 - 30  - 48
+                    1 - 31  - 49
+                    2 - 32  - 50
+                    3 - 33  - 51
+                    , - 2C  - 44
+                space - 20  - 32
+
+                    remove spaces (0x20)
+                    remove bar comments
+                        if character is / (0x2F)
+                            delete characters until newline (0x0A)
+                    remove all newlines
+                    split by commas (0x2C)
+                    theoretically then should just have a list of segments of chars 4n long
+                    split into groups of 4 chars
+                    figure out quantization
+                 */
+                System.out.println("the array list is " + noteDataBytes.size() + " big");
+
+                for (int i = 0; i < noteDataBytes.size(); i++) {
+                    //System.out.println(noteDataBytes.get(i).toString());
+                    if (noteDataBytes.get(i) == 0x2F) {
+                        System.out.println("in slash loop");
+                        while (i < noteDataBytes.size() && noteDataBytes.get(i) != 0x0A){
+                            noteDataBytes.remove(i);
                         }
+                    }
                 }
 
 
@@ -115,7 +154,7 @@ public class Chart {
             }
         }
 
-        return new Chart(name, subtitle, artist, soundPath, bgPath, path, difficulty, difficultyString, stepAuthor, bpm, offset, bannerPath);
+        return new Chart(name, subtitle, artist, soundPath, bgPath, path, difficulty, difficultyString, stepAuthor, bpm, offset, banner);
     }
 
     public String getName() {
@@ -171,15 +210,11 @@ public class Chart {
         return new Color(r / 255, g / 255, b / 255, 0.3f);
     }
 
-    private static String hexToAscii(String hexStr) {
-        StringBuilder output = new StringBuilder();
-
-        for (int i = 0; i < hexStr.length(); i += 2) {
-            String str = hexStr.substring(i, i + 2);
-            output.append((char) Integer.parseInt(str, 16));
-        }
-
-        return output.toString();
+    private static byte[] toBytes(char[] chars) {
+        CharBuffer charBuffer = CharBuffer.wrap(chars);
+        ByteBuffer byteBuffer = StandardCharsets.UTF_8.encode(charBuffer);
+        byte[] bytes = Arrays.copyOfRange(byteBuffer.array(), byteBuffer.position(), byteBuffer.limit());
+        Arrays.fill(byteBuffer.array(), (byte) 0);
+        return bytes;
     }
-
 }
