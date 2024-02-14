@@ -1,5 +1,6 @@
 package com.hflat.game;
 
+import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Texture;
 
 /**
@@ -67,23 +68,25 @@ public enum NoteDenom {
     }
 
     public static NoteDenom fromLength(float length) {
-        if (length == 1.0f) {
+        Gdx.app.debug("NoteDenom", String.valueOf(length));
+        length = length % 1;
+        if (length % 1/4f == 0) {
             return FOURTH;
-        } else if (length == 0.5f) {
+        } else if (length % 1/8f == 0) {
             return EIGHTH;
-        } else if (length == 1.0f/3.0f) {
+        } else if (length % 1/12f == 0) {
             return TWELFTH;
-        } else if (length == 0.25f) {
+        } else if (length % 1/16f == 0) {
             return SIXTEENTH;
-        } else if (length == 1.0f/6.0f) {
+        } else if (length % 1/24f == 0) {
             return TWENTYFOURTH;
-        } else if (length == 0.125f) {
+        } else if (length % 1/32f == 0) {
             return THIRTYSECOND;
-        } else if (length == 0.0625f) {
+        } else if (length % 1/64f == 0) {
             return SIXTYFOURTH;
-        } else if (length == 0.03125f) {
+        } else if (length % 1/128f == 0) {
             return ONEHUNDREDTWENTYEIGHTH;
-        } else if (length == 4f/192f) {
+        } else if (length % 1/192f == 0) {
             return ONEHUNDREDNINETYSECOND;
         } else {
             return null;
