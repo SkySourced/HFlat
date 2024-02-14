@@ -1,16 +1,24 @@
 package com.hflat.game;
 
+import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.Texture;
 
 import java.io.File;
 import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.nio.charset.Charset;
 import java.nio.CharBuffer;
 import java.nio.ByteBuffer;
 import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
 import java.util.*;
 
+
+/**
+ * A class to represent a chart/level
+ * Contains note information as well as info about the song
+ * */
 public class Chart {
     private final String name;
     private final String subtitle;
@@ -29,6 +37,9 @@ public class Chart {
 
     private ArrayList<Note> notes;
 
+    /**
+     * Constructor for chart object
+     * */
     public Chart(String name, String subtitle, String artist, String soundPath, String bgPath, String path, int difficulty, String difficultyString, String stepAuthor, float bpm, float offset, String bannerPath) {
         if (bannerPath == null || bannerPath.equals("charts/")) bannerPath = "defaultbanner.png";
 
@@ -49,16 +60,16 @@ public class Chart {
         this.difficultyColour = hashColor(difficultyString.toLowerCase());
     }
 
-    public static Chart parseChart(File chart) throws FileNotFoundException {
-        Scanner fileReader = new Scanner(chart);
-        StringBuilder file = new StringBuilder();
-        while (fileReader.hasNextLine()) {
-            String data = fileReader.nextLine();
-            file.append(data);
-        }
-        fileReader.close();
+    /**
+     * Generates a parsed chart object from a file address object
+     * @return A parsed Chart object
+     * @param chart The File object of the chart file
+     * */
+    public static Chart parseChart(File chart) throws IOException {
 
-        String[] fileLines = file.toString().split(";", -1);
+        String file = Files.readString(chart.toPath(), Charset.defaultCharset());
+
+        String[] fileLines = file.split(";", -1);
 
         String name = "";
         String subtitle = "";
@@ -74,9 +85,14 @@ public class Chart {
         String banner = "";
 
         for (String line : fileLines) {
-            System.out.println(Arrays.toString(line.getBytes(Charset.defaultCharset())));
+            line = line.replace("\r", "");
+            Gdx.app.debug("Chart", Arrays.toString(line.getBytes(Charset.defaultCharset())));
             while (!line.startsWith("#")){
-                line = line.substring(1);
+                try {
+                    line = line.substring(1);
+                } catch (StringIndexOutOfBoundsException e) {
+                    break;
+                }
             }
             if (line.startsWith("#TITLE:")) {
                 name = line.substring(7);
@@ -95,26 +111,20 @@ public class Chart {
             } else if (line.startsWith("#NOTES:")) {
                 String[] rawNoteInfo = line.split(":", -1);
 
-                for (int i = 0; i < rawNoteInfo.length; i++) rawNoteInfo[i] = rawNoteInfo[i].trim();
-
-                stepAuthor = rawNoteInfo[2];
-                difficultyString = rawNoteInfo[3];
-                difficulty = Integer.parseInt(rawNoteInfo[4]);
+                stepAuthor = rawNoteInfo[2].trim();
+                difficultyString = rawNoteInfo[3].trim();
+                difficulty = Integer.parseInt(rawNoteInfo[4].trim());
                 String noteData = rawNoteInfo[6];
 
                 // Note parsing
-                /*ArrayList<String> noteLines = new ArrayList<String>(List.of(noteData.split(",")));
 
-                for(String block: noteLines){
-                    ArrayList<String> lines = new ArrayList<String>(List.of(block.split("\n")));
-                    for(String l : lines) System.out.println(l);
-                }*/
                 byte[] byteArray = toBytes(noteData.toCharArray());
                 ArrayList<Byte> noteDataBytes = new ArrayList<Byte>();
                 for(byte b: byteArray){
                     if (b != 0x20) noteDataBytes.add(b);
                 }
-
+                //That looks pretty good
+                //Apart from the nulls
                 /*
                  char - hex - dec
                     / - 2F  - 47
@@ -136,18 +146,42 @@ public class Chart {
                     split into groups of 4 chars
                     figure out quantization
                  */
-                System.out.println("the array list is " + noteDataBytes.size() + " big");
 
                 for (int i = 0; i < noteDataBytes.size(); i++) {
-                    //System.out.println(noteDataBytes.get(i).toString());
                     if (noteDataBytes.get(i) == 0x2F) {
-                        System.out.println("in slash loop");
                         while (i < noteDataBytes.size() && noteDataBytes.get(i) != 0x0A){
                             noteDataBytes.remove(i);
                         }
                     }
                 }
+                for (int i = 0; i < noteDataBytes.size(); i++) {
+                    if (noteDataBytes.get(i) == 0x0A) {
+                        noteDataBytes.remove(i);
+                    }
+                }
+                // join the bytes into a string (string builder discards \n)
+                StringBuilder noteDataString = new StringBuilder();
+                for (byte b : noteDataBytes) {
+                    noteDataString.append((char) b);
+                }
+                String[] noteDataStringArray = noteDataString.toString().split(",");
 
+                for(String bar : noteDataStringArray){
+                    ArrayList<String> notes = new ArrayList<>();
+                    if (bar.charAt(0) == 0x0A) {
+                        bar = bar.substring(1);
+                    }
+                    Gdx.app.debug("Chart", bar);
+                    Gdx.app.debug("Chart", Arrays.toString(bar.getBytes()));
+                    for(int i = 0; i < bar.length(); i += 4) {
+                        notes.add(bar.substring(i, i+4));
+                    }
+                    for (int i = 0; i < notes.size(); i++) {
+                        Gdx.app.debug("Chart", notes.get(i));
+                        float quantization = (float) i % notes.size();
+                        Gdx.app.debug("Chart", NoteDenom.fromLength(quantization).toString());
+                    }
+                }
 
             } else if (line.startsWith("#BPMS:")) {
                 bpm = Float.parseFloat(line.split("=")[1]);
@@ -202,6 +236,11 @@ public class Chart {
         return difficultyColour;
     }
 
+    /**
+     * Converts a string colour code into a colour object
+     * @return A colour object
+     * @param s A colour string
+     * */
     private static Color hashColor(String s) {
         int hash = s.hashCode();
         float r = (hash & 0xFF0000) >> 16;
@@ -210,6 +249,11 @@ public class Chart {
         return new Color(r / 255, g / 255, b / 255, 0.3f);
     }
 
+    /**
+     * Converts a character array into a byte array
+     * @return An array of bytes
+     * @param chars An array of characters
+     * */
     private static byte[] toBytes(char[] chars) {
         CharBuffer charBuffer = CharBuffer.wrap(chars);
         ByteBuffer byteBuffer = StandardCharsets.UTF_8.encode(charBuffer);
