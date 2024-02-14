@@ -1,5 +1,6 @@
 package com.hflat.game;
 
+import com.badlogic.gdx.Application;
 import com.badlogic.gdx.ApplicationAdapter;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
@@ -17,6 +18,11 @@ import space.earlygrey.shapedrawer.ShapeDrawer;
 
 import java.io.File;
 
+/**
+ * The main game class
+ * Contains the game's state and main loop
+ * Imports & initialises all resources
+ */
 public class Game extends ApplicationAdapter {
 	private GameState state = GameState.LOADING;
 	private OrthographicCamera camera;
@@ -32,6 +38,9 @@ public class Game extends ApplicationAdapter {
 	private int selectedSongIndex = 0;
 	private long lastMenuAction;
 
+	/**
+	 * The game's state
+	 */
 	public enum GameState {
 		LOADING,
 		SONG_SELECT,
@@ -39,12 +48,19 @@ public class Game extends ApplicationAdapter {
 		RESULTS
 	}
 
+	/**
+	 * Called when the application is created
+	 * Initialises all resources
+	 */
     @Override
 	public void create () {
+		Gdx.app.setLogLevel(Application.LOG_DEBUG);
+
 		charts = new ChartManager(new File("charts"), this);
 
 		camera = new OrthographicCamera();
 		camera.setToOrtho(false, 400, 700);
+		Gdx.app.log("Debugging test","I am testing the debug");
 
 		Pixmap pixmap = new Pixmap(1, 1, Pixmap.Format.RGBA8888);
 		pixmap.setColor(Color.WHITE);
@@ -89,6 +105,10 @@ public class Game extends ApplicationAdapter {
 		serifGenerator.dispose();
 	}
 
+	/**
+	 * Called every frame
+	 * Renders the game
+	 */
 	@Override
 	public void render () {
 		if (charts.getChart(selectedSongIndex).getBackgroundColour() != null) {
@@ -141,7 +161,11 @@ public class Game extends ApplicationAdapter {
 		}
 		batch.end();
 	}
-	
+
+	/**
+	 * Called when the application is destroyed
+	 * Destroys all resources
+	 */
 	@Override
 	public void dispose () {
 		batch.dispose();
@@ -151,18 +175,52 @@ public class Game extends ApplicationAdapter {
 		pixelFont40.dispose();
 	}
 
+	/**
+	 * Returns the offset required to centre bitmap text
+	 * @param font The font to use
+	 * @param text The text to centre
+	 * @return The offset required to centre the text
+	 */
 	public static float getCentreTextOffset(BitmapFont font, String text) {
 		GlyphLayout layout = new GlyphLayout();
 		layout.setText(font, text);
 		return layout.width / 2;
 	}
 
+	/**
+	 * Draws centred text
+	 * @param batch The sprite batch to draw to
+	 * @param font The font to use
+	 * @param text The text to draw
+	 * @param y The y position to draw the text at
+	 */
+
 	public static void drawCentredText(SpriteBatch batch, BitmapFont font, String text, float y) {
 		GlyphLayout layout = new GlyphLayout();
 		layout.setText(font, text);
 		font.draw(batch, text, (float) Gdx.graphics.getWidth() /2 - layout.width / 2, y);
 	}
+
+	/**
+	 * Update the game's state, drawing appropriate content to the screen
+	 * @param state The new state to set
+	 */
 	public void setState(GameState state) {
 		this.state = state;
 	}
+	public class Ref{
+		public static enum LogTags{
+			DEBUG("Debug"),
+			ERROR("Error"),
+			INFO("Info"),
+			OTHER_SHIT("Other shit");
+
+			public final String literal;
+
+			private LogTags(String literal){
+				this.literal = literal;
+			}
+		}
+	}// is this meant to be an inner class
 }
+

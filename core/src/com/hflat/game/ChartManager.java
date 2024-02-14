@@ -3,35 +3,44 @@ package com.hflat.game;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.Arrays;
+
+import com.badlogic.gdx.Gdx;
 import com.hflat.game.Game.GameState;
 
+/**
+ * You're not going to believe this, it manages charts
+ * When instantiated it searches its directory for charts
+ * It will then parse charts and start the game from there
+ * */
 public class ChartManager {
     private ArrayList<Chart> charts;
     private String currentTask;
 
+    /**
+     * Constructor for chart manager
+     *
+     * */
     public ChartManager(File chartDirectory, Game game) {
-        System.out.println(Arrays.toString(chartDirectory.listFiles()));
+        Gdx.app.debug("Debugging",Arrays.toString(chartDirectory.listFiles()));
         ArrayList<File> chartFiles = new ArrayList<>();
         try {
             for (File file : chartDirectory.listFiles()) {
                 if (file.getName().endsWith(".sm")) {
                     chartFiles.add(file);
-                    System.out.println("Found chart: " + file.getName());
+                    Gdx.app.log("Info",String.format("Found chart: %s",file.getName()));
                 }
             }
-        } catch (NullPointerException e) {
-            System.out.println("No files found");
+        } catch (NullPointerException e) { // i think it will say its an error anyway
+            Gdx.app.error("ChartManager","No files found",e);
         }
         charts = new ArrayList<>();
         for (File chart : chartFiles) {
             currentTask = "Parsing " + chart.getName();
             try {
                 charts.add(Chart.parseChart(chart));
-                System.out.println("Parsed chart: " + chart.getName());
+                Gdx.app.log("ChartManager", "Parsed chart: " + chart.getName());
             } catch (Exception e) {
-                System.out.println("Error parsing chart: " + chart.getName() + " - " + e.getMessage());
-                System.out.println("Stack trace:");
-                e.printStackTrace();
+                Gdx.app.error("ChartManager", "Error parsing chart: " + chart.getName(), e);
             }
         }
         game.setState(GameState.SONG_SELECT);

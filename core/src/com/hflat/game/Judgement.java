@@ -1,5 +1,6 @@
 package com.hflat.game;
 
+
 public enum Judgement {
     MARVELLOUS(0.015f, 3),
     FANTASTIC(0.023f, 3),
