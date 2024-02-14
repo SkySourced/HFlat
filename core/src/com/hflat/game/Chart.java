@@ -179,7 +179,10 @@ public class Chart {
                     Gdx.app.debug("Chart -num notes", String.valueOf(notes.size()));
                     for (int i = 0; i < notes.size(); i++) {
                         Gdx.app.debug("Chart -nl", notes.get(i));
-                        NoteDenom quantization = NoteDenom.fromLength((float) (i+1 / notes.size()));
+                        Gdx.app.debug("Chart -i", String.valueOf(i));
+                        Gdx.app.debug("Chart -dt", String.valueOf((i+1)/notes.size()));
+                        float beat = (float) ((i+1) / notes.size());
+                        NoteDenom quantization = NoteDenom.fromLength(beat);
                         String quantizationString = (quantization == null) ? "null" : quantization.toString();
                         Gdx.app.debug("Chart -qs", quantizationString);
                     }
