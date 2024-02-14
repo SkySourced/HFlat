@@ -86,7 +86,7 @@ public class Chart {
 
         for (String line : fileLines) {
             line = line.replace("\r", "");
-            Gdx.app.debug("Chart", Arrays.toString(line.getBytes(Charset.defaultCharset())));
+            //Gdx.app.debug("Chart -bytes", Arrays.toString(line.getBytes(Charset.defaultCharset())));
             while (!line.startsWith("#")){
                 try {
                     line = line.substring(1);
@@ -171,15 +171,17 @@ public class Chart {
                     if (bar.charAt(0) == 0x0A) {
                         bar = bar.substring(1);
                     }
-                    Gdx.app.debug("Chart", bar);
-                    Gdx.app.debug("Chart", Arrays.toString(bar.getBytes()));
+                    Gdx.app.debug("Chart -bar", bar);
+//                    Gdx.app.debug("Chart", Arrays.toString(bar.getBytes()));
                     for(int i = 0; i < bar.length(); i += 4) {
                         notes.add(bar.substring(i, i+4));
                     }
+                    Gdx.app.debug("Chart -num notes", String.valueOf(notes.size()));
                     for (int i = 0; i < notes.size(); i++) {
-                        Gdx.app.debug("Chart", notes.get(i));
-                        float quantization = (float) i % notes.size();
-                        Gdx.app.debug("Chart", NoteDenom.fromLength(quantization).toString());
+                        Gdx.app.debug("Chart -nl", notes.get(i));
+                        NoteDenom quantization = NoteDenom.fromLength((float) (i+1 / notes.size()));
+                        String quantizationString = (quantization == null) ? "null" : quantization.toString();
+                        Gdx.app.debug("Chart -qs", quantizationString);
                     }
                 }
 
