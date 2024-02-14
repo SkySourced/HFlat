@@ -21,13 +21,13 @@ public class ChartManager {
      *
      * */
     public ChartManager(File chartDirectory, Game game) {
-        Gdx.app.debug("Debugging",Arrays.toString(chartDirectory.listFiles()));
+        Gdx.app.debug("ChartManager", Arrays.toString(chartDirectory.listFiles()));
         ArrayList<File> chartFiles = new ArrayList<>();
         try {
             for (File file : chartDirectory.listFiles()) {
                 if (file.getName().endsWith(".sm")) {
                     chartFiles.add(file);
-                    Gdx.app.log("Info",String.format("Found chart: %s",file.getName()));
+                    Gdx.app.log("ChartManager", String.format("Found chart: %s",file.getName()));
                 }
             }
         } catch (NullPointerException e) { // i think it will say its an error anyway
