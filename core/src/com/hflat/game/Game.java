@@ -60,7 +60,6 @@ public class Game extends ApplicationAdapter {
 
 		camera = new OrthographicCamera();
 		camera.setToOrtho(false, 400, 700);
-		Gdx.app.log("Debugging test","I am testing the debug");
 
 		Pixmap pixmap = new Pixmap(1, 1, Pixmap.Format.RGBA8888);
 		pixmap.setColor(Color.WHITE);

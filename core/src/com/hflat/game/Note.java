@@ -49,27 +49,6 @@ public class Note {
      */
     public Judgement judge(float time) {
         float diff = Math.abs(this.barTime - time);
-        // this.time is in fractions of bars and float time is probably easiest in some division of seconds
-        // I think i thought i would convert it when the note was hit bc its essentially just bars * bpm but i will probably forget that
-        //Yeah maybe just have it all converted while it's loading that'll make the performance a little better
-        //Not like it's that hard to run
-        // like multiply all the this.time s by 60/bpm when loading in to a chart
-        //Well I mean it might make for slightly better performance?
-        // i think a multiplication per note hit is fine
-        //Ik
-        // actually we could have two different times one in bars and one in seconds
-        // the Judgement.timingWindows are in ms
-        //That is a good idea
-        //Is there any way for me to see the window when we run it?
-        // oh not right now i think
-        // it kind of sucks rn its scaled for my laptop and its tiny on my monitor
-        // if we can find a way to get the resolution of the monitor we could scale it to that
-        //
-        //I'll look into resolution now
-        // I will probably commit then go eat
-        //I need to as well
-        // okay i will try get the last of the note parsing to work tonight if my brain feels like working
-        //Yep
         Judgement judgement;
         if (diff < Judgement.MARVELLOUS.timingWindow) {
             judgement = Judgement.MARVELLOUS;
