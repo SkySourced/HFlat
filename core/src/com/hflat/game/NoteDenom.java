@@ -13,6 +13,7 @@ public enum NoteDenom {
     SIXTEENTH (new Texture("notes/note16th.png"), 0.25f),
     TWENTYFOURTH (new Texture("notes/note24th.png"), 1.0f/6.0f),
     THIRTYSECOND (new Texture("notes/note32nd.png"), 0.125f),
+    FOURTYEIGHTH (new Texture("notes/note48th.png"), 1.0f/12.0f),
     SIXTYFOURTH (new Texture("notes/note64th.png"), 0.0625f),
     ONEHUNDREDTWENTYEIGHTH (new Texture("notes/note128th.png"), 0.03125f),
     ONEHUNDREDNINETYSECOND (new Texture("notes/note192nd.png"), 4f/192f);
@@ -38,6 +39,7 @@ public enum NoteDenom {
             case SIXTEENTH -> "16th";
             case TWENTYFOURTH -> "24th";
             case THIRTYSECOND -> "32nd";
+            case FOURTYEIGHTH -> "48th";
             case SIXTYFOURTH -> "64th";
             case ONEHUNDREDTWENTYEIGHTH -> "128th";
             case ONEHUNDREDNINETYSECOND -> "192nd";
@@ -60,6 +62,7 @@ public enum NoteDenom {
             case "16th" -> SIXTEENTH;
             case "24th" -> TWENTYFOURTH;
             case "32nd" -> THIRTYSECOND;
+            case "48th" -> FOURTYEIGHTH;
             case "64th" -> SIXTYFOURTH;
             case "128th" -> ONEHUNDREDTWENTYEIGHTH;
             case "192nd" -> ONEHUNDREDNINETYSECOND;
@@ -82,6 +85,8 @@ public enum NoteDenom {
             return TWENTYFOURTH;
         } else if (length % (1f/32f) == 0) {
             return THIRTYSECOND;
+        } else if (length % (1f/48f) == 0) {
+            return FOURTYEIGHTH;
         } else if (length % (1f/64f) == 0) {
             return SIXTYFOURTH;
         } else if (length % (1f/128f) == 0) {
