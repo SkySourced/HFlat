@@ -70,23 +70,23 @@ public enum NoteDenom {
     public static NoteDenom fromLength(float length) {
         Gdx.app.debug("NoteDenom", String.valueOf(length));
         length = length % 1;
-        if (length % 1/4f == 0) {
+        if (length % (1f/4f) == 0) {
             return FOURTH;
-        } else if (length % 1/8f == 0) {
+        } else if (length % (1f/8f) == 0) {
             return EIGHTH;
-        } else if (length % 1/12f == 0) {
+        } else if (length % (1f/12f) == 0) {
             return TWELFTH;
-        } else if (length % 1/16f == 0) {
+        } else if (length % (1f/16f) == 0) {
             return SIXTEENTH;
-        } else if (length % 1/24f == 0) {
+        } else if (length % (1f/24f) == 0) {
             return TWENTYFOURTH;
-        } else if (length % 1/32f == 0) {
+        } else if (length % (1f/32f) == 0) {
             return THIRTYSECOND;
-        } else if (length % 1/64f == 0) {
+        } else if (length % (1f/64f) == 0) {
             return SIXTYFOURTH;
-        } else if (length % 1/128f == 0) {
+        } else if (length % (1f/128f) == 0) {
             return ONEHUNDREDTWENTYEIGHTH;
-        } else if (length % 1/192f == 0) {
+        } else if (length % (1f/192f) == 0) {
             return ONEHUNDREDNINETYSECOND;
         } else {
             return null;
