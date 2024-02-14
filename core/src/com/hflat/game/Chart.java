@@ -178,10 +178,7 @@ public class Chart {
                     }
                     Gdx.app.debug("Chart -num notes", String.valueOf(notes.size()));
                     for (int i = 0; i < notes.size(); i++) {
-                        Gdx.app.debug("Chart -nl", notes.get(i));
-                        Gdx.app.debug("Chart -i", String.valueOf(i));
-                        Gdx.app.debug("Chart -dt", String.valueOf((i+1)/notes.size()));
-                        float beat = (float) ((i+1) / notes.size());
+                        float beat =((float)i+1f)/(float)notes.size(); // TODO: There is a problem where triplets are being rounded differently to the calculation in NoteDenom so they are not being recognized
                         NoteDenom quantization = NoteDenom.fromLength(beat);
                         String quantizationString = (quantization == null) ? "null" : quantization.toString();
                         Gdx.app.debug("Chart -qs", quantizationString);
@@ -189,7 +186,7 @@ public class Chart {
                 }
 
             } else if (line.startsWith("#BPMS:")) {
-                bpm = Float.parseFloat(line.split("=")[1]);
+                bpm = Float.parseFloat(line.split("=")[1].split(",")[0]);
             }
         }
 
