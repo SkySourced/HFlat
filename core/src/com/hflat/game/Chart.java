@@ -119,9 +119,9 @@ public class Chart {
                 // Note parsing
 
                 byte[] byteArray = toBytes(noteData.toCharArray());
-                ArrayList<Byte> noteDataBytes = new ArrayList<Byte>();
+                ArrayList<Byte> noteDataBytes = new ArrayList<>();
                 for(byte b: byteArray){
-                    if (b != 0x20) noteDataBytes.add(b);
+                    if (b != 0x20) noteDataBytes.add(b); // remove spaces
                 }
                 //That looks pretty good
                 //Apart from the nulls
@@ -148,37 +148,44 @@ public class Chart {
                  */
 
                 for (int i = 0; i < noteDataBytes.size(); i++) {
-                    if (noteDataBytes.get(i) == 0x2F) {
-                        while (i < noteDataBytes.size() && noteDataBytes.get(i) != 0x0A){
+                    if (noteDataBytes.get(i) == 0x2F) { // if character is /
+                        while (i < noteDataBytes.size() && noteDataBytes.get(i) != 0x0A){ // delete characters until newline
                             noteDataBytes.remove(i);
                         }
                     }
                 }
+
+                // remove all newlines
                 for (int i = 0; i < noteDataBytes.size(); i++) {
                     if (noteDataBytes.get(i) == 0x0A) {
                         noteDataBytes.remove(i);
                     }
                 }
-                // join the bytes into a string (string builder discards \n)
+                // join the bytes into a string (string builder discards \n (actually i dont think it does))
                 StringBuilder noteDataString = new StringBuilder();
                 for (byte b : noteDataBytes) {
                     noteDataString.append((char) b);
                 }
+
+                // split by commas
                 String[] noteDataStringArray = noteDataString.toString().split(",");
 
+                // split bars into groups of 4 chars
                 for(String bar : noteDataStringArray){
                     ArrayList<String> notes = new ArrayList<>();
-                    if (bar.charAt(0) == 0x0A) {
+                    if (bar.charAt(0) == 0x0A) { // remove newline
                         bar = bar.substring(1);
                     }
                     Gdx.app.debug("Chart -bar", bar);
 //                    Gdx.app.debug("Chart", Arrays.toString(bar.getBytes()));
-                    for(int i = 0; i < bar.length(); i += 4) {
+                    for(int i = 0; i < bar.length(); i += 4) { // split into groups of 4 chars
                         notes.add(bar.substring(i, i+4));
                     }
                     Gdx.app.debug("Chart -num notes", String.valueOf(notes.size()));
+                    // Quantization
                     for (int i = 0; i < notes.size(); i++) {
-                        float beat =((float)i+1f)/(float)notes.size(); // TODO: There is a problem where triplets are being rounded differently to the calculation in NoteDenom so they are not being recognized
+                        float beat = (float) Math.round((float) Math.pow(10, 6) * ((float)i+1f)/(float)notes.size())/ (float) Math.pow(10, 6); // TODO: There is a problem where triplets are being rounded differently to the calculation in NoteDenom so they are not being recognized
+                        Gdx.app.debug("Chart -q", String.valueOf(beat));
                         NoteDenom quantization = NoteDenom.fromLength(beat);
                         String quantizationString = (quantization == null) ? "null" : quantization.toString();
                         Gdx.app.debug("Chart -qs", quantizationString);

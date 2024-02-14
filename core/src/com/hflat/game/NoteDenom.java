@@ -9,14 +9,14 @@ import com.badlogic.gdx.graphics.Texture;
 public enum NoteDenom {
     FOURTH (new Texture("notes/note4th.png"), 1.0f),
     EIGHTH (new Texture("notes/note8th.png"), 0.5f),
-    TWELFTH (new Texture("notes/note12th.png"), 1.0f/3.0f),
+    TWELFTH (new Texture("notes/note12th.png"), (float) (Math.round(Math.pow(10, 6) * (1.0f/3.0f) / Math.pow(10,6)))),
     SIXTEENTH (new Texture("notes/note16th.png"), 0.25f),
-    TWENTYFOURTH (new Texture("notes/note24th.png"), 1.0f/6.0f),
+    TWENTYFOURTH (new Texture("notes/note24th.png"), (float) (Math.round(Math.pow(10, 6) * (1.0f/6.0f) / Math.pow(10,6)))),
     THIRTYSECOND (new Texture("notes/note32nd.png"), 0.125f),
-    FOURTYEIGHTH (new Texture("notes/note48th.png"), 1.0f/12.0f),
+    FOURTYEIGHTH (new Texture("notes/note48th.png"), (float) (Math.round(Math.pow(10, 6) * (1.0f/12.0f) / Math.pow(10,6)))),
     SIXTYFOURTH (new Texture("notes/note64th.png"), 0.0625f),
     ONEHUNDREDTWENTYEIGHTH (new Texture("notes/note128th.png"), 0.03125f),
-    ONEHUNDREDNINETYSECOND (new Texture("notes/note192nd.png"), 4f/192f);
+    ONEHUNDREDNINETYSECOND (new Texture("notes/note192nd.png"), (float) (Math.round(Math.pow(10, 6) * (4f/192f)) / Math.pow(10,6)));
     
     final Texture texture;
     final float length;
