@@ -3,6 +3,7 @@ package com.hflat.game.chart;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Objects;
 
 import com.badlogic.gdx.Gdx;
 import com.hflat.game.Game;
@@ -26,7 +27,7 @@ public class ChartManager {
         Gdx.app.debug("ChartManager", Arrays.toString(chartDirectory.listFiles()));
         ArrayList<File> chartFiles = new ArrayList<>();
         try {
-            for (File file : chartDirectory.listFiles()) {
+            for (File file : Objects.requireNonNull(chartDirectory.listFiles())) {
                 if (file.getName().endsWith(".sm")) {
                     chartFiles.add(file);
                     Gdx.app.log("ChartManager", String.format("Found chart: %s",file.getName()));

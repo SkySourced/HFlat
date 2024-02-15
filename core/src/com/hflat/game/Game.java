@@ -43,12 +43,17 @@ public class Game extends ApplicationAdapter {
 	private long lastMenuAction;
 	private Viewport viewport;
 
+	private long loadingStartTime;
+	private static Chart currentChart;
+
 	/**
 	 * The game's state
 	 */
 	public enum GameState {
 		LOADING,
 		SONG_SELECT,
+		SONG_LOADING,
+		OPTIONS,
 		PLAYING,
 		RESULTS
 	}
@@ -144,25 +149,61 @@ public class Game extends ApplicationAdapter {
 					lastMenuAction = System.nanoTime();
 					if(selectedSongIndex >= charts.getChartCount()) selectedSongIndex = 0;
 				}
-				Chart selectedChart = charts.getChart(selectedSongIndex);
+
+				if (Gdx.input.isKeyJustPressed(Input.Keys.ENTER)) {
+					loadingStartTime = System.nanoTime() / 1000000;
+					setState(GameState.SONG_LOADING);
+				}
+
+				currentChart = charts.getChart(selectedSongIndex);
 
 				// Draw album art
-				batch.draw(selectedChart.getTexture(), 25, 300, 350, 350);
+				batch.draw(currentChart.getTexture(), 25, 300, 350, 350);
 
 				drawCentredText(batch, pixelFont40, "Song Select", 690);
 
 				// Draw difficulty backgrounds
-				drawer.filledRectangle(25, 240, 60, 60, selectedChart.getDifficultyColour());
+				drawer.filledRectangle(25, 240, 60, 60, currentChart.getDifficultyColour());
 				drawer.filledRectangle(85, 240, 290, 60, Color.WHITE);
 
 				// Draw difficulty text
-				pixelFont40.draw(batch, selectedChart.getDifficultyString(), 100, 285);
-				int difficulty = selectedChart.getDifficulty();
+				pixelFont40.draw(batch, currentChart.getDifficultyString(), 100, 285);
+				int difficulty = currentChart.getDifficulty();
 				pixelFont40.draw(batch, String.valueOf(difficulty), String.valueOf(difficulty).length() == 1 ? 42 : 35 , 285);
 
 
-				serifFont20.draw(batch, selectedChart.getName(), 30, 230);
-				serifFont12.draw(batch, selectedChart.getSubtitle(), 30, 210);
+				serifFont20.draw(batch, currentChart.getName(), 30, 230);
+				serifFont12.draw(batch, currentChart.getSubtitle(), 30, 210);
+
+				break;
+			case SONG_LOADING:
+				// make background darkened version of difficultyColour
+				long loadingTime = 3000;
+				float progress = (System.nanoTime() / 1000000f - this.loadingStartTime) / (float) loadingTime;
+
+				drawer.filledRectangle(0, 0, 400, 700, new Color(currentChart.getDifficultyColour().r, currentChart.getDifficultyColour().g, currentChart.getDifficultyColour().b, 0.5f));
+				drawer.filledRectangle(0, 300, 400, 100, Color.DARK_GRAY);
+				drawer.filledRectangle(0, 300, progress * 400, 100, Color.GRAY);
+
+				drawCentredText(batch, serifFont20, currentChart.getName(), 695);
+				drawCentredText(batch, pixelFont20, "press  enter  for  options", 360);
+
+				if(Gdx.input.isKeyJustPressed(Input.Keys.ENTER)) {
+					setState(GameState.OPTIONS);
+				}
+				if(Gdx.input.isKeyJustPressed(Input.Keys.ESCAPE)) {
+					setState(GameState.SONG_SELECT);
+				}
+				if (progress >= 1) {
+					setState(GameState.PLAYING);
+				}
+				break;
+			case OPTIONS:
+				break;
+			case PLAYING:
+
+				break;
+			case RESULTS:
 				break;
 		}
 		batch.end();
@@ -179,6 +220,8 @@ public class Game extends ApplicationAdapter {
 		pixelFont20.dispose();
 		pixelFont12.dispose();
 		pixelFont40.dispose();
+		serifFont12.dispose();
+		serifFont20.dispose();
 	}
 
 	@Override
