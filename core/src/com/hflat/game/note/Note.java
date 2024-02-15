@@ -1,4 +1,4 @@
-package com.hflat.game;
+package com.hflat.game.note;
 
 /**
  * An enum to represent the different types of notes

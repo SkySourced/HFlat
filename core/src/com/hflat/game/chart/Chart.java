@@ -1,11 +1,12 @@
-package com.hflat.game;
+package com.hflat.game.chart;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.Texture;
+import com.hflat.game.note.Note;
+import com.hflat.game.note.NoteDenom;
 
 import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.nio.charset.Charset;
 import java.nio.CharBuffer;
@@ -13,6 +14,9 @@ import java.nio.ByteBuffer;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.util.*;
+
+import static com.hflat.game.Game.Ref.DENOM_ROUND_PLACES;
+import static com.hflat.game.note.NoteDenom.*;
 
 
 /**
@@ -184,7 +188,7 @@ public class Chart {
                     Gdx.app.debug("Chart -num notes", String.valueOf(notes.size()));
                     // Quantization
                     for (int i = 0; i < notes.size(); i++) {
-                        float beat = (float) Math.round((float) Math.pow(10, 6) * ((float)i+1f)/(float)notes.size())/ (float) Math.pow(10, 6); // TODO: There is a problem where triplets are being rounded differently to the calculation in NoteDenom so they are not being recognized
+                        float beat = (float) Math.round((float) Math.pow(10, DENOM_ROUND_PLACES) * ((float)i+1f)/(float)notes.size())/ (float) Math.pow(10, DENOM_ROUND_PLACES);
                         Gdx.app.debug("Chart -q", String.valueOf(beat));
                         NoteDenom quantization = NoteDenom.fromLength(beat);
                         String quantizationString = (quantization == null) ? "null" : quantization.toString();

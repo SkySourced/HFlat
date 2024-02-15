@@ -14,6 +14,10 @@ import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.graphics.g2d.freetype.FreeTypeFontGenerator;
 import com.badlogic.gdx.utils.ScreenUtils;
+import com.badlogic.gdx.utils.viewport.FitViewport;
+import com.badlogic.gdx.utils.viewport.Viewport;
+import com.hflat.game.chart.Chart;
+import com.hflat.game.chart.ChartManager;
 import space.earlygrey.shapedrawer.ShapeDrawer;
 
 import java.io.File;
@@ -37,6 +41,7 @@ public class Game extends ApplicationAdapter {
 	private BitmapFont serifFont12;
 	private int selectedSongIndex = 0;
 	private long lastMenuAction;
+	private Viewport viewport;
 
 	/**
 	 * The game's state
@@ -68,6 +73,7 @@ public class Game extends ApplicationAdapter {
 		pixmap.dispose();
 		TextureRegion region = new TextureRegion(texture, 0, 0, 1, 1);
 
+		viewport = new FitViewport(400, 700, camera);
 		batch = new SpriteBatch();
 
 		drawer = new ShapeDrawer(batch, region);
@@ -174,6 +180,11 @@ public class Game extends ApplicationAdapter {
 		pixelFont40.dispose();
 	}
 
+	@Override
+	public void resize(int width, int height){
+		viewport.update(width, height);
+	}
+
 	/**
 	 * Returns the offset required to centre bitmap text
 	 * @param font The font to use
@@ -208,18 +219,7 @@ public class Game extends ApplicationAdapter {
 		this.state = state;
 	}
 	public class Ref{
-		public static enum LogTags{
-			DEBUG("Debug"),
-			ERROR("Error"),
-			INFO("Info"),
-			OTHER_SHIT("Other shit");
-
-			public final String literal;
-
-			private LogTags(String literal){
-				this.literal = literal;
-			}
-		}
-	}// is this meant to be an inner class
+		public static final int DENOM_ROUND_PLACES = 7;
+	}
 }
 
