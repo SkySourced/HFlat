@@ -157,7 +157,8 @@ public class Game extends ApplicationAdapter {
 
 				// Draw difficulty text
 				pixelFont40.draw(batch, selectedChart.getDifficultyString(), 100, 285);
-				pixelFont40.draw(batch, String.valueOf(selectedChart.getDifficulty()), 25 + Game.getCentreTextOffset(pixelFont40, String.valueOf(selectedChart.getDifficulty())), 285);
+				int difficulty = selectedChart.getDifficulty();
+				pixelFont40.draw(batch, String.valueOf(difficulty), String.valueOf(difficulty).length() == 1 ? 42 : 35 , 285);
 
 
 				serifFont20.draw(batch, selectedChart.getName(), 30, 230);
@@ -208,7 +209,7 @@ public class Game extends ApplicationAdapter {
 	public static void drawCentredText(SpriteBatch batch, BitmapFont font, String text, float y) {
 		GlyphLayout layout = new GlyphLayout();
 		layout.setText(font, text);
-		font.draw(batch, text, (float) Gdx.graphics.getWidth() /2 - layout.width / 2, y);
+		font.draw(batch, text, (float) 200 - layout.width / 2, y);
 	}
 
 	/**
