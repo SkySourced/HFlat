@@ -1,11 +1,13 @@
-package com.hflat.game;
+package com.hflat.game.chart;
 
 import java.io.File;
 import java.util.ArrayList;
 import java.util.Arrays;
 
 import com.badlogic.gdx.Gdx;
+import com.hflat.game.Game;
 import com.hflat.game.Game.GameState;
+import com.hflat.game.chart.Chart;
 
 /**
  * You're not going to believe this, it manages charts

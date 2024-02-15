@@ -1,4 +1,4 @@
-package com.hflat.game;
+package com.hflat.game.note;
 
 public enum Lane {
     LEFT,
