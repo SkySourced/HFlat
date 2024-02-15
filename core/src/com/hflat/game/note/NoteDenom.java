@@ -7,7 +7,9 @@ import static com.hflat.game.Game.Ref.DENOM_ROUND_PLACES;
 
 /**
  * An enum to represent note denominations
- * [FOURTH] 0.25
+ * */
+
+/* [FOURTH] 0.25
  * [EIGHTH] 0.125
  * [TWELFTH] 0.083333
  * [SIXTEENTH] 0.0625
@@ -17,7 +19,7 @@ import static com.hflat.game.Game.Ref.DENOM_ROUND_PLACES;
  * [SIXTYFOURTH] 0.015625
  * [ONEHUNDREDTWENTYEIGHTH] 0.0078125
  * [ONEHUNDREDNINETYSECOND] 0.005208
- * */
+ */
 public enum NoteDenom {
     FOURTH (new Texture("notes/note4th.png"), 1f/4f),
     EIGHTH (new Texture("notes/note8th.png"), 1f/8f),

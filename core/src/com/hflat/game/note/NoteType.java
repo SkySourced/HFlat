@@ -15,4 +15,13 @@ public enum NoteType {
     NoteType(char smChar) {
         this.smChar = smChar;
     }
+
+    public static NoteType fromChar(char c) {
+        for (NoteType type : values()) {
+            if (type.smChar == c) {
+                return type;
+            }
+        }
+        return null;
+    }
 }

@@ -3,8 +3,7 @@ package com.hflat.game.chart;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.Texture;
-import com.hflat.game.note.Note;
-import com.hflat.game.note.NoteDenom;
+import com.hflat.game.note.*;
 
 import java.io.File;
 import java.io.IOException;
@@ -16,8 +15,6 @@ import java.nio.file.Files;
 import java.util.*;
 
 import static com.hflat.game.Game.Ref.DENOM_ROUND_PLACES;
-import static com.hflat.game.note.NoteDenom.*;
-
 
 /**
  * A class to represent a chart/level
@@ -44,7 +41,7 @@ public class Chart {
     /**
      * Constructor for chart object
      * */
-    public Chart(String name, String subtitle, String artist, String soundPath, String bgPath, String path, int difficulty, String difficultyString, String stepAuthor, float bpm, float offset, String bannerPath) {
+    public Chart(String name, String subtitle, String artist, String soundPath, String bgPath, String path, int difficulty, String difficultyString, String stepAuthor, float bpm, float offset, String bannerPath, ArrayList<Note> notes) {
         if (bannerPath == null || bannerPath.equals("charts/")) bannerPath = "defaultbanner.png";
 
         this.name = name;
@@ -58,7 +55,7 @@ public class Chart {
         this.stepAuthor = stepAuthor;
         this.bpm = bpm;
         this.offset = offset;
-        this.notes = new ArrayList<>();
+        this.notes = notes;
         this.banner = new Texture(bannerPath);
         this.backgroundColour = hashColor(name + artist);
         this.difficultyColour = hashColor(difficultyString.toLowerCase());
@@ -87,6 +84,7 @@ public class Chart {
         String stepAuthor = "";
         String bgPath = "";
         String banner = "";
+        ArrayList<Note> notes = new ArrayList<>();
 
         for (String line : fileLines) {
             line = line.replace("\r", "");
@@ -175,24 +173,37 @@ public class Chart {
                 String[] noteDataStringArray = noteDataString.toString().split(",");
 
                 // split bars into groups of 4 chars
-                for(String bar : noteDataStringArray){
-                    ArrayList<String> notes = new ArrayList<>();
-                    if (bar.charAt(0) == 0x0A) { // remove newline
-                        bar = bar.substring(1);
+                for(int barIndex = 0; barIndex < noteDataStringArray.length; barIndex++){
+                    ArrayList<String> rawNotes = new ArrayList<>();
+                    if (noteDataStringArray[barIndex].charAt(0) == 0x0A) { // remove newline
+                        noteDataStringArray[barIndex] = noteDataStringArray[barIndex].substring(1);
                     }
-                    Gdx.app.debug("Chart -bar", bar);
-//                    Gdx.app.debug("Chart", Arrays.toString(bar.getBytes()));
-                    for(int i = 0; i < bar.length(); i += 4) { // split into groups of 4 chars
-                        notes.add(bar.substring(i, i+4));
+                    Gdx.app.debug("Chart -bar", noteDataStringArray[barIndex]);
+//                    Gdx.app.debug("Chart", Arrays.toString(noteDataStringArray[barIndex].getBytes()));
+                    for(int i = 0; i < noteDataStringArray[barIndex].length(); i += 4) { // split into groups of 4 chars
+                        rawNotes.add(noteDataStringArray[barIndex].substring(i, i+4));
                     }
-                    Gdx.app.debug("Chart -num notes", String.valueOf(notes.size()));
+                    Gdx.app.debug("Chart -num notes", String.valueOf(rawNotes.size()));
                     // Quantization
-                    for (int i = 0; i < notes.size(); i++) {
-                        float beat = (float) Math.round((float) Math.pow(10, DENOM_ROUND_PLACES) * ((float)i+1f)/(float)notes.size())/ (float) Math.pow(10, DENOM_ROUND_PLACES);
+                    for (int i = 0; i < rawNotes.size(); i++) {
+                        float beat = (float) Math.round((float) Math.pow(10, DENOM_ROUND_PLACES) * ((float)i+1f)/(float)rawNotes.size())/ (float) Math.pow(10, DENOM_ROUND_PLACES);
                         Gdx.app.debug("Chart -q", String.valueOf(beat));
                         NoteDenom quantization = NoteDenom.fromLength(beat);
                         String quantizationString = (quantization == null) ? "null" : quantization.toString();
                         Gdx.app.debug("Chart -qs", quantizationString);
+                        for (int noteId = 0; noteId < 4; noteId++) {
+                            if (rawNotes.get(i).charAt(noteId) != '0') {
+                                Gdx.app.debug("Chart -note", "Lane: " + i + ", Beat: " + beat + ", BPM: " + bpm + ", Type: " + rawNotes.get(i).charAt(noteId) + ", Quantization: " + quantizationString);
+                                notes.add(new Note(
+                                        Lane.fromInt(noteId),
+                                        barIndex + beat,
+                                        (int) bpm,
+                                        NoteType.fromChar(rawNotes.get(i).charAt(noteId)),
+                                        quantization
+                                ));
+                            }
+
+                        }
                     }
                 }
 
@@ -201,7 +212,11 @@ public class Chart {
             }
         }
 
-        return new Chart(name, subtitle, artist, soundPath, bgPath, path, difficulty, difficultyString, stepAuthor, bpm, offset, banner);
+        for (Note note : notes) {
+            Gdx.app.debug("Chart -note", note.toString());
+        }
+
+        return new Chart(name, subtitle, artist, soundPath, bgPath, path, difficulty, difficultyString, stepAuthor, bpm, offset, banner, notes);
     }
 
     public String getName() {

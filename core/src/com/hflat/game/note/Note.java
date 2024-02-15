@@ -11,12 +11,12 @@ public class Note {
     public NoteType type;
     public NoteDenom colour;
 
-    public Note(Lane lane, float barTime, int bpm, NoteType type) {
+    public Note(Lane lane, float barTime, int bpm, NoteType type, NoteDenom colour) {
         this.lane = lane;
         this.barTime = barTime;
         this.time = (long) (barTime * 60 / bpm * 1000); // this I think is in ms, but we might want to make it a bit more precise
         this.type = type;
-        this.colour = NoteDenom.fromLength(this.barTime % 1); // this also needs to be changed
+        this.colour = colour;
     }
 
     /**
@@ -66,5 +66,9 @@ public class Note {
             judgement = Judgement.MISS;
         }
         return judgement;
+    }
+
+    public String toString() {
+        return "Note: " + lane + " " + barTime + " " + type + " " + colour;
     }
 }
