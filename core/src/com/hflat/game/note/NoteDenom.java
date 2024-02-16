@@ -7,7 +7,7 @@ import static com.hflat.game.Game.Ref.DENOM_ROUND_PLACES;
 
 /**
  * An enum to represent note denominations
- * */
+ */
 
 /* [FOURTH] 0.25
  * [EIGHTH] 0.125
@@ -21,20 +21,21 @@ import static com.hflat.game.Game.Ref.DENOM_ROUND_PLACES;
  * [ONEHUNDREDNINETYSECOND] 0.005208
  */
 public enum NoteDenom {
-    FOURTH (new Texture("notes/note4th.png"), 1f/4f),
-    EIGHTH (new Texture("notes/note8th.png"), 1f/8f),
-    TWELFTH (new Texture("notes/note12th.png"), (float) (Math.round(Math.pow(10, DENOM_ROUND_PLACES - 1) * (1.0f/12.0f)) / Math.pow(10, DENOM_ROUND_PLACES - 1))),
-    SIXTEENTH (new Texture("notes/note16th.png"), 1f/16f),
-    TWENTYFOURTH (new Texture("notes/note24th.png"), (float) (Math.round(Math.pow(10, DENOM_ROUND_PLACES - 1) * (1.0f/24.0f)) / Math.pow(10, DENOM_ROUND_PLACES - 1))),
-    THIRTYSECOND (new Texture("notes/note32nd.png"), 1f/32f),
-    FOURTYEIGHTH (new Texture("notes/note48th.png"), (float) (Math.round(Math.pow(10, DENOM_ROUND_PLACES - 1) * (1.0f/48.0f)) / Math.pow(10, DENOM_ROUND_PLACES - 1))),
-    SIXTYFOURTH (new Texture("notes/note64th.png"), 1f/64f),
-    ONEHUNDREDTWENTYEIGHTH (new Texture("notes/note128th.png"), 1f/128f),
-    ONEHUNDREDNINETYSECOND (new Texture("notes/note192nd.png"), (float) (Math.round(Math.pow(10, DENOM_ROUND_PLACES - 1) * (1f/192f)) / Math.pow(10, DENOM_ROUND_PLACES - 1)));
-    
+    FOURTH(new Texture("notes/note4th.png"), 1f / 4f),
+    EIGHTH(new Texture("notes/note8th.png"), 1f / 8f),
+    TWELFTH(new Texture("notes/note12th.png"), (float) (Math.round(Math.pow(10, DENOM_ROUND_PLACES - 1) * (1.0f / 12.0f)) / Math.pow(10, DENOM_ROUND_PLACES - 1))),
+    SIXTEENTH(new Texture("notes/note16th.png"), 1f / 16f),
+    TWENTYFOURTH(new Texture("notes/note24th.png"), (float) (Math.round(Math.pow(10, DENOM_ROUND_PLACES - 1) * (1.0f / 24.0f)) / Math.pow(10, DENOM_ROUND_PLACES - 1))),
+    THIRTYSECOND(new Texture("notes/note32nd.png"), 1f / 32f),
+    FOURTYEIGHTH(new Texture("notes/note48th.png"), (float) (Math.round(Math.pow(10, DENOM_ROUND_PLACES - 1) * (1.0f / 48.0f)) / Math.pow(10, DENOM_ROUND_PLACES - 1))),
+    SIXTYFOURTH(new Texture("notes/note64th.png"), 1f / 64f),
+    ONEHUNDREDTWENTYEIGHTH(new Texture("notes/note128th.png"), 1f / 128f),
+    ONEHUNDREDNINETYSECOND(new Texture("notes/note192nd.png"), (float) (Math.round(Math.pow(10, DENOM_ROUND_PLACES - 1) * (1f / 192f)) / Math.pow(10, DENOM_ROUND_PLACES - 1)));
+
     final Texture texture;
     final float length;
     static final float marginOfError = 0.0001f;
+
     NoteDenom(Texture texture, float length) {
         this.texture = texture;
         this.length = length;
@@ -43,6 +44,7 @@ public enum NoteDenom {
     /**
      * Returns the length of the note in string form, generally for logging
      * e.g. "4th", "32nd", "128th"
+     *
      * @return the length of the note in string form
      */
     public String toString() {
@@ -65,6 +67,7 @@ public enum NoteDenom {
 
     /**
      * Converts a string to a NoteDenom
+     *
      * @param s the string to convert
      * @return the NoteDenom represented by the string
      */
@@ -100,7 +103,6 @@ public enum NoteDenom {
             return ONEHUNDREDTWENTYEIGHTH;
         }
         length = Float.parseFloat(String.valueOf(length).substring(0, String.valueOf(length).length() - 1));
-        Gdx.app.debug("NoteDenom", String.valueOf(length));
         if (length % TWELFTH.length - marginOfError < 0) {
             return TWELFTH;
         } else if (length % TWENTYFOURTH.length - marginOfError < 0) {

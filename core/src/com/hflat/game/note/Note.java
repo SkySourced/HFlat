@@ -2,7 +2,7 @@ package com.hflat.game.note;
 
 /**
  * An enum to represent the different types of notes
- * */
+ */
 public class Note {
 
     public Lane lane;
@@ -21,6 +21,7 @@ public class Note {
 
     /**
      * Get the lane of the note
+     *
      * @return the Lane of the note
      */
     public Lane getLane() {
@@ -29,6 +30,7 @@ public class Note {
 
     /**
      * Get the time of the note in number of bars since the start of the song
+     *
      * @return the time of the note
      */
     public float getTime() {
@@ -37,6 +39,7 @@ public class Note {
 
     /**
      * Get the type of the note
+     *
      * @return the NoteType for the note
      */
     public NoteType getType() {
@@ -45,6 +48,7 @@ public class Note {
 
     /**
      * Determine the judgement for a note based on the time the player hit it
+     *
      * @return the Judgement for the note
      */
     public Judgement judge(float time) {
