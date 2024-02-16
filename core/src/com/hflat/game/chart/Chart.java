@@ -2,16 +2,11 @@ package com.hflat.game.chart;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Color;
-import com.badlogic.gdx.graphics.Texture;
 import com.hflat.game.note.*;
 
-import java.io.File;
-import java.io.IOException;
-import java.nio.charset.Charset;
 import java.nio.CharBuffer;
 import java.nio.ByteBuffer;
 import java.nio.charset.StandardCharsets;
-import java.nio.file.Files;
 import java.util.*;
 
 import static com.hflat.game.Game.Ref.DENOM_ROUND_PLACES;
@@ -19,114 +14,55 @@ import static com.hflat.game.Game.Ref.DENOM_ROUND_PLACES;
 /**
  * A class to represent a chart/level
  * Contains note information as well as info about the song
- * */
+ */
 public class Chart {
-    private final String name;
-    private final String subtitle;
-    private final String artist;
-    private final String soundPath;
-    private final String bgPath;
-    private final String path;
-    private final float offset;
-    private final Texture banner;
+
+    private Song song;
     private final int difficulty;
     private final String difficultyString;
     private final String stepAuthor;
-    private final float bpm;
-    private final Color backgroundColour;
     private final Color difficultyColour;
 
     private ArrayList<Note> notes;
 
     /**
      * Constructor for chart object
-     * */
-    public Chart(String name, String subtitle, String artist, String soundPath, String bgPath, String path, int difficulty, String difficultyString, String stepAuthor, float bpm, float offset, String bannerPath, ArrayList<Note> notes) {
-        if (bannerPath == null || bannerPath.equals("charts/")) bannerPath = "defaultbanner.png";
-
-        this.name = name;
-        this.subtitle = subtitle;
-        this.artist = artist;
+     */
+    public Chart(int difficulty, String difficultyString, String stepAuthor, ArrayList<Note> notes) {
         this.difficulty = difficulty;
-        this.soundPath = soundPath;
-        this.bgPath = bgPath;
-        this.path = path;
         this.difficultyString = difficultyString;
         this.stepAuthor = stepAuthor;
-        this.bpm = bpm;
-        this.offset = offset;
         this.notes = notes;
-        this.banner = new Texture(bannerPath);
-        this.backgroundColour = hashColor(name + artist);
         this.difficultyColour = hashColor(difficultyString.toLowerCase());
     }
 
     /**
      * Generates a parsed chart object from a file address object
+     *
+     * @param data the string from the sm file with data about the notes
      * @return A parsed Chart object
-     * @param chart The File object of the chart file
-     * */
-    public static Chart parseChart(File chart) throws IOException {
+     */
 
-        String file = Files.readString(chart.toPath(), Charset.defaultCharset());
+    public static Chart parseChart(String data, float bpm) {
+        String[] rawNoteInfo = data.split(":", -1);
+        if (!Objects.equals(rawNoteInfo[1].trim(), "dance-single")) return null; // only parse one panel ddr charts
 
-        String[] fileLines = file.split(";", -1);
+        String stepAuthor = rawNoteInfo[2].trim();
+        String difficultyString = rawNoteInfo[3].trim();
+        int difficulty = Integer.parseInt(rawNoteInfo[4].trim());
+        String noteData = rawNoteInfo[6];
 
-        String name = "";
-        String subtitle = "";
-        String artist = "";
-        String soundPath = "";
-        String path = chart.getPath();
-        int difficulty = 0;
-        float bpm = 0;
-        float offset = 0;
-        String difficultyString = "";
-        String stepAuthor = "";
-        String bgPath = "";
-        String banner = "";
         ArrayList<Note> notes = new ArrayList<>();
 
-        for (String line : fileLines) {
-            line = line.replace("\r", "");
-            //Gdx.app.debug("Chart -bytes", Arrays.toString(line.getBytes(Charset.defaultCharset())));
-            while (!line.startsWith("#")){
-                try {
-                    line = line.substring(1);
-                } catch (StringIndexOutOfBoundsException e) {
-                    break;
-                }
-            }
-            if (line.startsWith("#TITLE:")) {
-                name = line.substring(7);
-            } else if (line.startsWith("#SUBTITLE:")) {
-                subtitle = line.substring(10);
-            } else if (line.startsWith("#ARTIST:")) {
-                artist = line.substring(8);
-            } else if (line.startsWith("#BANNER:")) {
-                banner = "charts/" + line.substring(8);
-            } else if (line.startsWith("#MUSIC:")) {
-                soundPath = line.substring(7);
-            } else if (line.startsWith("#OFFSET:")){
-                offset = Float.parseFloat(line.substring(8));
-            } else if (line.startsWith("#BACKGROUND:")){
-                bgPath = line.substring(12);
-            } else if (line.startsWith("#NOTES:")) {
-                String[] rawNoteInfo = line.split(":", -1);
+        // Note parsing
 
-                stepAuthor = rawNoteInfo[2].trim();
-                difficultyString = rawNoteInfo[3].trim();
-                difficulty = Integer.parseInt(rawNoteInfo[4].trim());
-                String noteData = rawNoteInfo[6];
-
-                // Note parsing
-
-                byte[] byteArray = toBytes(noteData.toCharArray());
-                ArrayList<Byte> noteDataBytes = new ArrayList<>();
-                for(byte b: byteArray){
-                    if (b != 0x20) noteDataBytes.add(b); // remove spaces
-                }
-                //That looks pretty good
-                //Apart from the nulls
+        byte[] byteArray = toBytes(noteData.toCharArray());
+        ArrayList<Byte> noteDataBytes = new ArrayList<>();
+        for (byte b : byteArray) {
+            if (b != 0x20) noteDataBytes.add(b); // remove spaces
+        }
+        //That looks pretty good
+        //Apart from the nulls
                 /*
                  char - hex - dec
                     / - 2F  - 47
@@ -149,95 +85,68 @@ public class Chart {
                     figure out quantization
                  */
 
-                for (int i = 0; i < noteDataBytes.size(); i++) {
-                    if (noteDataBytes.get(i) == 0x2F) { // if character is /
-                        while (i < noteDataBytes.size() && noteDataBytes.get(i) != 0x0A){ // delete characters until newline
-                            noteDataBytes.remove(i);
-                        }
-                    }
+        for (int i = 0; i < noteDataBytes.size(); i++) {
+            if (noteDataBytes.get(i) == 0x2F) { // if character is /
+                while (i < noteDataBytes.size() && noteDataBytes.get(i) != 0x0A) { // delete characters until newline
+                    noteDataBytes.remove(i);
                 }
-
-                // remove all newlines
-                for (int i = 0; i < noteDataBytes.size(); i++) {
-                    if (noteDataBytes.get(i) == 0x0A) {
-                        noteDataBytes.remove(i);
-                    }
-                }
-                // join the bytes into a string (string builder discards \n (actually i dont think it does))
-                StringBuilder noteDataString = new StringBuilder();
-                for (byte b : noteDataBytes) {
-                    noteDataString.append((char) b);
-                }
-
-                // split by commas
-                String[] noteDataStringArray = noteDataString.toString().split(",");
-
-                // split bars into groups of 4 chars
-                for(int barIndex = 0; barIndex < noteDataStringArray.length; barIndex++){
-                    ArrayList<String> rawNotes = new ArrayList<>();
-                    if (noteDataStringArray[barIndex].charAt(0) == 0x0A) { // remove newline
-                        noteDataStringArray[barIndex] = noteDataStringArray[barIndex].substring(1);
-                    }
-                    Gdx.app.debug("Chart -bar", noteDataStringArray[barIndex]);
-//                    Gdx.app.debug("Chart", Arrays.toString(noteDataStringArray[barIndex].getBytes()));
-                    for(int i = 0; i < noteDataStringArray[barIndex].length(); i += 4) { // split into groups of 4 chars
-                        rawNotes.add(noteDataStringArray[barIndex].substring(i, i+4));
-                    }
-                    Gdx.app.debug("Chart -num notes", String.valueOf(rawNotes.size()));
-                    // Quantization
-                    for (int i = 0; i < rawNotes.size(); i++) {
-                        float beat = (float) Math.round((float) Math.pow(10, DENOM_ROUND_PLACES) * ((float)i+1f)/(float)rawNotes.size())/ (float) Math.pow(10, DENOM_ROUND_PLACES);
-                        Gdx.app.debug("Chart -q", String.valueOf(beat));
-                        NoteDenom quantization = NoteDenom.fromLength(beat);
-                        String quantizationString = (quantization == null) ? "null" : quantization.toString();
-                        Gdx.app.debug("Chart -qs", quantizationString);
-                        for (int noteId = 0; noteId < 4; noteId++) {
-                            if (rawNotes.get(i).charAt(noteId) != '0') {
-                                Gdx.app.debug("Chart -note", "Lane: " + i + ", Beat: " + beat + ", BPM: " + bpm + ", Type: " + rawNotes.get(i).charAt(noteId) + ", Quantization: " + quantizationString);
-                                notes.add(new Note(
-                                        Lane.fromInt(noteId),
-                                        barIndex + beat,
-                                        (int) bpm,
-                                        NoteType.fromChar(rawNotes.get(i).charAt(noteId)),
-                                        quantization
-                                ));
-                            }
-
-                        }
-                    }
-                }
-
-            } else if (line.startsWith("#BPMS:")) {
-                bpm = Float.parseFloat(line.split("=")[1].split(",")[0]);
             }
         }
 
-        for (Note note : notes) {
-            Gdx.app.debug("Chart -note", note.toString());
+        // remove all newlines
+        for (int i = 0; i < noteDataBytes.size(); i++) {
+            if (noteDataBytes.get(i) == 0x0A) {
+                noteDataBytes.remove(i);
+                break;
+            }
+        }
+        // join the bytes into a string (string builder discards \n (actually i dont think it does))
+        StringBuilder noteDataString = new StringBuilder();
+        for (byte b : noteDataBytes) {
+            noteDataString.append((char) b);
         }
 
-        return new Chart(name, subtitle, artist, soundPath, bgPath, path, difficulty, difficultyString, stepAuthor, bpm, offset, banner, notes);
-    }
+        // split by commas
+        String[] noteDataStringArray = noteDataString.toString().split(",");
 
-    public String getName() {
-        return name;
+        // split bars into groups of 4 chars
+        for (int barIndex = 0; barIndex < noteDataStringArray.length; barIndex++) {
+            ArrayList<String> rawNotes = new ArrayList<>();
+            if (noteDataStringArray[barIndex].charAt(0) == 0x0A) { // remove newline
+                noteDataStringArray[barIndex] = noteDataStringArray[barIndex].substring(1);
+            }
+            //Gdx.app.debug("Chart -bar", noteDataStringArray[barIndex]);
+//                    Gdx.app.debug("Chart", Arrays.toString(noteDataStringArray[barIndex].getBytes()));
+            for (int i = 0; i < noteDataStringArray[barIndex].length(); i += 4) { // split into groups of 4 chars
+                rawNotes.add(noteDataStringArray[barIndex].substring(i, i + 4));
+            }
+            //Gdx.app.debug("Chart -num notes", String.valueOf(rawNotes.size()));
+            // Quantization
+            for (int i = 0; i < rawNotes.size(); i++) {
+                float beat = (float) Math.round((float) Math.pow(10, DENOM_ROUND_PLACES) * ((float) i + 1f) / (float) rawNotes.size()) / (float) Math.pow(10, DENOM_ROUND_PLACES);
+                //Gdx.app.debug("Chart -q", String.valueOf(beat));
+                NoteDenom quantization = NoteDenom.fromLength(beat);
+                String quantizationString = (quantization == null) ? "null" : quantization.toString();
+                //Gdx.app.debug("Chart -qs", quantizationString);
+                for (int noteId = 0; noteId < 4; noteId++) {
+                    if (rawNotes.get(i).charAt(noteId) != '0') {
+                        //Gdx.app.debug("Chart -note", "Lane: " + i + ", Beat: " + beat + ", BPM: " + bpm + ", Type: " + rawNotes.get(i).charAt(noteId) + ", Quantization: " + quantizationString);
+                        notes.add(new Note(
+                                Lane.fromInt(noteId),
+                                barIndex + beat,
+                                (int) bpm,
+                                NoteType.fromChar(rawNotes.get(i).charAt(noteId)),
+                                quantization
+                        ));
+                    }
+                }
+            }
+        }
+        return new Chart(difficulty, difficultyString, stepAuthor, notes);
     }
-
-    public String getSubtitle() {
-        return subtitle;
-    }
-
-    public String getArtist() {
-        return artist;
-    }
-
 
     public int getDifficulty() {
         return difficulty;
-    }
-
-    public String getPath() {
-        return path;
     }
 
     public String getDifficultyString() {
@@ -248,40 +157,43 @@ public class Chart {
         return stepAuthor;
     }
 
-    public float getBpm() {
-        return bpm;
-    }
-
-    public Texture getTexture() {
-        return banner;
-    }
-
-    public Color getBackgroundColour() {
-        return backgroundColour;
-    }
-
     public Color getDifficultyColour() {
         return difficultyColour;
     }
 
+    public ArrayList<Note> getNotes() {
+        return notes;
+    }
+
+    public Song getSong() {
+        return song;
+    }
+
+    public Chart setSong(Song song) {
+        return this;
+    }
+
     /**
      * Converts a string colour code into a colour object
-     * @return A colour object
+     *
      * @param s A colour string
-     * */
-    private static Color hashColor(String s) {
-        int hash = s.hashCode();
+     * @return A colour object
+     */
+    public static Color hashColor(String s) {
+        if (s.length() < 5) s = s + s;
+        int hash = String.valueOf(s.hashCode()).hashCode() & 0xFFFFFF;
         float r = (hash & 0xFF0000) >> 16;
         float g = (hash & 0x00FF00) >> 8;
         float b = hash & 0x0000FF;
-        return new Color(r / 255, g / 255, b / 255, 0.3f);
+        return new Color(r / 255, g / 255, b / 255, 0.7f);
     }
 
     /**
      * Converts a character array into a byte array
-     * @return An array of bytes
+     *
      * @param chars An array of characters
-     * */
+     * @return An array of bytes
+     */
     private static byte[] toBytes(char[] chars) {
         CharBuffer charBuffer = CharBuffer.wrap(chars);
         ByteBuffer byteBuffer = StandardCharsets.UTF_8.encode(charBuffer);
