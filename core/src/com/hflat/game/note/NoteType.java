@@ -2,7 +2,7 @@ package com.hflat.game.note;
 
 /**
  * An enum to represent the different types of notes
- * */
+ */
 public enum NoteType {
     TAP('1'),
     HOLD('2'),
