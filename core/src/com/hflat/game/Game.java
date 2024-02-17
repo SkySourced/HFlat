@@ -16,12 +16,17 @@ import com.badlogic.gdx.graphics.g2d.freetype.FreeTypeFontGenerator;
 import com.badlogic.gdx.utils.ScreenUtils;
 import com.badlogic.gdx.utils.viewport.FitViewport;
 import com.badlogic.gdx.utils.viewport.Viewport;
-import com.hflat.game.chart.Chart;
-import com.hflat.game.chart.Song;
+
+import com.hflat.game.chart.GameOptions;
 import com.hflat.game.chart.SongManager;
+import com.hflat.game.chart.Song;
+import com.hflat.game.chart.Chart;
+
 import space.earlygrey.shapedrawer.ShapeDrawer;
 
 import java.io.File;
+import java.text.DecimalFormat;
+import java.text.NumberFormat;
 
 /**
  * The main game class
@@ -32,6 +37,8 @@ public class Game extends ApplicationAdapter {
     private GameState state = GameState.LOADING;
     private OrthographicCamera camera;
     public SongManager songs;
+    private GameOptions options;
+
     private SpriteBatch batch;
     private Texture logo;
     private ShapeDrawer drawer;
@@ -42,9 +49,10 @@ public class Game extends ApplicationAdapter {
     private BitmapFont serifFont12;
     private int selectedSongIndex = 0;
     private int selectedDifficultyIndex = 0;
+    private int optionSelectionIndex = 6;
     private long lastMenuAction;
     private Viewport viewport;
-
+    NumberFormat formatter = new DecimalFormat("0.00"); // This should be renamed, but I can't think of anything good6-
     private long loadingStartTime;
     private static Song currentSong;
     private static Chart currentChart;
@@ -70,6 +78,7 @@ public class Game extends ApplicationAdapter {
         Gdx.app.setLogLevel(Application.LOG_DEBUG);
 
         songs = new SongManager(new File("charts"), this);
+        options = new GameOptions();
 
         camera = new OrthographicCamera();
         camera.setToOrtho(false, 400, 700);
@@ -135,7 +144,7 @@ public class Game extends ApplicationAdapter {
         batch.setProjectionMatrix(camera.combined);
 
         batch.begin();
-        long menuActionDelay = 160000000L;
+        long menuActionDelay = (long) (Math.pow(10, 9) / 8);
         switch (state) {
             case LOADING:
                 batch.draw(logo, (float) Gdx.graphics.getWidth() / 2 - (float) logo.getWidth() / 2, (float) Gdx.graphics.getHeight() / 2 - (float) logo.getHeight() / 2 + 70);
@@ -188,7 +197,7 @@ public class Game extends ApplicationAdapter {
                         difficultyColour = Color.GRAY;
                     }
                     if (i == selectedDifficultyIndex) {
-                        difficultyColour = Color.WHITE;
+                        drawer.filledRectangle(28, 243 + 10 * i, 4, 4, Color.WHITE);
                     }
                     drawer.filledRectangle(27, 242 + 10 * i, 6, 6, difficultyColour);
                 }
@@ -203,6 +212,8 @@ public class Game extends ApplicationAdapter {
 
                 serifFont20.draw(batch, currentSong.getName(), 30, 230);
                 serifFont12.draw(batch, currentSong.getSubtitle(), 30, 210);
+                serifFont20.draw(batch, currentSong.getArtist(), 30, 190);
+
 
                 break;
             case SONG_LOADING:
@@ -228,6 +239,141 @@ public class Game extends ApplicationAdapter {
                 }
                 break;
             case OPTIONS:
+                drawCentredText(batch, pixelFont40, "Options", 690);
+                drawer.filledRectangle(25, 25, 350, 625, new Color(0.7f, 0.7f, 0.7f, 0.7f));
+                serifFont20.draw(batch, "Note speed", 40, 625);
+                serifFont20.draw(batch, "Note size", 40, 575);
+                serifFont20.draw(batch, "Show judgements", 40, 525);
+                serifFont20.draw(batch, "Show combo", 40, 475);
+                serifFont20.draw(batch, "Background filter", 40, 425);
+                serifFont20.draw(batch, "Music speed", 40, 375);
+                serifFont20.draw(batch, "Visual offset", 40, 325);
+
+                int optionWidth;
+                GlyphLayout layout = new GlyphLayout();
+
+                switch (optionSelectionIndex) {
+                    case 6:
+                        layout.setText(serifFont20, formatter.format(options.getNoteSpeed())+"x");
+                        break;
+                    case 5:
+                        layout.setText(serifFont20, (int) (options.getMini() * 100) + "%");
+                        break;
+                    case 4:
+                        layout.setText(serifFont20, options.isShowJudgements() ? "On" : "Off");
+                        break;
+                    case 3:
+                        layout.setText(serifFont20, options.isShowCombo() ? "On" : "Off");
+                        break;
+                    case 2:
+                        layout.setText(serifFont20, options.getBackgroundFilter().toString());
+                        break;
+                    case 1:
+                        layout.setText(serifFont20, formatter.format(options.getMusicRate())+"x");
+                        break;
+                    case 0:
+                        layout.setText(serifFont20, options.getVisualOffset() + "ms");
+                        break;
+                    case -1:
+                        layout.setText(pixelFont40, "play");
+                    default:
+                        break;
+                }
+
+                optionWidth = (int) layout.width;
+
+                if (optionSelectionIndex >= 0) {
+                    drawer.rectangle(360 - optionWidth - 7, 300 + 50 * optionSelectionIndex, optionWidth + 15, 30, Color.BLACK, 2);
+                } else {
+                    drawer.rectangle(200 - ((float) optionWidth / 2) - 20, 30, optionWidth + 40, 60, Color.BLACK, 2);
+                }
+
+                drawRightAlignedText(batch, serifFont20, formatter.format(options.getNoteSpeed())+"x", 360, 625);
+                drawRightAlignedText(batch, serifFont20, (int) (options.getMini() * 100) + "%", 360, 575);
+                drawRightAlignedText(batch, serifFont20, options.isShowJudgements() ? "On" : "Off", 360, 525);
+                drawRightAlignedText(batch, serifFont20, options.isShowCombo() ? "On" : "Off", 360, 475);
+                drawRightAlignedText(batch, serifFont20, options.getBackgroundFilter().toString(), 360, 425);
+                drawRightAlignedText(batch, serifFont20, formatter.format(options.getMusicRate())+"x", 360, 375);
+                drawRightAlignedText(batch, serifFont20, options.getVisualOffset() + "ms", 360, 325);
+
+                drawCentredText(batch, pixelFont40, "play", 75);
+
+                if (Gdx.input.isKeyPressed(Input.Keys.UP) && lastMenuAction + menuActionDelay < System.nanoTime()){
+                    optionSelectionIndex++;
+                    if (optionSelectionIndex > 6) optionSelectionIndex = -1;
+                    lastMenuAction = System.nanoTime();
+                } else if (Gdx.input.isKeyPressed(Input.Keys.DOWN) && lastMenuAction + menuActionDelay < System.nanoTime()){
+                    optionSelectionIndex--;
+                    if (optionSelectionIndex < -1) optionSelectionIndex = 6;
+                    lastMenuAction = System.nanoTime();
+                }
+
+                if (Gdx.input.isKeyPressed(Input.Keys.LEFT) && lastMenuAction + menuActionDelay < System.nanoTime()){
+                    lastMenuAction = System.nanoTime();
+                    switch(optionSelectionIndex){
+                        case 6:
+                            options.setNoteSpeed(options.getNoteSpeed() - 0.05f);
+                            if (options.getNoteSpeed() < 0.05f) options.setNoteSpeed(0.05f);
+                            break;
+                        case 5:
+                            options.setMini(options.getMini() - 0.01f);
+                            if (options.getMini() < 0.01f) options.setMini(0.01f);
+                            break;
+                        case 4:
+                            options.setShowJudgements(!options.isShowJudgements());
+                            break;
+                        case 3:
+                            options.setShowCombo(!options.isShowCombo());
+                            break;
+                        case 2:
+                            options.setBackgroundFilter(options.getBackgroundFilter().previous());
+                            break;
+                        case 1:
+                            options.setMusicRate(options.getMusicRate() - 0.05f);
+                            if (options.getMusicRate() < 0.05f) options.setMusicRate(0.05f);
+                            break;
+                        case 0:
+                            options.setVisualOffset(options.getVisualOffset() - 1);
+                            break;
+                    }
+                } else if (Gdx.input.isKeyPressed(Input.Keys.RIGHT) && lastMenuAction + menuActionDelay < System.nanoTime()){
+                    switch (optionSelectionIndex){
+                        case 6:
+                            options.setNoteSpeed(options.getNoteSpeed() + 0.05f);
+                            if (options.getNoteSpeed() > 10.0f) options.setNoteSpeed(10.0f);
+                            break;
+                        case 5:
+                            options.setMini(options.getMini() + 0.01f);
+                            if (options.getMini() > 1f) options.setMini(1f);
+                            break;
+                        case 4:
+                            options.setShowJudgements(!options.isShowJudgements());
+                            break;
+                        case 3:
+                            options.setShowCombo(!options.isShowCombo());
+                            break;
+                        case 2:
+                            options.setBackgroundFilter(options.getBackgroundFilter().next());
+                            break;
+                        case 1:
+                            options.setMusicRate(options.getMusicRate() + 0.05f);
+                            if (options.getMusicRate() > 5f) options.setMusicRate(5f);
+                            break;
+                        case 0:
+                            options.setVisualOffset(options.getVisualOffset() + 1);
+                            if (options.getVisualOffset() > 1000) options.setVisualOffset(1000);
+                            break;
+                    }
+                    lastMenuAction = System.nanoTime();
+                }
+
+                if (Gdx.input.isKeyJustPressed(Input.Keys.ENTER) && lastMenuAction + menuActionDelay > System.nanoTime()){
+                    lastMenuAction = System.nanoTime();
+                    if (optionSelectionIndex == 7){
+                        setState(GameState.PLAYING);
+                    }
+                }
+
                 break;
             case PLAYING:
 
@@ -284,6 +430,20 @@ public class Game extends ApplicationAdapter {
         GlyphLayout layout = new GlyphLayout();
         layout.setText(font, text);
         font.draw(batch, text, (float) 200 - layout.width / 2, y);
+    }
+
+    /**
+     * Draws right-aligned text
+     * @param batch The sprite batch to draw to
+     * @param font The font to use
+     * @param text The text to draw
+     * @param x The x position to draw the text at (right-most point)
+     * @param y The y position to draw the text at
+     */
+    public static void drawRightAlignedText(SpriteBatch batch, BitmapFont font, String text, float x, float y) {
+        GlyphLayout layout = new GlyphLayout();
+        layout.setText(font, text);
+        font.draw(batch, text, x - layout.width, y);
     }
 
     /**
