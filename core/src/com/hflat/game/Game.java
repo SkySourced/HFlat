@@ -86,7 +86,7 @@ public class Game extends ApplicationAdapter {
 
         drawer = new ShapeDrawer(batch, region);
 
-        logo = new Texture("hflatlogo.png");
+        logo = new Texture("hFlatLogo.png");
 
         FreeTypeFontGenerator pixelGenerator = new FreeTypeFontGenerator(Gdx.files.internal("fonts/5x5.ttf"));
         FreeTypeFontGenerator serifGenerator = new FreeTypeFontGenerator(Gdx.files.internal("fonts/Newsreader.ttf"));
