@@ -5,7 +5,7 @@ public enum BackgroundFilter {
     DARK (0.5f),
     DARKER (0.75f),
     DARKEST (0.9f),
-    OFF (1f);
+    NO_BACKGROUND (1f);
 
     final float opacity;
     BackgroundFilter(float opacity) {
@@ -18,53 +18,32 @@ public enum BackgroundFilter {
 
     @Override
     public String toString() {
-        switch (this) {
-            case NONE:
-                return "None";
-            case DARK:
-                return "Dark";
-            case DARKER:
-                return "Darker";
-            case DARKEST:
-                return "Darkest";
-            case OFF:
-                return "Off";
-            default:
-                return "None";
-        }
+        return switch (this) {
+            case NONE -> "None";
+            case DARK -> "Dark";
+            case DARKER -> "Darker";
+            case DARKEST -> "Darkest";
+            case NO_BACKGROUND -> "No Background";
+        };
     }
 
     public BackgroundFilter next() {
-        switch (this) {
-            case NONE:
-                return DARK;
-            case DARK:
-                return DARKER;
-            case DARKER:
-                return DARKEST;
-            case DARKEST:
-                return OFF;
-            case OFF:
-                return NONE;
-            default:
-                return NONE;
-        }
+        return switch (this) {
+            case NONE -> DARK;
+            case DARK -> DARKER;
+            case DARKER -> DARKEST;
+            case DARKEST -> NO_BACKGROUND;
+            case NO_BACKGROUND -> NONE;
+        };
     }
 
     public BackgroundFilter previous() {
-        switch (this) {
-            case NONE:
-                return OFF;
-            case DARK:
-                return NONE;
-            case DARKER:
-                return DARK;
-            case DARKEST:
-                return DARKER;
-            case OFF:
-                return DARKEST;
-            default:
-                return NONE;
-        }
+        return switch (this) {
+            case NONE -> NO_BACKGROUND;
+            case DARK -> NONE;
+            case DARKER -> DARK;
+            case DARKEST -> DARKER;
+            case NO_BACKGROUND -> DARKEST;
+        };
     }
 }
