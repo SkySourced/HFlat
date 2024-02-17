@@ -16,12 +16,10 @@ import com.badlogic.gdx.graphics.g2d.freetype.FreeTypeFontGenerator;
 import com.badlogic.gdx.utils.ScreenUtils;
 import com.badlogic.gdx.utils.viewport.FitViewport;
 import com.badlogic.gdx.utils.viewport.Viewport;
-
-import com.hflat.game.chart.GameOptions;
-import com.hflat.game.chart.SongManager;
-import com.hflat.game.chart.Song;
 import com.hflat.game.chart.Chart;
-
+import com.hflat.game.chart.GameOptions;
+import com.hflat.game.chart.Song;
+import com.hflat.game.chart.SongManager;
 import space.earlygrey.shapedrawer.ShapeDrawer;
 
 import java.io.File;
@@ -50,6 +48,8 @@ public class Game extends ApplicationAdapter {
     private int selectedSongIndex = 0;
     private int selectedDifficultyIndex = 0;
     private int optionSelectionIndex = 6;
+    private float escapeHeldDuration;
+    private float dontGiveUpTime = 0f;
     private long lastMenuAction;
     private Viewport viewport;
     NumberFormat formatter = new DecimalFormat("0.00"); // This should be renamed, but I can't think of anything good6-
@@ -366,17 +366,33 @@ public class Game extends ApplicationAdapter {
                     }
                     lastMenuAction = System.nanoTime();
                 }
-
                 if (Gdx.input.isKeyJustPressed(Input.Keys.ENTER) && lastMenuAction + menuActionDelay > System.nanoTime()){
                     lastMenuAction = System.nanoTime();
-                    if (optionSelectionIndex == 7){
+                    if (optionSelectionIndex == -1){
                         setState(GameState.PLAYING);
                     }
                 }
 
                 break;
             case PLAYING:
+                if (Gdx.input.isKeyPressed(Input.Keys.ESCAPE)){
+                    dontGiveUpTime = 0;
+                    escapeHeldDuration += Gdx.graphics.getDeltaTime();
+                    drawCentredText(batch, serifFont12, "Hold ESC to quit", 150);
+                    // seconds
+                    int escapeHeldThreshold = 2;
+                    if (escapeHeldDuration > escapeHeldThreshold){
+                        setState(GameState.SONG_SELECT);
+                    }
+                } else {
+                    if (escapeHeldDuration > 0) dontGiveUpTime = 1.5f;
+                    escapeHeldDuration = 0;
+                }
 
+                if (dontGiveUpTime > 0){
+                    dontGiveUpTime -= Gdx.graphics.getDeltaTime();
+                    drawCentredText(batch, serifFont12, "Don't give up!", 150);
+                }
                 break;
             case RESULTS:
                 break;
