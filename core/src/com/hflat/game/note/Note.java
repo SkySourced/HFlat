@@ -1,9 +1,11 @@
 package com.hflat.game.note;
 
+import com.badlogic.gdx.scenes.scene2d.Actor;
+
 /**
  * An enum to represent the different types of notes
  */
-public class Note {
+public class Note extends Actor {
 
     public Lane lane;
     public float barTime;

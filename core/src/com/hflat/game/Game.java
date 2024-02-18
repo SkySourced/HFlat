@@ -13,6 +13,7 @@ import com.badlogic.gdx.graphics.g2d.GlyphLayout;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.graphics.g2d.freetype.FreeTypeFontGenerator;
+import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.utils.ScreenUtils;
 import com.badlogic.gdx.utils.viewport.FitViewport;
 import com.badlogic.gdx.utils.viewport.Viewport;
@@ -35,9 +36,16 @@ public class Game extends ApplicationAdapter {
     private GameState state = GameState.LOADING;
     private OrthographicCamera camera;
     public SongManager songs;
-    private GameOptions options;
-
+    public static GameOptions options;
     private SpriteBatch batch;
+
+    private Stage loadingStage;
+    private Stage songSelectStage;
+    private Stage songLoadingStage;
+    private Stage optionsStage;
+    private Stage playingStage;
+    private Stage resultsStage;
+    private Stage[] stages = {loadingStage, songSelectStage, songLoadingStage, optionsStage, playingStage, resultsStage};
     private Texture logo;
     private ShapeDrawer drawer;
     private BitmapFont pixelFont20;
@@ -77,11 +85,16 @@ public class Game extends ApplicationAdapter {
     public void create() {
         Gdx.app.setLogLevel(Application.LOG_DEBUG);
 
-        songs = new SongManager(new File("charts"), this);
-        options = new GameOptions();
-
         camera = new OrthographicCamera();
         camera.setToOrtho(false, 400, 700);
+        viewport = new FitViewport(400, 700, camera);
+
+        for (Stage stage : stages){
+            stage = new Stage(viewport);
+        }
+
+        songs = new SongManager(new File("charts"), this);
+        options = new GameOptions();
 
         Pixmap pixmap = new Pixmap(1, 1, Pixmap.Format.RGBA8888);
         pixmap.setColor(Color.WHITE);
@@ -90,13 +103,19 @@ public class Game extends ApplicationAdapter {
         pixmap.dispose();
         TextureRegion region = new TextureRegion(texture, 0, 0, 1, 1);
 
-        viewport = new FitViewport(400, 700, camera);
         batch = new SpriteBatch();
 
         drawer = new ShapeDrawer(batch, region);
 
         logo = new Texture("hFlatLogo.png");
 
+        buildFonts();
+    }
+
+    /**
+     * Builds the fonts used in the game
+     */
+    private void buildFonts() {
         FreeTypeFontGenerator pixelGenerator = new FreeTypeFontGenerator(Gdx.files.internal("fonts/5x5.ttf"));
         FreeTypeFontGenerator serifGenerator = new FreeTypeFontGenerator(Gdx.files.internal("fonts/Newsreader.ttf"));
         FreeTypeFontGenerator.FreeTypeFontParameter parameter = new FreeTypeFontGenerator.FreeTypeFontParameter();
