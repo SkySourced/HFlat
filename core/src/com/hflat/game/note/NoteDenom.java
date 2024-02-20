@@ -1,9 +1,8 @@
 package com.hflat.game.note;
 
-import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Texture;
 
-import static com.hflat.game.Game.Ref.DENOM_ROUND_PLACES;
+import static com.hflat.game.HFlatGame.Ref.DENOM_ROUND_PLACES;
 
 /**
  * An enum to represent note denominations

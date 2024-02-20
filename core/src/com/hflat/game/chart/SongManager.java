@@ -3,12 +3,11 @@ package com.hflat.game.chart;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collections;
 import java.util.Objects;
 
 import com.badlogic.gdx.Gdx;
-import com.hflat.game.Game;
-import com.hflat.game.Game.GameState;
+import com.hflat.game.HFlatGame;
+import com.hflat.game.HFlatGame.GameState;
 
 /**
  * You're not going to believe this, it manages songs/charts
@@ -22,7 +21,7 @@ public class SongManager {
     /**
      * Constructor for song manager
      */
-    public SongManager(File songDirectory, Game game) {
+    public SongManager(File songDirectory, HFlatGame game) {
         Gdx.app.debug("SongManager", Arrays.toString(songDirectory.listFiles()));
         ArrayList<File> simFiles = new ArrayList<>();
         try {

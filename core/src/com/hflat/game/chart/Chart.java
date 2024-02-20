@@ -1,6 +1,5 @@
 package com.hflat.game.chart;
 
-import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Color;
 import com.hflat.game.note.*;
 
@@ -9,7 +8,7 @@ import java.nio.ByteBuffer;
 import java.nio.charset.StandardCharsets;
 import java.util.*;
 
-import static com.hflat.game.Game.Ref.DENOM_ROUND_PLACES;
+import static com.hflat.game.HFlatGame.Ref.DENOM_ROUND_PLACES;
 
 /**
  * A class to represent a chart/level

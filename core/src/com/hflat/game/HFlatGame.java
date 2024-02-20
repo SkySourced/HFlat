@@ -1,9 +1,6 @@
 package com.hflat.game;
 
-import com.badlogic.gdx.Application;
-import com.badlogic.gdx.ApplicationAdapter;
-import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.Input;
+import com.badlogic.gdx.*;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.Pixmap;
@@ -13,7 +10,6 @@ import com.badlogic.gdx.graphics.g2d.GlyphLayout;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.graphics.g2d.freetype.FreeTypeFontGenerator;
-import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.utils.ScreenUtils;
 import com.badlogic.gdx.utils.viewport.FitViewport;
 import com.badlogic.gdx.utils.viewport.Viewport;
@@ -21,6 +17,8 @@ import com.hflat.game.chart.Chart;
 import com.hflat.game.chart.GameOptions;
 import com.hflat.game.chart.Song;
 import com.hflat.game.chart.SongManager;
+import com.hflat.game.screens.*;
+import com.hflat.game.ui.AssetsManager;
 import space.earlygrey.shapedrawer.ShapeDrawer;
 
 import java.io.File;
@@ -32,20 +30,20 @@ import java.text.NumberFormat;
  * Contains the game's state and main loop
  * Imports & initialises all resources
  */
-public class Game extends ApplicationAdapter {
+public class HFlatGame extends Game implements ApplicationListener {
     private GameState state = GameState.LOADING;
     private OrthographicCamera camera;
     public SongManager songs;
     public static GameOptions options;
     private SpriteBatch batch;
+    public static AssetsManager assMan = new AssetsManager();
 
-    private Stage loadingStage;
-    private Stage songSelectStage;
-    private Stage songLoadingStage;
-    private Stage optionsStage;
-    private Stage playingStage;
-    private Stage resultsStage;
-    private Stage[] stages = {loadingStage, songSelectStage, songLoadingStage, optionsStage, playingStage, resultsStage};
+    private Screen loadingScreen;
+    private Screen songSelectScreen;
+    private Screen songLoadingScreen;
+    private Screen optionsScreen;
+    private Screen playingScreen;
+    private Screen resultsScreen;
     private Texture logo;
     private ShapeDrawer drawer;
     private BitmapFont pixelFont20;
@@ -89,12 +87,11 @@ public class Game extends ApplicationAdapter {
         camera.setToOrtho(false, 400, 700);
         viewport = new FitViewport(400, 700, camera);
 
-        for (Stage stage : stages){
-            stage = new Stage(viewport);
-        }
-
         songs = new SongManager(new File("charts"), this);
         options = new GameOptions();
+
+        assMan.queueAddMenuTextures();
+        assMan.manager.finishLoading();
 
         Pixmap pixmap = new Pixmap(1, 1, Pixmap.Format.RGBA8888);
         pixmap.setColor(Color.WHITE);
@@ -109,7 +106,9 @@ public class Game extends ApplicationAdapter {
 
         logo = new Texture("hFlatLogo.png");
 
-        buildFonts();
+
+
+        //buildFonts();
     }
 
     /**
@@ -166,11 +165,17 @@ public class Game extends ApplicationAdapter {
         long menuActionDelay = (long) (Math.pow(10, 9) / 8);
         switch (state) {
             case LOADING:
+                if (loadingScreen == null) loadingScreen = new LoadingScreen(this);
+                this.setScreen(loadingScreen);
+
                 batch.draw(logo, (float) Gdx.graphics.getWidth() / 2 - (float) logo.getWidth() / 2, (float) Gdx.graphics.getHeight() / 2 - (float) logo.getHeight() / 2 + 70);
                 drawCentredText(batch, pixelFont20, "Uses unlicensed assets!", (float) Gdx.graphics.getHeight() / 2 - 100);
                 drawCentredText(batch, pixelFont12, songs.getCurrentTask(), (float) Gdx.graphics.getHeight() / 2 - 150);
                 break;
             case SONG_SELECT:
+                if (songSelectScreen == null) songSelectScreen = new SongSelectScreen(this);
+                this.setScreen(songSelectScreen);
+
                 currentSong = songs.getSong(selectedSongIndex);
                 currentChart = currentSong.getChart(selectedDifficultyIndex);
 
@@ -236,6 +241,9 @@ public class Game extends ApplicationAdapter {
 
                 break;
             case SONG_LOADING:
+                if (songLoadingScreen == null) songLoadingScreen = new SongLoadingScreen(this);
+                this.setScreen(songLoadingScreen);
+
                 // make background darkened version of difficultyColour
                 long loadingTime = 3000;
                 float progress = (System.nanoTime() / 1000000f - this.loadingStartTime) / (float) loadingTime;
@@ -258,6 +266,9 @@ public class Game extends ApplicationAdapter {
                 }
                 break;
             case OPTIONS:
+                if (optionsScreen == null) optionsScreen = new OptionsScreen(this);
+                this.setScreen(optionsScreen);
+
                 drawCentredText(batch, pixelFont40, "Options", 690);
                 drawer.filledRectangle(25, 25, 350, 625, new Color(0.7f, 0.7f, 0.7f, 0.7f));
                 serifFont20.draw(batch, "Note speed", 40, 625);
@@ -394,6 +405,9 @@ public class Game extends ApplicationAdapter {
 
                 break;
             case PLAYING:
+                if (playingScreen == null) playingScreen = new PlayingScreen(this);
+                this.setScreen(playingScreen);
+
                 if (Gdx.input.isKeyPressed(Input.Keys.ESCAPE)){
                     dontGiveUpTime = 0;
                     escapeHeldDuration += Gdx.graphics.getDeltaTime();
@@ -414,6 +428,8 @@ public class Game extends ApplicationAdapter {
                 }
                 break;
             case RESULTS:
+                if (resultsScreen == null) resultsScreen = new ResultsScreen(this);
+                this.setScreen(resultsScreen);
                 break;
         }
         batch.end();
@@ -488,6 +504,14 @@ public class Game extends ApplicationAdapter {
      */
     public void setState(GameState state) {
         this.state = state;
+    }
+
+    /**
+     * Get the current game state
+     * @return The current game state
+     */
+    public SongManager getSongManager() {
+        return songs;
     }
 
     public static class Ref {

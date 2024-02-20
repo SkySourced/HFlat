@@ -16,6 +16,6 @@ public class DesktopLauncher {
         config.setWindowedMode(400, 700);
 
         config.setTitle("HFlat");
-        new Lwjgl3Application(new Game(), config);
+        new Lwjgl3Application(new HFlatGame(), config);
     }
 }
