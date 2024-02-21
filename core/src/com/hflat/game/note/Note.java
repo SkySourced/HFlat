@@ -1,6 +1,7 @@
 package com.hflat.game.note;
 
 import com.badlogic.gdx.scenes.scene2d.Actor;
+import com.hflat.game.Game;
 
 /**
  * An enum to represent the different types of notes
@@ -10,12 +11,14 @@ public class Note extends Actor {
     public Lane lane;
     public float barTime;
     public long time;
+    public int bpm;
     public NoteType type;
     public NoteDenom colour;
 
     public Note(Lane lane, float barTime, int bpm, NoteType type, NoteDenom colour) {
         this.lane = lane;
         this.barTime = barTime;
+        this.bpm = bpm;
         this.time = (long) (barTime * 60 / bpm * 1000); // this I think is in ms, but we might want to make it a bit more precise
         this.type = type;
         this.colour = colour;
@@ -72,6 +75,14 @@ public class Note extends Actor {
             judgement = Judgement.MISS;
         }
         return judgement;
+    }
+
+    /**
+     * Set the initial position of the note
+     * @return the initial y position of the note
+     */
+    private float setInitialY() {
+        return barTime * bpm * Game.options.getNoteSpeed() * Game.options.getMusicRate() * Game.NOTE_SPACING;
     }
 
     public String toString() {

@@ -38,6 +38,7 @@ public class Game extends ApplicationAdapter {
     public SongManager songs;
     public static GameOptions options;
     private SpriteBatch batch;
+    public static final float NOTE_SPACING = 1.0f;
 
     private Stage loadingStage;
     private Stage songSelectStage;
