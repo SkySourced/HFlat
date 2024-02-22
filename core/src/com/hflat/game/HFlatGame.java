@@ -10,6 +10,7 @@ import com.badlogic.gdx.graphics.g2d.GlyphLayout;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.graphics.g2d.freetype.FreeTypeFontGenerator;
+import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.utils.ScreenUtils;
 import com.badlogic.gdx.utils.viewport.FitViewport;
 import com.badlogic.gdx.utils.viewport.Viewport;
@@ -37,6 +38,7 @@ public class HFlatGame extends Game implements ApplicationListener {
     public static GameOptions options;
     private SpriteBatch batch;
     public static AssetsManager assMan = new AssetsManager();
+    public static final float NOTE_SPACING = 1.0f;
 
     private Screen loadingScreen;
     private Screen songSelectScreen;
@@ -179,7 +181,7 @@ public class HFlatGame extends Game implements ApplicationListener {
                 currentSong = songs.getSong(selectedSongIndex);
                 currentChart = currentSong.getChart(selectedDifficultyIndex);
 
-                if (Gdx.input.isKeyJustPressed(Input.Keys.LEFT) && lastMenuAction + menuActionDelay < System.nanoTime()) {
+                if (Gdx.input.isKeyPressed(Input.Keys.LEFT) && lastMenuAction + menuActionDelay < System.nanoTime()) {
                     selectedSongIndex--;
                     lastMenuAction = System.nanoTime();
                     if (selectedSongIndex < 0) selectedSongIndex = songs.getSongCount() - 1;
@@ -191,14 +193,14 @@ public class HFlatGame extends Game implements ApplicationListener {
                     selectedDifficultyIndex = Math.min(selectedDifficultyIndex, songs.getSong(selectedSongIndex).getChartCount() - 1);
                 }
 
-                if (Gdx.input.isKeyJustPressed(Input.Keys.UP) && lastMenuAction + menuActionDelay < System.nanoTime()) {
+                if (Gdx.input.isKeyPressed(Input.Keys.UP) && lastMenuAction + menuActionDelay < System.nanoTime()) {
                     selectedDifficultyIndex++;
                     lastMenuAction = System.nanoTime();
-                    if (selectedDifficultyIndex >= currentSong.getChartCount()) selectedDifficultyIndex = currentSong.getChartCount() - 1;
+                    if (selectedDifficultyIndex >= currentSong.getChartCount()) selectedDifficultyIndex = 0;
                 } else if (Gdx.input.isKeyPressed(Input.Keys.DOWN) && lastMenuAction + menuActionDelay < System.nanoTime()) {
                     selectedDifficultyIndex--;
                     lastMenuAction = System.nanoTime();
-                    if (selectedDifficultyIndex < 0) selectedDifficultyIndex = 0;
+                    if (selectedDifficultyIndex < 0) selectedDifficultyIndex = currentSong.getChartCount() - 1;
                 }
 
                 if (Gdx.input.isKeyJustPressed(Input.Keys.ENTER)) {
@@ -340,59 +342,45 @@ public class HFlatGame extends Game implements ApplicationListener {
 
                 if (Gdx.input.isKeyPressed(Input.Keys.LEFT) && lastMenuAction + menuActionDelay < System.nanoTime()){
                     lastMenuAction = System.nanoTime();
-                    switch(optionSelectionIndex){
-                        case 6:
+                    switch (optionSelectionIndex) {
+                        case 6 -> {
                             options.setNoteSpeed(options.getNoteSpeed() - 0.05f);
                             if (options.getNoteSpeed() < 0.05f) options.setNoteSpeed(0.05f);
-                            break;
-                        case 5:
+                        }
+                        case 5 -> {
                             options.setMini(options.getMini() - 0.01f);
                             if (options.getMini() < 0.01f) options.setMini(0.01f);
-                            break;
-                        case 4:
-                            options.setShowJudgements(!options.isShowJudgements());
-                            break;
-                        case 3:
-                            options.setShowCombo(!options.isShowCombo());
-                            break;
-                        case 2:
-                            options.setBackgroundFilter(options.getBackgroundFilter().previous());
-                            break;
-                        case 1:
+                        }
+                        case 4 -> options.setShowJudgements(!options.isShowJudgements());
+                        case 3 -> options.setShowCombo(!options.isShowCombo());
+                        case 2 -> options.setBackgroundFilter(options.getBackgroundFilter().previous());
+                        case 1 -> {
                             options.setMusicRate(options.getMusicRate() - 0.05f);
                             if (options.getMusicRate() < 0.05f) options.setMusicRate(0.05f);
-                            break;
-                        case 0:
-                            options.setVisualOffset(options.getVisualOffset() - 1);
-                            break;
+                        }
+                        case 0 -> options.setVisualOffset(options.getVisualOffset() - 1);
                     }
                 } else if (Gdx.input.isKeyPressed(Input.Keys.RIGHT) && lastMenuAction + menuActionDelay < System.nanoTime()){
-                    switch (optionSelectionIndex){
-                        case 6:
+                    switch (optionSelectionIndex) {
+                        case 6 -> {
                             options.setNoteSpeed(options.getNoteSpeed() + 0.05f);
                             if (options.getNoteSpeed() > 10.0f) options.setNoteSpeed(10.0f);
-                            break;
-                        case 5:
+                        }
+                        case 5 -> {
                             options.setMini(options.getMini() + 0.01f);
                             if (options.getMini() > 1f) options.setMini(1f);
-                            break;
-                        case 4:
-                            options.setShowJudgements(!options.isShowJudgements());
-                            break;
-                        case 3:
-                            options.setShowCombo(!options.isShowCombo());
-                            break;
-                        case 2:
-                            options.setBackgroundFilter(options.getBackgroundFilter().next());
-                            break;
-                        case 1:
+                        }
+                        case 4 -> options.setShowJudgements(!options.isShowJudgements());
+                        case 3 -> options.setShowCombo(!options.isShowCombo());
+                        case 2 -> options.setBackgroundFilter(options.getBackgroundFilter().next());
+                        case 1 -> {
                             options.setMusicRate(options.getMusicRate() + 0.05f);
                             if (options.getMusicRate() > 5f) options.setMusicRate(5f);
-                            break;
-                        case 0:
+                        }
+                        case 0 -> {
                             options.setVisualOffset(options.getVisualOffset() + 1);
                             if (options.getVisualOffset() > 1000) options.setVisualOffset(1000);
-                            break;
+                        }
                     }
                     lastMenuAction = System.nanoTime();
                 }
@@ -402,7 +390,9 @@ public class HFlatGame extends Game implements ApplicationListener {
                         setState(GameState.PLAYING);
                     }
                 }
-
+                if (Gdx.input.isKeyJustPressed(Input.Keys.ESCAPE)){
+                    setState(GameState.SONG_SELECT);
+                }
                 break;
             case PLAYING:
                 if (playingScreen == null) playingScreen = new PlayingScreen(this);
