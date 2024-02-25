@@ -19,74 +19,72 @@ public class AssetsManager {
     public final AssetManager manager = new AssetManager();
 
     // Fonts
-    FreeTypeFontGenerator pixelGenerator = new FreeTypeFontGenerator(Gdx.files.internal("fonts/5x5.ttf"));
-    FreeTypeFontGenerator serifGenerator = new FreeTypeFontGenerator(Gdx.files.internal("fonts/Newsreader.ttf"));
-    FreeTypeFontGenerator.FreeTypeFontParameter parameter = new FreeTypeFontGenerator.FreeTypeFontParameter();
+    public BitmapFont pixelFont20;
+    public BitmapFont pixelFont12;
+    public BitmapFont pixelFont40;
+    public BitmapFont serifFont20;
+    public BitmapFont serifFont12;
 
     // Menu textures
     public final String defaultBanner = "defaultBanner.png";
     public final String hFlatLogo = "hFlatLogo.png";
 
     // Note textures
-    public final String holdEnd = "hold-end.png";
-    public final String holdSegment = "hold-segment.png";
-    public final String jackEnd = "jack-end.png";
-    public final String jackSegment = "jack-segment.png";
-    public final String mine = "mine.png";
-    public final String fourthNote = "note4th.png";
-    public final String eighthNote = "note8th.png";
-    public final String twelfthNote = "note12th.png";
-    public final String sixteenthNote = "note16th.png";
-    public final String twentyFourthNote = "note24th.png";
-    public final String thirtySecondNote = "note32nd.png";
-    public final String fortyEighthNote = "note48th.png";
-    public final String sixtyFourthNote = "note64th.png";
-    public final String oneHundredTwentyEighthNote = "note128th.png";
-    public final String oneHundredNinetySecondNote = "note192nd.png";
-    public final String targetBeat = "target-beat.png";
-    public final String targetPressed = "target-pressed.png";
-    public final String targetUnpressed = "target-unpressed.png";
+    public final String notes = "notes/";
+    public final AssetLocation holdEnd = new AssetLocation("hold-end.png");
+    public final AssetLocation holdSegment = new AssetLocation("hold-segment.png");
+    public final AssetLocation jackEnd = new AssetLocation("jack-end.png");
+    public final AssetLocation jackSegment = new AssetLocation("jack-segment.png");
+    public final AssetLocation mine = new AssetLocation("mine.png");
+    public final AssetLocation fourthNote = new AssetLocation("note4th.png");
+    public final AssetLocation eighthNote = new AssetLocation("note8th.png");
+    public final AssetLocation twelfthNote = new AssetLocation("note12th.png");
+    public final AssetLocation sixteenthNote = new AssetLocation("note16th.png");
+    public final AssetLocation twentyFourthNote = new AssetLocation("note24th.png");
+    public final AssetLocation thirtySecondNote = new AssetLocation("note32nd.png");
+    public final AssetLocation fortyEighthNote = new AssetLocation("note48th.png");
+    public final AssetLocation sixtyFourthNote = new AssetLocation("note64th.png");
+    public final AssetLocation oneHundredTwentyEighthNote = new AssetLocation("note128th.png");
+    public final AssetLocation oneHundredNinetySecondNote = new AssetLocation("note192nd.png");
+    public final AssetLocation targetBeat = new AssetLocation("target-beat.png");
+    public final AssetLocation targetPressed = new AssetLocation("target-pressed.png");
+    public final AssetLocation targetUnpressed = new AssetLocation("target-unpressed.png");
 
-    // Fonts
-
-
-    public void queueAddMenuTextures() {
-        manager.setLoader(BitmapFont.class, new FreetypeFontLoader(manager.getFileHandleResolver()));
-
+    /**
+     * Builds the fonts used in the game
+     */
+    private void buildFonts() {
+        FreeTypeFontGenerator pixelGenerator = new FreeTypeFontGenerator(Gdx.files.internal("fonts/5x5.ttf"));
+        FreeTypeFontGenerator serifGenerator = new FreeTypeFontGenerator(Gdx.files.internal("fonts/Newsreader.ttf"));
+        FreeTypeFontGenerator.FreeTypeFontParameter parameter = new FreeTypeFontGenerator.FreeTypeFontParameter();
         parameter.color = Color.BLACK;
         parameter.size = 20;
         parameter.shadowOffsetX = 1;
         parameter.shadowOffsetY = 1;
         parameter.shadowColor = new Color(0, 0, 0, 0.75f);
-        manager.load("fonts/5x5.ttf", BitmapFont.class, new FreeTypeFontLoaderParameter());
+        pixelFont20 = pixelGenerator.generateFont(parameter);
 
         parameter.size = 12;
-        BitmapFont pixelFont12 = pixelGenerator.generateFont(parameter);
+        pixelFont12 = pixelGenerator.generateFont(parameter);
 
-
-
-        manager.load(hFlatLogo, Texture.class);
-    }
-
-    public void queueAddFonts() {
-        FreeTypeFontGenerator.FreeTypeFontParameter parameter = new FreeTypeFontGenerator.FreeTypeFontParameter();
-
-        parameter.color = Color.BLACK;
         parameter.size = 40;
         parameter.shadowOffsetX = 2;
         parameter.shadowOffsetY = 2;
-        BitmapFont pixelFont40 = pixelGenerator.generateFont(parameter);
+        pixelFont40 = pixelGenerator.generateFont(parameter);
 
         parameter.size = 20;
         parameter.shadowOffsetX = 1;
         parameter.shadowOffsetY = 1;
-        BitmapFont serifFont20 = serifGenerator.generateFont(parameter);
+        serifFont20 = serifGenerator.generateFont(parameter);
 
         parameter.size = 12;
-        BitmapFont serifFont12 = serifGenerator.generateFont(parameter);
+        serifFont12 = serifGenerator.generateFont(parameter);
+
+        pixelGenerator.dispose();
+        serifGenerator.dispose();
     }
 
-    public void queueAddBulkImages() {
+    public void queueAdd() {
         manager.load(defaultBanner, Texture.class);
         manager.load(holdEnd, Texture.class);
         manager.load(holdSegment, Texture.class);
@@ -107,5 +105,4 @@ public class AssetsManager {
         manager.load(targetPressed, Texture.class);
         manager.load(targetUnpressed, Texture.class);
     }
-
 }

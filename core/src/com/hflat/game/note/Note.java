@@ -1,7 +1,7 @@
 package com.hflat.game.note;
 
 import com.badlogic.gdx.scenes.scene2d.Actor;
-import com.hflat.game.Game;
+import com.hflat.game.HFlatGame;
 
 /**
  * An enum to represent the different types of notes
@@ -82,7 +82,7 @@ public class Note extends Actor {
      * @return the initial y position of the note
      */
     private float setInitialY() {
-        return barTime * bpm * Game.options.getNoteSpeed() * Game.options.getMusicRate() * Game.NOTE_SPACING;
+        return barTime * bpm * HFlatGame.options.getNoteSpeed() * HFlatGame.options.getMusicRate() * HFlatGame.NOTE_SPACING;
     }
 
     public String toString() {

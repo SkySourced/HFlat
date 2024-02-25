@@ -48,11 +48,6 @@ public class HFlatGame extends Game implements ApplicationListener {
     private Screen resultsScreen;
     private Texture logo;
     private ShapeDrawer drawer;
-    private BitmapFont pixelFont20;
-    private BitmapFont pixelFont12;
-    private BitmapFont pixelFont40;
-    private BitmapFont serifFont20;
-    private BitmapFont serifFont12;
     private int selectedSongIndex = 0;
     private int selectedDifficultyIndex = 0;
     private int optionSelectionIndex = 6;
@@ -92,7 +87,7 @@ public class HFlatGame extends Game implements ApplicationListener {
         songs = new SongManager(new File("charts"), this);
         options = new GameOptions();
 
-        assMan.queueAddMenuTextures();
+        assMan.queueAdd();
         assMan.manager.finishLoading();
 
         Pixmap pixmap = new Pixmap(1, 1, Pixmap.Format.RGBA8888);
@@ -113,39 +108,7 @@ public class HFlatGame extends Game implements ApplicationListener {
         //buildFonts();
     }
 
-    /**
-     * Builds the fonts used in the game
-     */
-    private void buildFonts() {
-        FreeTypeFontGenerator pixelGenerator = new FreeTypeFontGenerator(Gdx.files.internal("fonts/5x5.ttf"));
-        FreeTypeFontGenerator serifGenerator = new FreeTypeFontGenerator(Gdx.files.internal("fonts/Newsreader.ttf"));
-        FreeTypeFontGenerator.FreeTypeFontParameter parameter = new FreeTypeFontGenerator.FreeTypeFontParameter();
-        parameter.color = Color.BLACK;
-        parameter.size = 20;
-        parameter.shadowOffsetX = 1;
-        parameter.shadowOffsetY = 1;
-        parameter.shadowColor = new Color(0, 0, 0, 0.75f);
-        pixelFont20 = pixelGenerator.generateFont(parameter);
 
-        parameter.size = 12;
-        pixelFont12 = pixelGenerator.generateFont(parameter);
-
-        parameter.size = 40;
-        parameter.shadowOffsetX = 2;
-        parameter.shadowOffsetY = 2;
-        pixelFont40 = pixelGenerator.generateFont(parameter);
-
-        parameter.size = 20;
-        parameter.shadowOffsetX = 1;
-        parameter.shadowOffsetY = 1;
-        serifFont20 = serifGenerator.generateFont(parameter);
-
-        parameter.size = 12;
-        serifFont12 = serifGenerator.generateFont(parameter);
-
-        pixelGenerator.dispose();
-        serifGenerator.dispose();
-    }
 
     /**
      * Called every frame
@@ -164,81 +127,15 @@ public class HFlatGame extends Game implements ApplicationListener {
         batch.setProjectionMatrix(camera.combined);
 
         batch.begin();
-        long menuActionDelay = (long) (Math.pow(10, 9) / 8);
         switch (state) {
             case LOADING:
                 if (loadingScreen == null) loadingScreen = new LoadingScreen(this);
                 this.setScreen(loadingScreen);
 
-                batch.draw(logo, (float) Gdx.graphics.getWidth() / 2 - (float) logo.getWidth() / 2, (float) Gdx.graphics.getHeight() / 2 - (float) logo.getHeight() / 2 + 70);
-                drawCentredText(batch, pixelFont20, "Uses unlicensed assets!", (float) Gdx.graphics.getHeight() / 2 - 100);
-                drawCentredText(batch, pixelFont12, songs.getCurrentTask(), (float) Gdx.graphics.getHeight() / 2 - 150);
                 break;
             case SONG_SELECT:
                 if (songSelectScreen == null) songSelectScreen = new SongSelectScreen(this);
                 this.setScreen(songSelectScreen);
-
-                currentSong = songs.getSong(selectedSongIndex);
-                currentChart = currentSong.getChart(selectedDifficultyIndex);
-
-                if (Gdx.input.isKeyPressed(Input.Keys.LEFT) && lastMenuAction + menuActionDelay < System.nanoTime()) {
-                    selectedSongIndex--;
-                    lastMenuAction = System.nanoTime();
-                    if (selectedSongIndex < 0) selectedSongIndex = songs.getSongCount() - 1;
-                    selectedDifficultyIndex = Math.min(selectedDifficultyIndex, songs.getSong(selectedSongIndex).getChartCount() - 1);
-                } else if (Gdx.input.isKeyPressed(Input.Keys.RIGHT) && lastMenuAction + menuActionDelay < System.nanoTime()) {
-                    selectedSongIndex++;
-                    lastMenuAction = System.nanoTime();
-                    if (selectedSongIndex >= songs.getSongCount()) selectedSongIndex = 0;
-                    selectedDifficultyIndex = Math.min(selectedDifficultyIndex, songs.getSong(selectedSongIndex).getChartCount() - 1);
-                }
-
-                if (Gdx.input.isKeyPressed(Input.Keys.UP) && lastMenuAction + menuActionDelay < System.nanoTime()) {
-                    selectedDifficultyIndex++;
-                    lastMenuAction = System.nanoTime();
-                    if (selectedDifficultyIndex >= currentSong.getChartCount()) selectedDifficultyIndex = 0;
-                } else if (Gdx.input.isKeyPressed(Input.Keys.DOWN) && lastMenuAction + menuActionDelay < System.nanoTime()) {
-                    selectedDifficultyIndex--;
-                    lastMenuAction = System.nanoTime();
-                    if (selectedDifficultyIndex < 0) selectedDifficultyIndex = currentSong.getChartCount() - 1;
-                }
-
-                if (Gdx.input.isKeyJustPressed(Input.Keys.ENTER)) {
-                    loadingStartTime = System.nanoTime() / 1000000;
-                    setState(GameState.SONG_LOADING);
-                }
-
-                // Draw album art
-                batch.draw(currentSong.getTexture(), 25, 300, 350, 350);
-
-                drawCentredText(batch, pixelFont40, "Song Select", 690);
-
-                // Draw difficulty backgrounds
-                for (int i = 0; i < 6; i++) {
-                    drawer.filledRectangle(25, 240 + 10 * i, 10, 10, Color.GRAY);
-                    Color difficultyColour;
-                    try {
-                        difficultyColour = currentSong.getChart(i, false).getDifficultyColour();
-                    } catch (NullPointerException e) {
-                        difficultyColour = Color.GRAY;
-                    }
-                    if (i == selectedDifficultyIndex) {
-                        drawer.filledRectangle(28, 243 + 10 * i, 4, 4, Color.WHITE);
-                    }
-                    drawer.filledRectangle(27, 242 + 10 * i, 6, 6, difficultyColour);
-                }
-                drawer.filledRectangle(35, 240, 60, 60, currentChart.getDifficultyColour());
-                drawer.filledRectangle(95, 240, 280, 60, Color.WHITE);
-
-                // Draw difficulty text
-                pixelFont40.draw(batch, currentChart.getDifficultyString(), 110, 285);
-                int difficulty = currentChart.getDifficulty();
-                pixelFont40.draw(batch, String.valueOf(difficulty), String.valueOf(difficulty).length() == 1 ? 52 : 45, 285);
-
-
-                serifFont20.draw(batch, currentSong.getName(), 30, 230);
-                serifFont12.draw(batch, currentSong.getSubtitle(), 30, 210);
-                serifFont20.draw(batch, currentSong.getArtist(), 30, 190);
 
 
                 break;
