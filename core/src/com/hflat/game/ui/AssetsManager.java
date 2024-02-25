@@ -9,6 +9,8 @@ import com.badlogic.gdx.graphics.g2d.freetype.FreeTypeFontGenerator;
 import com.badlogic.gdx.graphics.g2d.freetype.FreetypeFontLoader;
 import com.badlogic.gdx.graphics.g2d.freetype.FreetypeFontLoader.FreeTypeFontLoaderParameter;
 
+import java.util.ArrayList;
+
 
 // links
 // https://www.gamedevelopment.blog/full-libgdx-game-tutorial-rendering-asset-manager/
@@ -17,6 +19,8 @@ import com.badlogic.gdx.graphics.g2d.freetype.FreetypeFontLoader.FreeTypeFontLoa
 
 public class AssetsManager {
     public final AssetManager manager = new AssetManager();
+
+    public ArrayList<AssetLocation> assetsList = new ArrayList<AssetLocation>();
 
     // Fonts
     public BitmapFont pixelFont20;
@@ -28,6 +32,15 @@ public class AssetsManager {
     // Menu textures
     public final String defaultBanner = "defaultBanner.png";
     public final String hFlatLogo = "hFlatLogo.png";
+
+    public class AssetLocation {
+        public String address;
+
+        public AssetLocation(String address){
+            this.address = notes.concat(address);
+            assetsList.add(this);
+        }
+    }
 
     // Note textures
     public final String notes = "notes/";
@@ -86,23 +99,8 @@ public class AssetsManager {
 
     public void queueAdd() {
         manager.load(defaultBanner, Texture.class);
-        manager.load(holdEnd, Texture.class);
-        manager.load(holdSegment, Texture.class);
-        manager.load(jackEnd, Texture.class);
-        manager.load(jackSegment, Texture.class);
-        manager.load(mine, Texture.class);
-        manager.load(fourthNote, Texture.class);
-        manager.load(eighthNote, Texture.class);
-        manager.load(twelfthNote, Texture.class);
-        manager.load(sixteenthNote, Texture.class);
-        manager.load(twentyFourthNote, Texture.class);
-        manager.load(thirtySecondNote, Texture.class);
-        manager.load(fortyEighthNote, Texture.class);
-        manager.load(sixtyFourthNote, Texture.class);
-        manager.load(oneHundredTwentyEighthNote, Texture.class);
-        manager.load(oneHundredNinetySecondNote, Texture.class);
-        manager.load(targetBeat, Texture.class);
-        manager.load(targetPressed, Texture.class);
-        manager.load(targetUnpressed, Texture.class);
+        assetsList.forEach((AssetLocation asset) -> manager.load(asset.address, Texture.class));
+        manager.load(hFlatLogo, Texture.class);
+        buildFonts();
     }
 }
