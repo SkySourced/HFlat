@@ -1,13 +1,16 @@
 package com.hflat.game.chart;
 
+import com.badlogic.gdx.Gdx;
+import com.hflat.game.HFlatGame;
+import com.hflat.game.HFlatGame.GameState;
+
 import java.io.File;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Objects;
 
-import com.badlogic.gdx.Gdx;
-import com.hflat.game.HFlatGame;
-import com.hflat.game.HFlatGame.GameState;
+import static com.hflat.game.HFlatGame.currentChart;
+import static com.hflat.game.HFlatGame.currentSong;
 
 /**
  * You're not going to believe this, it manages songs/charts
@@ -47,6 +50,8 @@ public class SongManager {
         }
         game.setState(GameState.SONG_SELECT);
         currentTask = "";
+        currentSong = songs.getFirst();
+        currentChart = currentSong.getChart(0);
     }
 
     public String getCurrentTask() {

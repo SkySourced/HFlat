@@ -3,14 +3,9 @@ package com.hflat.game;
 import com.badlogic.gdx.*;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.OrthographicCamera;
-import com.badlogic.gdx.graphics.Pixmap;
-import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.GlyphLayout;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
-import com.badlogic.gdx.graphics.g2d.TextureRegion;
-import com.badlogic.gdx.graphics.g2d.freetype.FreeTypeFontGenerator;
-import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.utils.ScreenUtils;
 import com.badlogic.gdx.utils.viewport.FitViewport;
 import com.badlogic.gdx.utils.viewport.Viewport;
@@ -20,11 +15,8 @@ import com.hflat.game.chart.Song;
 import com.hflat.game.chart.SongManager;
 import com.hflat.game.screens.*;
 import com.hflat.game.ui.AssetsManager;
-import space.earlygrey.shapedrawer.ShapeDrawer;
 
 import java.io.File;
-import java.text.DecimalFormat;
-import java.text.NumberFormat;
 
 /**
  * The main game class
@@ -36,9 +28,9 @@ public class HFlatGame extends Game implements ApplicationListener {
     private OrthographicCamera camera;
     public SongManager songs;
     public static GameOptions options;
-    private SpriteBatch batch;
     public static AssetsManager assMan = new AssetsManager();
     public static final float NOTE_SPACING = 1.0f;
+    public static final long menuActionDelay = (long) (Math.pow(10, 9) / 8);
 
     private Screen loadingScreen;
     private Screen songSelectScreen;
@@ -46,19 +38,9 @@ public class HFlatGame extends Game implements ApplicationListener {
     private Screen optionsScreen;
     private Screen playingScreen;
     private Screen resultsScreen;
-    private Texture logo;
-    private ShapeDrawer drawer;
-    private int selectedSongIndex = 0;
-    private int selectedDifficultyIndex = 0;
-    private int optionSelectionIndex = 6;
-    private float escapeHeldDuration;
-    private float dontGiveUpTime = 0f;
-    private long lastMenuAction;
     private Viewport viewport;
-    NumberFormat formatter = new DecimalFormat("0.00"); // This should be renamed, but I can't think of anything good6-
-    private long loadingStartTime;
-    private static Song currentSong;
-    private static Chart currentChart;
+    public static Song currentSong;
+    public static Chart currentChart;
 
     /**
      * The game's state
@@ -89,23 +71,6 @@ public class HFlatGame extends Game implements ApplicationListener {
 
         assMan.queueAdd();
         assMan.manager.finishLoading();
-
-        Pixmap pixmap = new Pixmap(1, 1, Pixmap.Format.RGBA8888);
-        pixmap.setColor(Color.WHITE);
-        pixmap.drawPixel(0, 0);
-        Texture texture = new Texture(pixmap);
-        pixmap.dispose();
-        TextureRegion region = new TextureRegion(texture, 0, 0, 1, 1);
-
-        batch = new SpriteBatch();
-
-        drawer = new ShapeDrawer(batch, region);
-
-        logo = new Texture("hFlatLogo.png");
-
-
-
-        //buildFonts();
     }
 
 
@@ -116,17 +81,14 @@ public class HFlatGame extends Game implements ApplicationListener {
      */
     @Override
     public void render() {
-        if (songs.getSong(selectedSongIndex).getBackgroundColour() != null) {
-            ScreenUtils.clear(songs.getSong(selectedSongIndex).getBackgroundColour());
+        if (currentSong.getBackgroundColour() != null) {
+            ScreenUtils.clear(currentSong.getBackgroundColour());
         } else {
             ScreenUtils.clear(Color.WHITE);
         }
 
         camera.update();
 
-        batch.setProjectionMatrix(camera.combined);
-
-        batch.begin();
         switch (state) {
             case LOADING:
                 if (loadingScreen == null) loadingScreen = new LoadingScreen(this);
@@ -143,183 +105,25 @@ public class HFlatGame extends Game implements ApplicationListener {
                 if (songLoadingScreen == null) songLoadingScreen = new SongLoadingScreen(this);
                 this.setScreen(songLoadingScreen);
 
-                // make background darkened version of difficultyColour
-                long loadingTime = 3000;
-                float progress = (System.nanoTime() / 1000000f - this.loadingStartTime) / (float) loadingTime;
 
-                drawer.filledRectangle(0, 0, 400, 700, new Color(currentChart.getDifficultyColour().r, currentChart.getDifficultyColour().g, currentChart.getDifficultyColour().b, 0.5f));
-                drawer.filledRectangle(0, 300, 400, 100, Color.DARK_GRAY);
-                drawer.filledRectangle(0, 300, progress * 400, 100, Color.GRAY);
-
-                drawCentredText(batch, serifFont20, currentSong.getName(), 695);
-                drawCentredText(batch, pixelFont20, "press  enter  for  options", 360);
-
-                if (Gdx.input.isKeyJustPressed(Input.Keys.ENTER)) {
-                    setState(GameState.OPTIONS);
-                }
-                if (Gdx.input.isKeyJustPressed(Input.Keys.ESCAPE)) {
-                    setState(GameState.SONG_SELECT);
-                }
-                if (progress >= 1) {
-                    setState(GameState.PLAYING);
-                }
                 break;
             case OPTIONS:
                 if (optionsScreen == null) optionsScreen = new OptionsScreen(this);
                 this.setScreen(optionsScreen);
 
-                drawCentredText(batch, pixelFont40, "Options", 690);
-                drawer.filledRectangle(25, 25, 350, 625, new Color(0.7f, 0.7f, 0.7f, 0.7f));
-                serifFont20.draw(batch, "Note speed", 40, 625);
-                serifFont20.draw(batch, "Note size", 40, 575);
-                serifFont20.draw(batch, "Show judgements", 40, 525);
-                serifFont20.draw(batch, "Show combo", 40, 475);
-                serifFont20.draw(batch, "Background filter", 40, 425);
-                serifFont20.draw(batch, "Music speed", 40, 375);
-                serifFont20.draw(batch, "Visual offset", 40, 325);
 
-                int optionWidth;
-                GlyphLayout layout = new GlyphLayout();
-
-                switch (optionSelectionIndex) {
-                    case 6:
-                        layout.setText(serifFont20, formatter.format(options.getNoteSpeed())+"x");
-                        break;
-                    case 5:
-                        layout.setText(serifFont20, (int) (options.getMini() * 100) + "%");
-                        break;
-                    case 4:
-                        layout.setText(serifFont20, options.isShowJudgements() ? "On" : "Off");
-                        break;
-                    case 3:
-                        layout.setText(serifFont20, options.isShowCombo() ? "On" : "Off");
-                        break;
-                    case 2:
-                        layout.setText(serifFont20, options.getBackgroundFilter().toString());
-                        break;
-                    case 1:
-                        layout.setText(serifFont20, formatter.format(options.getMusicRate())+"x");
-                        break;
-                    case 0:
-                        layout.setText(serifFont20, options.getVisualOffset() + "ms");
-                        break;
-                    case -1:
-                        layout.setText(pixelFont40, "play");
-                    default:
-                        break;
-                }
-
-                optionWidth = (int) layout.width;
-
-                if (optionSelectionIndex >= 0) {
-                    drawer.rectangle(360 - optionWidth - 7, 300 + 50 * optionSelectionIndex, optionWidth + 15, 30, Color.BLACK, 2);
-                } else {
-                    drawer.rectangle(200 - ((float) optionWidth / 2) - 20, 30, optionWidth + 40, 60, Color.BLACK, 2);
-                }
-
-                drawRightAlignedText(batch, serifFont20, formatter.format(options.getNoteSpeed())+"x", 360, 625);
-                drawRightAlignedText(batch, serifFont20, (int) (options.getMini() * 100) + "%", 360, 575);
-                drawRightAlignedText(batch, serifFont20, options.isShowJudgements() ? "On" : "Off", 360, 525);
-                drawRightAlignedText(batch, serifFont20, options.isShowCombo() ? "On" : "Off", 360, 475);
-                drawRightAlignedText(batch, serifFont20, options.getBackgroundFilter().toString(), 360, 425);
-                drawRightAlignedText(batch, serifFont20, formatter.format(options.getMusicRate())+"x", 360, 375);
-                drawRightAlignedText(batch, serifFont20, options.getVisualOffset() + "ms", 360, 325);
-
-                drawCentredText(batch, pixelFont40, "play", 75);
-
-                if (Gdx.input.isKeyPressed(Input.Keys.UP) && lastMenuAction + menuActionDelay < System.nanoTime()){
-                    optionSelectionIndex++;
-                    if (optionSelectionIndex > 6) optionSelectionIndex = -1;
-                    lastMenuAction = System.nanoTime();
-                } else if (Gdx.input.isKeyPressed(Input.Keys.DOWN) && lastMenuAction + menuActionDelay < System.nanoTime()){
-                    optionSelectionIndex--;
-                    if (optionSelectionIndex < -1) optionSelectionIndex = 6;
-                    lastMenuAction = System.nanoTime();
-                }
-
-                if (Gdx.input.isKeyPressed(Input.Keys.LEFT) && lastMenuAction + menuActionDelay < System.nanoTime()){
-                    lastMenuAction = System.nanoTime();
-                    switch (optionSelectionIndex) {
-                        case 6 -> {
-                            options.setNoteSpeed(options.getNoteSpeed() - 0.05f);
-                            if (options.getNoteSpeed() < 0.05f) options.setNoteSpeed(0.05f);
-                        }
-                        case 5 -> {
-                            options.setMini(options.getMini() - 0.01f);
-                            if (options.getMini() < 0.01f) options.setMini(0.01f);
-                        }
-                        case 4 -> options.setShowJudgements(!options.isShowJudgements());
-                        case 3 -> options.setShowCombo(!options.isShowCombo());
-                        case 2 -> options.setBackgroundFilter(options.getBackgroundFilter().previous());
-                        case 1 -> {
-                            options.setMusicRate(options.getMusicRate() - 0.05f);
-                            if (options.getMusicRate() < 0.05f) options.setMusicRate(0.05f);
-                        }
-                        case 0 -> options.setVisualOffset(options.getVisualOffset() - 1);
-                    }
-                } else if (Gdx.input.isKeyPressed(Input.Keys.RIGHT) && lastMenuAction + menuActionDelay < System.nanoTime()){
-                    switch (optionSelectionIndex) {
-                        case 6 -> {
-                            options.setNoteSpeed(options.getNoteSpeed() + 0.05f);
-                            if (options.getNoteSpeed() > 10.0f) options.setNoteSpeed(10.0f);
-                        }
-                        case 5 -> {
-                            options.setMini(options.getMini() + 0.01f);
-                            if (options.getMini() > 1f) options.setMini(1f);
-                        }
-                        case 4 -> options.setShowJudgements(!options.isShowJudgements());
-                        case 3 -> options.setShowCombo(!options.isShowCombo());
-                        case 2 -> options.setBackgroundFilter(options.getBackgroundFilter().next());
-                        case 1 -> {
-                            options.setMusicRate(options.getMusicRate() + 0.05f);
-                            if (options.getMusicRate() > 5f) options.setMusicRate(5f);
-                        }
-                        case 0 -> {
-                            options.setVisualOffset(options.getVisualOffset() + 1);
-                            if (options.getVisualOffset() > 1000) options.setVisualOffset(1000);
-                        }
-                    }
-                    lastMenuAction = System.nanoTime();
-                }
-                if (Gdx.input.isKeyJustPressed(Input.Keys.ENTER) && lastMenuAction + menuActionDelay > System.nanoTime()){
-                    lastMenuAction = System.nanoTime();
-                    if (optionSelectionIndex == -1){
-                        setState(GameState.PLAYING);
-                    }
-                }
-                if (Gdx.input.isKeyJustPressed(Input.Keys.ESCAPE)){
-                    setState(GameState.SONG_SELECT);
-                }
                 break;
             case PLAYING:
                 if (playingScreen == null) playingScreen = new PlayingScreen(this);
                 this.setScreen(playingScreen);
 
-                if (Gdx.input.isKeyPressed(Input.Keys.ESCAPE)){
-                    dontGiveUpTime = 0;
-                    escapeHeldDuration += Gdx.graphics.getDeltaTime();
-                    drawCentredText(batch, serifFont12, "Hold ESC to quit", 150);
-                    // seconds
-                    int escapeHeldThreshold = 2;
-                    if (escapeHeldDuration > escapeHeldThreshold){
-                        setState(GameState.SONG_SELECT);
-                    }
-                } else {
-                    if (escapeHeldDuration > 0) dontGiveUpTime = 1.5f;
-                    escapeHeldDuration = 0;
-                }
 
-                if (dontGiveUpTime > 0){
-                    dontGiveUpTime -= Gdx.graphics.getDeltaTime();
-                    drawCentredText(batch, serifFont12, "Don't give up!", 150);
-                }
                 break;
             case RESULTS:
                 if (resultsScreen == null) resultsScreen = new ResultsScreen(this);
                 this.setScreen(resultsScreen);
                 break;
         }
-        batch.end();
     }
 
     /**
@@ -328,13 +132,7 @@ public class HFlatGame extends Game implements ApplicationListener {
      */
     @Override
     public void dispose() {
-        batch.dispose();
-        logo.dispose();
-        pixelFont20.dispose();
-        pixelFont12.dispose();
-        pixelFont40.dispose();
-        serifFont12.dispose();
-        serifFont20.dispose();
+
     }
 
     @Override
@@ -399,6 +197,14 @@ public class HFlatGame extends Game implements ApplicationListener {
      */
     public SongManager getSongManager() {
         return songs;
+    }
+
+    /**
+     * Get the camera
+     * @return The camera
+     */
+    public OrthographicCamera getCamera() {
+        return camera;
     }
 
     public static class Ref {
