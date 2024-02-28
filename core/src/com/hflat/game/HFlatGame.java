@@ -1,6 +1,9 @@
 package com.hflat.game;
 
-import com.badlogic.gdx.*;
+import com.badlogic.gdx.Application;
+import com.badlogic.gdx.Game;
+import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.Pixmap;
@@ -23,7 +26,7 @@ import java.io.File;
 
 /** The main game class. Contains the game's state & references to global utilities. Imports & initialises all resources
  */
-public class HFlatGame extends Game implements ApplicationListener {
+public class HFlatGame extends Game {
     private GameState state = GameState.LOADING;
     private OrthographicCamera camera;
     public SongManager songs;
@@ -79,8 +82,6 @@ public class HFlatGame extends Game implements ApplicationListener {
     /**Called every frame, creates the various screen classes and renders them*/
     @Override
     public void render() {
-        super.render();
-
         if (currentSong.getBackgroundColour() != null) {
             ScreenUtils.clear(currentSong.getBackgroundColour());
         } else {
@@ -99,31 +100,29 @@ public class HFlatGame extends Game implements ApplicationListener {
                 if (songSelectScreen == null) songSelectScreen = new SongSelectScreen(this);
                 this.setScreen(songSelectScreen);
 
-
                 break;
             case SONG_LOADING:
                 if (songLoadingScreen == null) songLoadingScreen = new SongLoadingScreen(this);
                 this.setScreen(songLoadingScreen);
-
 
                 break;
             case OPTIONS:
                 if (optionsScreen == null) optionsScreen = new OptionsScreen(this);
                 this.setScreen(optionsScreen);
 
-
                 break;
             case PLAYING:
                 if (playingScreen == null) playingScreen = new PlayingScreen(this);
                 this.setScreen(playingScreen);
 
-
                 break;
             case RESULTS:
                 if (resultsScreen == null) resultsScreen = new ResultsScreen(this);
                 this.setScreen(resultsScreen);
+
                 break;
         }
+        super.render();
     }
 
     /** Called when the application is destroyed, and destroys all resources */

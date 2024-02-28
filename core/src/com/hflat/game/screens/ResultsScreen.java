@@ -6,9 +6,10 @@ import com.hflat.game.HFlatGame;
 
 public class ResultsScreen implements Screen {
     HFlatGame parent;
-    SpriteBatch resultsBatch = new SpriteBatch();
+    SpriteBatch resultsBatch;
     public ResultsScreen(HFlatGame hFlatGame) {
         this.parent = hFlatGame;
+        resultsBatch = new SpriteBatch();
     }
     @Override
     public void show() {

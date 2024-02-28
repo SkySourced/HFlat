@@ -17,15 +17,17 @@ import static com.hflat.game.HFlatGame.*;
 public class OptionsScreen implements Screen {
     // Drawing utils
     HFlatGame parent;
-    SpriteBatch optionsBatch = new SpriteBatch();
-    ShapeDrawer drawer = new ShapeDrawer(optionsBatch, textureRegion);
-    NumberFormat formatter = new DecimalFormat("0.00"); // This should be renamed, but I can't think of anything good6-
+    SpriteBatch optionsBatch;
+    ShapeDrawer drawer;
+    NumberFormat formatter = new DecimalFormat("0.00"); // This should be renamed, but I can't think of anything good
     // Counters
     int optionSelectionIndex = 0;
     long lastMenuAction = 0;
 
     public OptionsScreen(HFlatGame hFlatGame) {
         this.parent = hFlatGame;
+        optionsBatch = new SpriteBatch();
+        drawer = new ShapeDrawer(optionsBatch, textureRegion);
     }
     @Override
     public void show() {
@@ -34,6 +36,7 @@ public class OptionsScreen implements Screen {
 
     @Override
     public void render(float delta) {
+        parent.getCamera().update();
         optionsBatch.setProjectionMatrix(parent.getCamera().combined);
 
         optionsBatch.begin();

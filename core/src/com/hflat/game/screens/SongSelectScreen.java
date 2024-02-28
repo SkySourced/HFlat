@@ -14,8 +14,8 @@ import static com.hflat.game.HFlatGame.*;
 public class SongSelectScreen implements Screen {
     // Drawing utils
     HFlatGame parent;
-    SpriteBatch songSelectBatch = new SpriteBatch();
-    private final ShapeDrawer drawer = new ShapeDrawer(songSelectBatch, textureRegion);
+    SpriteBatch songSelectBatch;
+    private final ShapeDrawer drawer;
     // Counters
     int selectedSongIndex = 0;
     int selectedDifficultyIndex = 0;
@@ -27,6 +27,8 @@ public class SongSelectScreen implements Screen {
 
     public SongSelectScreen(HFlatGame hFlatGame) {
         this.parent = hFlatGame;
+        songSelectBatch = new SpriteBatch();
+        drawer = new ShapeDrawer(songSelectBatch, textureRegion);
     }
 
     @Override

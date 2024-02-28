@@ -12,7 +12,7 @@ import static com.hflat.game.HFlatGame.drawCentredText;
 public class PlayingScreen implements Screen {
     // Drawing utils
     HFlatGame parent;
-    SpriteBatch playingBatch = new SpriteBatch();
+    SpriteBatch playingBatch;
     // Counters
     private static float dontGiveUpTime = 0f;
     float escapeHeldDuration;
@@ -21,6 +21,7 @@ public class PlayingScreen implements Screen {
 
     public PlayingScreen(HFlatGame hFlatGame) {
         this.parent = hFlatGame;
+        playingBatch = new SpriteBatch();
     }
     @Override
     public void show() {

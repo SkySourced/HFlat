@@ -11,8 +11,8 @@ import space.earlygrey.shapedrawer.ShapeDrawer;
 import static com.hflat.game.HFlatGame.*;
 
 public class SongLoadingScreen implements Screen {
-    SpriteBatch songLoadingBatch = new SpriteBatch();
-    ShapeDrawer drawer = new ShapeDrawer(songLoadingBatch, textureRegion);
+    SpriteBatch songLoadingBatch;
+    ShapeDrawer drawer;
 
     HFlatGame parent;
     private final float loadingStartTime;
@@ -20,6 +20,8 @@ public class SongLoadingScreen implements Screen {
     public SongLoadingScreen(HFlatGame hFlatGame) {
         this.parent = hFlatGame;
         this.loadingStartTime = System.nanoTime();
+        songLoadingBatch = new SpriteBatch();
+        drawer = new ShapeDrawer(songLoadingBatch, textureRegion);
     }
     @Override
     public void show() {
