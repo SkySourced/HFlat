@@ -69,6 +69,7 @@ public class SongSelectScreen implements Screen {
 
         if (Gdx.input.isKeyJustPressed(Input.Keys.ENTER)) {
             parent.setState(HFlatGame.GameState.SONG_LOADING);
+            parent.loadingStartTime = System.nanoTime();
         }
 
         // Draw album art

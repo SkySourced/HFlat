@@ -35,6 +35,7 @@ public class HFlatGame extends Game {
     public static AssetsManager assMan = new AssetsManager();
     public static final float NOTE_SPACING = 1.0f;
     public static final long menuActionDelay = (long) (Math.pow(10, 9) / 8);
+    public long loadingStartTime;
 
     private Screen loadingScreen;
     private Screen songSelectScreen;

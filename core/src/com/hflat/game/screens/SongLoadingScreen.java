@@ -15,11 +15,9 @@ public class SongLoadingScreen implements Screen {
     ShapeDrawer drawer;
 
     HFlatGame parent;
-    private final float loadingStartTime;
 
     public SongLoadingScreen(HFlatGame hFlatGame) {
         this.parent = hFlatGame;
-        this.loadingStartTime = System.nanoTime();
         songLoadingBatch = new SpriteBatch();
         drawer = new ShapeDrawer(songLoadingBatch, textureRegion);
     }
@@ -33,7 +31,7 @@ public class SongLoadingScreen implements Screen {
         songLoadingBatch.setProjectionMatrix(parent.getCamera().combined);
 
         long loadingTime = 3000;
-        float progress = (System.nanoTime() / 1000000f - this.loadingStartTime) / (float) loadingTime;
+        float progress = (System.nanoTime() - parent.loadingStartTime) / (float) (loadingTime * Math.pow(10, 6));
 
         songLoadingBatch.begin();
 
