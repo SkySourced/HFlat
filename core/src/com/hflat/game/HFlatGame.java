@@ -3,9 +3,12 @@ package com.hflat.game;
 import com.badlogic.gdx.*;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.OrthographicCamera;
+import com.badlogic.gdx.graphics.Pixmap;
+import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.GlyphLayout;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.utils.ScreenUtils;
 import com.badlogic.gdx.utils.viewport.FitViewport;
 import com.badlogic.gdx.utils.viewport.Viewport;
@@ -27,6 +30,7 @@ public class HFlatGame extends Game implements ApplicationListener {
     private GameState state = GameState.LOADING;
     private OrthographicCamera camera;
     public SongManager songs;
+    public static TextureRegion textureRegion;
     public static GameOptions options;
     public static AssetsManager assMan = new AssetsManager();
     public static final float NOTE_SPACING = 1.0f;
@@ -69,6 +73,11 @@ public class HFlatGame extends Game implements ApplicationListener {
         songs = new SongManager(new File("charts"), this);
         options = new GameOptions();
 
+        Pixmap pixmap = new Pixmap(1, 1, Pixmap.Format.RGBA8888);
+        pixmap.setColor(Color.WHITE);
+        pixmap.fill();
+        textureRegion = new TextureRegion(new Texture(pixmap));
+
         assMan.queueAdd();
         assMan.manager.finishLoading();
     }
@@ -81,6 +90,8 @@ public class HFlatGame extends Game implements ApplicationListener {
      */
     @Override
     public void render() {
+        super.render();
+
         if (currentSong.getBackgroundColour() != null) {
             ScreenUtils.clear(currentSong.getBackgroundColour());
         } else {

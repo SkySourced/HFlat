@@ -18,7 +18,7 @@ public class OptionsScreen implements Screen {
     // Drawing utils
     HFlatGame parent;
     SpriteBatch optionsBatch = new SpriteBatch();
-    ShapeDrawer drawer = new ShapeDrawer(optionsBatch);
+    ShapeDrawer drawer = new ShapeDrawer(optionsBatch, textureRegion);
     NumberFormat formatter = new DecimalFormat("0.00"); // This should be renamed, but I can't think of anything good6-
     // Counters
     int optionSelectionIndex = 0;

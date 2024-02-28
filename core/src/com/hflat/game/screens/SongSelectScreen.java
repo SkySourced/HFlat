@@ -15,7 +15,7 @@ public class SongSelectScreen implements Screen {
     // Drawing utils
     HFlatGame parent;
     SpriteBatch songSelectBatch = new SpriteBatch();
-    private final ShapeDrawer drawer = new ShapeDrawer(songSelectBatch);
+    private final ShapeDrawer drawer = new ShapeDrawer(songSelectBatch, textureRegion);
     // Counters
     int selectedSongIndex = 0;
     int selectedDifficultyIndex = 0;

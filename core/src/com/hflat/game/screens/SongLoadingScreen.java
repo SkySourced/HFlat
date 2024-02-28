@@ -12,7 +12,7 @@ import static com.hflat.game.HFlatGame.*;
 
 public class SongLoadingScreen implements Screen {
     SpriteBatch songLoadingBatch = new SpriteBatch();
-    ShapeDrawer drawer = new ShapeDrawer(songLoadingBatch);
+    ShapeDrawer drawer = new ShapeDrawer(songLoadingBatch, textureRegion);
 
     HFlatGame parent;
     private final float loadingStartTime;
