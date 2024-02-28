@@ -21,10 +21,7 @@ import com.hflat.game.ui.AssetsManager;
 
 import java.io.File;
 
-/**
- * The main game class
- * Contains the game's state and main loop
- * Imports & initialises all resources
+/** The main game class. Contains the game's state & references to global utilities. Imports & initialises all resources
  */
 public class HFlatGame extends Game implements ApplicationListener {
     private GameState state = GameState.LOADING;
@@ -46,9 +43,7 @@ public class HFlatGame extends Game implements ApplicationListener {
     public static Song currentSong;
     public static Chart currentChart;
 
-    /**
-     * The game's state
-     */
+    /**The game's state */
     public enum GameState {
         LOADING,
         SONG_SELECT,
@@ -58,10 +53,7 @@ public class HFlatGame extends Game implements ApplicationListener {
         RESULTS
     }
 
-    /**
-     * Called when the application is created
-     * Initialises all resources
-     */
+    /** Called when the application is created, initialises all resources */
     @Override
     public void create() {
         Gdx.app.setLogLevel(Application.LOG_DEBUG);
@@ -84,10 +76,7 @@ public class HFlatGame extends Game implements ApplicationListener {
 
 
 
-    /**
-     * Called every frame
-     * Renders the game
-     */
+    /**Called every frame, creates the various screen classes and renders them*/
     @Override
     public void render() {
         super.render();
@@ -137,10 +126,7 @@ public class HFlatGame extends Game implements ApplicationListener {
         }
     }
 
-    /**
-     * Called when the application is destroyed
-     * Destroys all resources
-     */
+    /** Called when the application is destroyed, and destroys all resources */
     @Override
     public void dispose() {
 

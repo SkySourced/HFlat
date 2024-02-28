@@ -13,8 +13,8 @@ import static com.hflat.game.HFlatGame.currentChart;
 import static com.hflat.game.HFlatGame.currentSong;
 
 /**
- * You're not going to believe this, it manages songs/charts
- * When instantiated it searches its directory for songs
+ * You're not going to believe this, it manages songs/charts.
+ * When instantiated it searches its directory for songs.
  * It will then parse songs & charts and start the game from there
  */
 public class SongManager {
