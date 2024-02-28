@@ -4,19 +4,31 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.graphics.Color;
+import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.hflat.game.HFlatGame;
-import com.hflat.game.chart.Chart;
-import com.hflat.game.chart.Song;
+import space.earlygrey.shapedrawer.ShapeDrawer;
+
+import static com.hflat.game.HFlatGame.*;
 
 public class SongSelectScreen implements Screen {
+    // Drawing utils
     HFlatGame parent;
-    SpriteBatch songSelectBatch = new SpriteBatch();
+    SpriteBatch songSelectBatch;
+    private final ShapeDrawer drawer;
+    // Counters
     int selectedSongIndex = 0;
     int selectedDifficultyIndex = 0;
     long lastMenuAction;
+    // Fonts
+    BitmapFont pixelFont40 = HFlatGame.assMan.pixelFont40;
+    BitmapFont serifFont12 = HFlatGame.assMan.serifFont12;
+    BitmapFont serifFont20 = HFlatGame.assMan.serifFont20;
+
     public SongSelectScreen(HFlatGame hFlatGame) {
         this.parent = hFlatGame;
+        songSelectBatch = new SpriteBatch();
+        drawer = new ShapeDrawer(songSelectBatch, textureRegion);
     }
 
     @Override
@@ -26,10 +38,12 @@ public class SongSelectScreen implements Screen {
 
     @Override
     public void render(float delta) {
-        long menuActionDelay = (long) (Math.pow(10, 9) / 8);
-        
-        Song currentSong = parent.getSongManager().getSong(selectedSongIndex);
-        Chart currentChart = currentSong.getChart(selectedDifficultyIndex);
+        songSelectBatch.setProjectionMatrix(parent.getCamera().combined);
+
+        songSelectBatch.begin();
+
+        currentSong = parent.getSongManager().getSong(selectedSongIndex);
+        currentChart = currentSong.getChart(selectedDifficultyIndex);
 
         if (Gdx.input.isKeyPressed(Input.Keys.LEFT) && lastMenuAction + menuActionDelay < System.nanoTime()) {
             selectedSongIndex--;
@@ -54,14 +68,13 @@ public class SongSelectScreen implements Screen {
         }
 
         if (Gdx.input.isKeyJustPressed(Input.Keys.ENTER)) {
-            loadingStartTime = System.nanoTime() / 1000000;
             parent.setState(HFlatGame.GameState.SONG_LOADING);
         }
 
         // Draw album art
         songSelectBatch.draw(currentSong.getTexture(), 25, 300, 350, 350);
 
-        HFlatGame.drawCentredText(songSelectBatch, pixelFont40, "Song Select", 690);
+        HFlatGame.drawCentredText(songSelectBatch, HFlatGame.assMan.pixelFont40, "Song Select", 690);
 
         // Draw difficulty backgrounds
         for (int i = 0; i < 6; i++) {
@@ -89,6 +102,8 @@ public class SongSelectScreen implements Screen {
         serifFont20.draw(songSelectBatch, currentSong.getName(), 30, 230);
         serifFont12.draw(songSelectBatch, currentSong.getSubtitle(), 30, 210);
         serifFont20.draw(songSelectBatch, currentSong.getArtist(), 30, 190);
+
+        songSelectBatch.end();
     }
 
     @Override
@@ -113,6 +128,6 @@ public class SongSelectScreen implements Screen {
 
     @Override
     public void dispose() {
-
+        songSelectBatch.dispose();
     }
 }

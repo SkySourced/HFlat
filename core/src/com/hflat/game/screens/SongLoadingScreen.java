@@ -1,15 +1,27 @@
 package com.hflat.game.screens;
 
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.Input;
 import com.badlogic.gdx.Screen;
-import com.badlogic.gdx.graphics.GL20;
+import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.hflat.game.HFlatGame;
+import space.earlygrey.shapedrawer.ShapeDrawer;
+
+import static com.hflat.game.HFlatGame.*;
 
 public class SongLoadingScreen implements Screen {
+    SpriteBatch songLoadingBatch;
+    ShapeDrawer drawer;
+
     HFlatGame parent;
+    private final float loadingStartTime;
+
     public SongLoadingScreen(HFlatGame hFlatGame) {
         this.parent = hFlatGame;
+        this.loadingStartTime = System.nanoTime();
+        songLoadingBatch = new SpriteBatch();
+        drawer = new ShapeDrawer(songLoadingBatch, textureRegion);
     }
     @Override
     public void show() {
@@ -18,7 +30,30 @@ public class SongLoadingScreen implements Screen {
 
     @Override
     public void render(float delta) {
+        songLoadingBatch.setProjectionMatrix(parent.getCamera().combined);
 
+        long loadingTime = 3000;
+        float progress = (System.nanoTime() / 1000000f - this.loadingStartTime) / (float) loadingTime;
+
+        songLoadingBatch.begin();
+
+        drawer.filledRectangle(0, 0, 400, 700, new Color(currentChart.getDifficultyColour().r, currentChart.getDifficultyColour().g, currentChart.getDifficultyColour().b, 0.5f));
+        drawer.filledRectangle(0, 300, 400, 100, Color.DARK_GRAY);
+        drawer.filledRectangle(0, 300, progress * 400, 100, Color.GRAY);
+
+        drawCentredText(songLoadingBatch, assMan.serifFont20, currentSong.getName(), 695);
+        drawCentredText(songLoadingBatch, assMan.pixelFont20, "press  enter  for  options", 360);
+
+        if (Gdx.input.isKeyJustPressed(Input.Keys.ENTER)) {
+            parent.setState(HFlatGame.GameState.OPTIONS);
+        }
+        if (Gdx.input.isKeyJustPressed(Input.Keys.ESCAPE)) {
+            parent.setState(HFlatGame.GameState.SONG_SELECT);
+        }
+        if (progress >= 1) {
+            parent.setState(HFlatGame.GameState.PLAYING);
+        }
+        songLoadingBatch.end();
     }
 
     @Override
@@ -43,5 +78,6 @@ public class SongLoadingScreen implements Screen {
 
     @Override
     public void dispose() {
+        songLoadingBatch.dispose();
     }
 }

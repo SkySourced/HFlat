@@ -1,17 +1,20 @@
 package com.hflat.game.chart;
 
+import com.badlogic.gdx.Gdx;
+import com.hflat.game.HFlatGame;
+import com.hflat.game.HFlatGame.GameState;
+
 import java.io.File;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Objects;
 
-import com.badlogic.gdx.Gdx;
-import com.hflat.game.HFlatGame;
-import com.hflat.game.HFlatGame.GameState;
+import static com.hflat.game.HFlatGame.currentChart;
+import static com.hflat.game.HFlatGame.currentSong;
 
 /**
- * You're not going to believe this, it manages songs/charts
- * When instantiated it searches its directory for songs
+ * You're not going to believe this, it manages songs/charts.
+ * When instantiated it searches its directory for songs.
  * It will then parse songs & charts and start the game from there
  */
 public class SongManager {
@@ -47,6 +50,8 @@ public class SongManager {
         }
         game.setState(GameState.SONG_SELECT);
         currentTask = "";
+        currentSong = songs.getFirst();
+        currentChart = currentSong.getChart(0);
     }
 
     public String getCurrentTask() {
