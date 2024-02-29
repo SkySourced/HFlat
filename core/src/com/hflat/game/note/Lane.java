@@ -1,10 +1,15 @@
 package com.hflat.game.note;
 
 public enum Lane {
-    LEFT,
-    DOWN,
-    UP,
-    RIGHT;
+    LEFT (270),
+    DOWN (180),
+    UP (0),
+    RIGHT (90);
+
+    final int rotation;
+    Lane (int rotation) {
+        this.rotation = rotation;
+    }
 
     public static Lane fromInt(int i) {
         return switch (i) {
@@ -14,5 +19,18 @@ public enum Lane {
             case 3 -> RIGHT;
             default -> null;
         };
+    }
+
+    public int toInt() {
+        return switch (this) {
+            case LEFT -> 0;
+            case DOWN -> 1;
+            case UP -> 2;
+            case RIGHT -> 3;
+        };
+    }
+
+    public int getRotation() {
+        return rotation;
     }
 }

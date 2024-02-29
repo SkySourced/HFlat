@@ -50,7 +50,7 @@ public class SongManager {
         }
         game.setState(GameState.SONG_SELECT);
         currentTask = "";
-        currentSong = songs.getFirst();
+        currentSong = songs.get(0);
         currentChart = currentSong.getChart(0);
     }
 

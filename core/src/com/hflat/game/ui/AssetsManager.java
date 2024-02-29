@@ -6,8 +6,6 @@ import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.freetype.FreeTypeFontGenerator;
-import com.badlogic.gdx.graphics.g2d.freetype.FreetypeFontLoader;
-import com.badlogic.gdx.graphics.g2d.freetype.FreetypeFontLoader.FreeTypeFontLoaderParameter;
 
 import java.util.ArrayList;
 
@@ -20,7 +18,7 @@ import java.util.ArrayList;
 public class AssetsManager {
     public final AssetManager manager = new AssetManager();
 
-    public ArrayList<AssetLocation> assetsList = new ArrayList<AssetLocation>();
+    public ArrayList<AssetLocation> assetsList = new ArrayList<>();
 
     // Fonts
     public BitmapFont pixelFont20;
@@ -99,8 +97,8 @@ public class AssetsManager {
 
     public void queueAdd() {
         manager.load(defaultBanner, Texture.class);
-        assetsList.forEach((AssetLocation asset) -> manager.load(asset.address, Texture.class));
         manager.load(hFlatLogo, Texture.class);
+        assetsList.forEach((AssetLocation asset) -> manager.load(asset.address, Texture.class));
         buildFonts();
     }
 }

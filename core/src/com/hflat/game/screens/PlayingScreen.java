@@ -3,12 +3,13 @@ package com.hflat.game.screens;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
 import com.badlogic.gdx.Screen;
-import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.math.Affine2;
 import com.badlogic.gdx.math.Vector2;
 import com.hflat.game.HFlatGame;
+import com.hflat.game.note.Lane;
+import com.hflat.game.note.Note;
 
 import static com.hflat.game.HFlatGame.*;
 
@@ -73,8 +74,11 @@ public class PlayingScreen implements Screen {
         // if beat happened within last 0.1 s draw beat arrow
         // else draw normal arrow
 
-        playingBatch.draw(assMan.manager.get(assMan.targetPressed.address), 100, 650, left);
-        playingBatch.draw(assMan.manager.get(assMan.targetPressed.address), 150, 650, up);
+        Note.drawNote(assMan.manager.get(assMan.targetPressed.address), Lane.LEFT, playingBatch);
+        Note.drawNote(assMan.manager.get(assMan.targetPressed.address), Lane.DOWN, playingBatch);
+        Note.drawNote(assMan.manager.get(assMan.targetPressed.address), Lane.UP, playingBatch);
+        Note.drawNote(assMan.manager.get(assMan.targetPressed.address), Lane.RIGHT, playingBatch);
+
 
         playingBatch.end();
     }
