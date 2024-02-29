@@ -7,6 +7,7 @@ import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.hflat.game.HFlatGame;
+import com.hflat.game.HFlatGame.GameState;
 
 import static com.hflat.game.HFlatGame.drawCentredText;
 
@@ -16,6 +17,8 @@ public class LoadingScreen extends ScreenAdapter {
     Texture logo;
     BitmapFont pixelFont20 = HFlatGame.assMan.pixelFont20;
     BitmapFont pixelFont12 = HFlatGame.assMan.pixelFont12;
+
+    public static final GameState state = HFlatGame.GameState.LOADING;
 
     public LoadingScreen(HFlatGame parent) {
         this.parent = parent;

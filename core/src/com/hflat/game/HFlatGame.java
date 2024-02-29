@@ -89,7 +89,10 @@ public class HFlatGame extends Game {
             ScreenUtils.clear(Color.WHITE);
         }
 
+
+
         camera.update();
+
 
         switch (state) {
             case LOADING:

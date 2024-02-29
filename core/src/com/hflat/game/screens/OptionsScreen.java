@@ -8,6 +8,8 @@ import com.badlogic.gdx.graphics.g2d.GlyphLayout;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.hflat.game.HFlatGame;
 import space.earlygrey.shapedrawer.ShapeDrawer;
+import com.hflat.game.HFlatGame.GameState;
+
 
 import java.text.DecimalFormat;
 import java.text.NumberFormat;
@@ -23,6 +25,7 @@ public class OptionsScreen implements Screen {
     // Counters
     int optionSelectionIndex = 0;
     long lastMenuAction = 0;
+    public static final GameState state = GameState.OPTIONS;
 
     public OptionsScreen(HFlatGame hFlatGame) {
         this.parent = hFlatGame;
