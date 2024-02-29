@@ -54,6 +54,8 @@ public class OptionsScreen implements Screen {
         assMan.serifFont20.draw(optionsBatch, "Music speed", 40, 375);
         assMan.serifFont20.draw(optionsBatch, "Visual offset", 40, 325);
 
+        drawCentredText(optionsBatch, assMan.serifFont20, (Math.round(currentSong.getBpm() * options.getNoteSpeed() * options.getMusicRate())) + " eBPM", 120);
+
         int optionWidth;
         GlyphLayout layout = new GlyphLayout();
 
@@ -117,42 +119,45 @@ public class OptionsScreen implements Screen {
             lastMenuAction = System.nanoTime();
             switch (optionSelectionIndex) {
                 case 6 -> {
-                    options.setNoteSpeed(options.getNoteSpeed() - 0.05f);
-                    if (options.getNoteSpeed() < 0.05f) options.setNoteSpeed(0.05f);
+                    options.setNoteSpeed(options.getNoteSpeed() - Ref.STEP_NOTE_SPEED);
+                    if (options.getNoteSpeed() < Ref.MIN_NOTE_SPEED) options.setNoteSpeed(Ref.MIN_NOTE_SPEED);
                 }
                 case 5 -> {
-                    options.setMini(options.getMini() - 0.01f);
-                    if (options.getMini() < 0.01f) options.setMini(0.01f);
+                    options.setMini(options.getMini() - Ref.STEP_MINI);
+                    if (options.getMini() < Ref.MIN_MINI) options.setMini(Ref.MIN_MINI);
                 }
                 case 4 -> options.setShowJudgements(!options.isShowJudgements());
                 case 3 -> options.setShowCombo(!options.isShowCombo());
                 case 2 -> options.setBackgroundFilter(options.getBackgroundFilter().previous());
                 case 1 -> {
-                    options.setMusicRate(options.getMusicRate() - 0.05f);
-                    if (options.getMusicRate() < 0.05f) options.setMusicRate(0.05f);
+                    options.setMusicRate(options.getMusicRate() - Ref.STEP_MUSIC_RATE);
+                    if (options.getMusicRate() < Ref.MIN_MUSIC_RATE) options.setMusicRate(Ref.MIN_MUSIC_RATE);
                 }
-                case 0 -> options.setVisualOffset(options.getVisualOffset() - 1);
+                case 0 -> {
+                    options.setVisualOffset(options.getVisualOffset() - Ref.STEP_VISUAL_OFFSET);
+                    if (options.getVisualOffset() < Ref.MIN_VISUAL_OFFSET) options.setVisualOffset(Ref.MIN_VISUAL_OFFSET);
+                }
             }
         } else if (Gdx.input.isKeyPressed(Input.Keys.RIGHT) && lastMenuAction + menuActionDelay < System.nanoTime()){
             switch (optionSelectionIndex) {
                 case 6 -> {
-                    options.setNoteSpeed(options.getNoteSpeed() + 0.05f);
-                    if (options.getNoteSpeed() > 10.0f) options.setNoteSpeed(10.0f);
+                    options.setNoteSpeed(options.getNoteSpeed() +Ref.STEP_NOTE_SPEED);
+                    if (options.getNoteSpeed() > Ref.MAX_NOTE_SPEED) options.setNoteSpeed(Ref.MAX_NOTE_SPEED);
                 }
                 case 5 -> {
-                    options.setMini(options.getMini() + 0.01f);
-                    if (options.getMini() > 1f) options.setMini(1f);
+                    options.setMini(options.getMini() + Ref.STEP_MINI);
+                    if (options.getMini() > Ref.MAX_MINI) options.setMini(Ref.MAX_MINI);
                 }
                 case 4 -> options.setShowJudgements(!options.isShowJudgements());
                 case 3 -> options.setShowCombo(!options.isShowCombo());
                 case 2 -> options.setBackgroundFilter(options.getBackgroundFilter().next());
                 case 1 -> {
-                    options.setMusicRate(options.getMusicRate() + 0.05f);
-                    if (options.getMusicRate() > 5f) options.setMusicRate(5f);
+                    options.setMusicRate(options.getMusicRate() + Ref.STEP_MUSIC_RATE);
+                    if (options.getMusicRate() > Ref.MAX_MUSIC_RATE) options.setMusicRate(Ref.MAX_MUSIC_RATE);
                 }
                 case 0 -> {
-                    options.setVisualOffset(options.getVisualOffset() + 1);
-                    if (options.getVisualOffset() > 1000) options.setVisualOffset(1000);
+                    options.setVisualOffset(options.getVisualOffset() + Ref.STEP_VISUAL_OFFSET);
+                    if (options.getVisualOffset() > Ref.MAX_VISUAL_OFFSET) options.setVisualOffset(Ref.MAX_VISUAL_OFFSET);
                 }
             }
             lastMenuAction = System.nanoTime();

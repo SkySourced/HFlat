@@ -7,8 +7,8 @@ public enum Judgement {
     EXCELLENT(0.0445f, 2),
     GREAT(0.1035f, 1),
     DECENT(0.1365f, 0),
-    WAY_OFF(0.1815f, 0),
-    MISS(0, 0);
+    WAY_OFF(0.1815f, -1),
+    MISS(0, -2);
 
     final float timingWindow; //
     final int score;

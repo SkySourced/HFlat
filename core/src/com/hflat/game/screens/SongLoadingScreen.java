@@ -39,7 +39,7 @@ public class SongLoadingScreen implements Screen {
         drawer.filledRectangle(0, 300, 400, 100, Color.DARK_GRAY);
         drawer.filledRectangle(0, 300, progress * 400, 100, Color.GRAY);
 
-        drawCentredText(songLoadingBatch, assMan.serifFont20, currentSong.getName(), 695);
+        drawCentredText(songLoadingBatch, assMan.serifFont20, currentSong.getName(), 670);
         drawCentredText(songLoadingBatch, assMan.pixelFont20, "press  enter  for  options", 360);
 
         if (Gdx.input.isKeyJustPressed(Input.Keys.ENTER)) {

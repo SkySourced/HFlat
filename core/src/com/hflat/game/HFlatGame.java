@@ -209,6 +209,18 @@ public class HFlatGame extends Game {
 
     public static class Ref {
         public static final int DENOM_ROUND_PLACES = 7;
+        public static final int MAX_NOTE_SPEED = 10;
+        public static final float MIN_NOTE_SPEED = 0.05f;
+        public static final float STEP_NOTE_SPEED = 0.05f;
+        public static final float MAX_MINI = 1f;
+        public static final float MIN_MINI = 0.01f;
+        public static final float STEP_MINI = 0.01f;
+        public static final float MAX_MUSIC_RATE = 5f;
+        public static final float MIN_MUSIC_RATE = 0.05f;
+        public static final float STEP_MUSIC_RATE = 0.05f;
+        public static final int MAX_VISUAL_OFFSET = 1000;
+        public static final int MIN_VISUAL_OFFSET = -1000;
+        public static final int STEP_VISUAL_OFFSET = 1;
     }
 }
 
