@@ -1,9 +1,12 @@
 package com.hflat.game.note;
 
 import com.badlogic.gdx.graphics.Texture;
+import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.hflat.game.HFlatGame;
+
+import static com.hflat.game.HFlatGame.options;
 
 /**
  * An enum to represent the different types of notes
@@ -84,11 +87,15 @@ public class Note extends Actor {
      * @return the initial y position of the note
      */
     private float setInitialY() {
-        return barTime * bpm * HFlatGame.options.getNoteSpeed() * HFlatGame.options.getMusicRate() * HFlatGame.NOTE_SPACING;
+        return barTime * bpm * options.getNoteSpeed() * options.getMusicRate() * HFlatGame.NOTE_SPACING;
     }
 
     public static void drawNote(Texture texture, Lane lane, SpriteBatch batch) {
-        batch.draw(texture, 100 + lane.toInt() * 50, 650, 100 + lane.toInt() * 50, 650, 90, 90, 1, 1, lane.getRotation(), 0, 0, 800, 800, false, false);
+        Sprite sprite = new Sprite(texture);
+        sprite.setBounds(20 + lane.toInt() * 95, 560, 80 * options.getMini(), 80 * options.getMini());
+        sprite.setOriginCenter();
+        sprite.setRotation(lane.rotation);
+        sprite.draw(batch);
     }
 
     public String toString() {

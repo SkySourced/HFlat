@@ -17,19 +17,24 @@ public class PlayingScreen implements Screen {
     // Drawing utils
     HFlatGame parent;
     SpriteBatch playingBatch;
+
     // Counters
     private static float dontGiveUpTime = 0f;
     float escapeHeldDuration;
+
     // Fonts
     BitmapFont serifFont12 = HFlatGame.assMan.serifFont12;
 
-    // Matrices
-    Affine2 left;
-    Affine2 up;
-    Affine2 down;
-    Affine2 right;
+    // Keys pressed
+    boolean leftPressed;
+    boolean upPressed;
+    boolean downPressed;
+    boolean rightPressed;
 
-    Vector2 noteScale;
+    boolean beatTick;
+
+    float gameTimeBars = -3f * currentSong.getBpm() / 60 / 4;
+    double gameTimeNanos = -3 * Math.pow(10, 9);
 
     public PlayingScreen(HFlatGame hFlatGame) {
         this.parent = hFlatGame;
@@ -37,15 +42,15 @@ public class PlayingScreen implements Screen {
     }
     @Override
     public void show() {
-        noteScale = new Vector2(options.getMini(), options.getMini());
-        Affine2 left = new Affine2().preRotate(270).preScale(noteScale);
-        Affine2 up = new Affine2().preRotate(0).preScale(noteScale);
-        Affine2 down = new Affine2().preRotate(180).preScale(noteScale);
-        Affine2 right = new Affine2().preRotate(90).preScale(noteScale);
+
     }
 
     @Override
     public void render(float delta) {
+        // Update times
+        gameTimeNanos += delta * Math.pow(10, 9);
+        gameTimeBars += delta * currentSong.getBpm() / 60 / 4;
+
         playingBatch.setProjectionMatrix(parent.getCamera().combined);
 
         playingBatch.begin();
@@ -74,10 +79,16 @@ public class PlayingScreen implements Screen {
         // if beat happened within last 0.1 s draw beat arrow
         // else draw normal arrow
 
-        Note.drawNote(assMan.manager.get(assMan.targetPressed.address), Lane.LEFT, playingBatch);
-        Note.drawNote(assMan.manager.get(assMan.targetPressed.address), Lane.DOWN, playingBatch);
-        Note.drawNote(assMan.manager.get(assMan.targetPressed.address), Lane.UP, playingBatch);
-        Note.drawNote(assMan.manager.get(assMan.targetPressed.address), Lane.RIGHT, playingBatch);
+        leftPressed = Gdx.input.isKeyPressed(Input.Keys.LEFT);
+        upPressed = Gdx.input.isKeyPressed(Input.Keys.UP);
+        downPressed = Gdx.input.isKeyPressed(Input.Keys.DOWN);
+        rightPressed = Gdx.input.isKeyPressed(Input.Keys.RIGHT);
+        beatTick = (Math.abs(gameTimeBars) / 4 % 1 <= 0.1);
+
+        Note.drawNote(assMan.manager.get(leftPressed ? assMan.targetPressed.address : beatTick ? assMan.targetBeat.address : assMan.targetUnpressed.address), Lane.LEFT, playingBatch);
+        Note.drawNote(assMan.manager.get(downPressed ? assMan.targetPressed.address : beatTick ? assMan.targetBeat.address : assMan.targetUnpressed.address), Lane.DOWN, playingBatch);
+        Note.drawNote(assMan.manager.get(upPressed ? assMan.targetPressed.address : beatTick ? assMan.targetBeat.address : assMan.targetUnpressed.address), Lane.UP, playingBatch);
+        Note.drawNote(assMan.manager.get(rightPressed ? assMan.targetPressed.address : beatTick ? assMan.targetBeat.address : assMan.targetUnpressed.address), Lane.RIGHT, playingBatch);
 
 
         playingBatch.end();

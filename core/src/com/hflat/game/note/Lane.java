@@ -1,10 +1,10 @@
 package com.hflat.game.note;
 
 public enum Lane {
-    LEFT (270),
+    LEFT (90),
     DOWN (180),
     UP (0),
-    RIGHT (90);
+    RIGHT (270);
 
     final int rotation;
     Lane (int rotation) {
