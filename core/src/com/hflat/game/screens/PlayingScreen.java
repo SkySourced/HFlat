@@ -5,9 +5,8 @@ import com.badlogic.gdx.Input;
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
-import com.badlogic.gdx.math.Affine2;
-import com.badlogic.gdx.math.Vector2;
 import com.hflat.game.HFlatGame;
+import com.hflat.game.note.Judgement;
 import com.hflat.game.note.Lane;
 import com.hflat.game.note.Note;
 
@@ -19,8 +18,12 @@ public class PlayingScreen implements Screen {
     SpriteBatch playingBatch;
 
     // Counters
-    private static float dontGiveUpTime = 0f;
-    float escapeHeldDuration;
+    private static float dontGiveUpTime = 0f; // time to show 'Don't give up!' message
+    float escapeHeldDuration; // time ESC has been held
+
+    float rawScore = 0;
+    int combo = 0;
+    float scorePercentage = 0;
 
     // Fonts
     BitmapFont serifFont12 = HFlatGame.assMan.serifFont12;
@@ -42,14 +45,17 @@ public class PlayingScreen implements Screen {
     }
     @Override
     public void show() {
-
+        escapeHeldDuration = 0;
     }
 
     @Override
     public void render(float delta) {
         // Update times
         gameTimeNanos += delta * Math.pow(10, 9);
-        gameTimeBars += delta * currentSong.getBpm() / 60 / 4;
+        gameTimeBars += delta * currentSong.getBpm() * options.getMusicRate() / 60 / 4;
+
+        // Update scores - this probably doesn't need to happen every frame
+        scorePercentage = rawScore / Judgement.MARVELLOUS.getScore() * currentChart.getNotes().size();
 
         playingBatch.setProjectionMatrix(parent.getCamera().combined);
 
@@ -83,8 +89,9 @@ public class PlayingScreen implements Screen {
         upPressed = Gdx.input.isKeyPressed(Input.Keys.UP);
         downPressed = Gdx.input.isKeyPressed(Input.Keys.DOWN);
         rightPressed = Gdx.input.isKeyPressed(Input.Keys.RIGHT);
-        beatTick = (Math.abs(gameTimeBars) / 4 % 1 <= 0.1);
+        beatTick = (Math.abs(gameTimeBars) * 4 % 1 <= 0.1);
 
+        // I love ternary operators, but even I think this is too much
         Note.drawNote(assMan.manager.get(leftPressed ? assMan.targetPressed.address : beatTick ? assMan.targetBeat.address : assMan.targetUnpressed.address), Lane.LEFT, playingBatch);
         Note.drawNote(assMan.manager.get(downPressed ? assMan.targetPressed.address : beatTick ? assMan.targetBeat.address : assMan.targetUnpressed.address), Lane.DOWN, playingBatch);
         Note.drawNote(assMan.manager.get(upPressed ? assMan.targetPressed.address : beatTick ? assMan.targetBeat.address : assMan.targetUnpressed.address), Lane.UP, playingBatch);
