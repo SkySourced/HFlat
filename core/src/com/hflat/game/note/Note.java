@@ -72,6 +72,8 @@ public class Note extends Actor {
             judgement = Judgement.EXCELLENT;
         } else if (diff < Judgement.GREAT.timingWindow) {
             judgement = Judgement.GREAT;
+        } else if (diff < Judgement.GOOD.timingWindow) {
+            judgement = Judgement.GOOD;
         } else if (diff < Judgement.DECENT.timingWindow) {
             judgement = Judgement.DECENT;
         } else if (diff < Judgement.WAY_OFF.timingWindow) {
@@ -92,7 +94,16 @@ public class Note extends Actor {
 
     public static void drawNote(Texture texture, Lane lane, SpriteBatch batch) {
         Sprite sprite = new Sprite(texture);
-        sprite.setBounds(20 + lane.toInt() * 95, 560, 80 * options.getMini(), 80 * options.getMini());
+        int firstXCoord = (int) (Gdx.graphics.getWidth() - 4 * HFlatGame.Ref.DEFAULT_ARROW_SIZE * options.getMini() - 3 * HFlatGame.Ref.DEFAULT_ARROW_SPACING * options.getMini()) / 2;
+        sprite.setBounds(firstXCoord + lane.toInt() * 95 * options.getMini(), 560, HFlatGame.Ref.DEFAULT_ARROW_SIZE * options.getMini(), HFlatGame.Ref.DEFAULT_ARROW_SIZE * options.getMini());
+        sprite.setOriginCenter();
+        sprite.setRotation(lane.rotation);
+        sprite.draw(batch);
+    }
+
+    public static void drawNote(Texture texture, Lane lane, SpriteBatch batch, int y) {
+        Sprite sprite = new Sprite(texture);
+        sprite.setBounds(20 + lane.toInt() * 95, y, 80 * options.getMini(), 80 * options.getMini());
         sprite.setOriginCenter();
         sprite.setRotation(lane.rotation);
         sprite.draw(batch);

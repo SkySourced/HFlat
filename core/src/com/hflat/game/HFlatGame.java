@@ -221,6 +221,29 @@ public class HFlatGame extends Game {
         public static final int MAX_VISUAL_OFFSET = 1000;
         public static final int MIN_VISUAL_OFFSET = -1000;
         public static final int STEP_VISUAL_OFFSET = 1;
+
+        public static final int DEFAULT_ARROW_SIZE = 80;
+        public static final int DEFAULT_ARROW_SPACING = 15;
+
+        public static final Color MARVELLOUS_COLOUR = color(0x3a, 0xe5, 0xfc);
+        public static final Color FANTASTIC_COLOUR = color(0xed, 0xfa, 0xfc);
+        public static final Color EXCELLENT_COLOUR = color(0xe2, 0xb8, 0x38);
+        public static final Color GREAT_COLOUR = color(0xad, 0xf4, 0x66);
+        public static final Color GOOD_COLOUR = color(0x6b, 0x23, 0x62);
+        public static final Color DECENT_COLOUR = color(0xb0, 0x66, 0xf4);
+        public static final Color WAY_OFF_COLOUR = color(0x99, 0x49, 0x1b);
+        public static final Color MISS_COLOUR = color(0x99, 0x1b, 0x1d);
+
     }
+
+    public static Color color(int r, int g, int b, int a) {
+        return new Color(r / 255f, g / 255f, b / 255f, a / 255f);
+    }
+
+    public static Color color(int r, int g, int b) {
+        return new Color(r / 255f, g / 255f, b / 255f, 1);
+    }
+
+
 }
 

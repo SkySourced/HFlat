@@ -10,12 +10,15 @@ import com.hflat.game.note.Judgement;
 import com.hflat.game.note.Lane;
 import com.hflat.game.note.Note;
 
+import java.text.DecimalFormat;
+
 import static com.hflat.game.HFlatGame.*;
 
 public class PlayingScreen implements Screen {
     // Drawing utils
     HFlatGame parent;
     SpriteBatch playingBatch;
+    DecimalFormat scoreFormatter = new DecimalFormat("00.00");
 
     // Counters
     private static float dontGiveUpTime = 0f; // time to show 'Don't give up!' message
@@ -24,6 +27,14 @@ public class PlayingScreen implements Screen {
     float rawScore = 0;
     int combo = 0;
     float scorePercentage = 0;
+    int marvellous = 0;
+    int fantastic = 0;
+    int excellent = 0;
+    int great = 0;
+    int good = 0;
+    int decent = 0;
+    int wayOff = 0;
+    int miss = 0;
 
     // Fonts
     BitmapFont serifFont12 = HFlatGame.assMan.serifFont12;
@@ -39,13 +50,14 @@ public class PlayingScreen implements Screen {
     float gameTimeBars = -3f * currentSong.getBpm() / 60 / 4;
     double gameTimeNanos = -3 * Math.pow(10, 9);
 
+
     public PlayingScreen(HFlatGame hFlatGame) {
         this.parent = hFlatGame;
         playingBatch = new SpriteBatch();
     }
     @Override
     public void show() {
-        escapeHeldDuration = 0;
+//        escapeHeldDuration = 0;
     }
 
     @Override
@@ -97,6 +109,18 @@ public class PlayingScreen implements Screen {
         Note.drawNote(assMan.manager.get(upPressed ? assMan.targetPressed.address : beatTick ? assMan.targetBeat.address : assMan.targetUnpressed.address), Lane.UP, playingBatch);
         Note.drawNote(assMan.manager.get(rightPressed ? assMan.targetPressed.address : beatTick ? assMan.targetBeat.address : assMan.targetUnpressed.address), Lane.RIGHT, playingBatch);
 
+        assMan.pixelFont40.draw(playingBatch, scoreFormatter.format(scorePercentage), 30, 680);
+
+        drawRightAlignedText(playingBatch, assMan.marvellousFont, String.valueOf(marvellous), 250, 690);
+        drawRightAlignedText(playingBatch, assMan.fantasticFont, String.valueOf(fantastic), 250, 678);
+        drawRightAlignedText(playingBatch, assMan.excellentFont, String.valueOf(excellent), 250, 666);
+        drawRightAlignedText(playingBatch, assMan.greatFont, String.valueOf(great), 250, 654);
+        drawRightAlignedText(playingBatch, assMan.goodFont, String.valueOf(good), 320, 690);
+        drawRightAlignedText(playingBatch, assMan.decentFont, String.valueOf(decent), 320, 678);
+        drawRightAlignedText(playingBatch, assMan.wayOffFont, String.valueOf(wayOff), 320, 666);
+        drawRightAlignedText(playingBatch, assMan.missFont, String.valueOf(miss), 320, 654);
+
+        marvellous++;
 
         playingBatch.end();
     }

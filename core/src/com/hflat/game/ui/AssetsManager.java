@@ -6,6 +6,7 @@ import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.freetype.FreeTypeFontGenerator;
+import com.hflat.game.note.Judgement;
 
 import java.util.ArrayList;
 
@@ -24,8 +25,18 @@ public class AssetsManager {
     public BitmapFont pixelFont20;
     public BitmapFont pixelFont12;
     public BitmapFont pixelFont40;
+    public BitmapFont pixelFont80;
     public BitmapFont serifFont20;
     public BitmapFont serifFont12;
+    public BitmapFont marvellousFont;
+    public BitmapFont fantasticFont;
+    public BitmapFont excellentFont;
+    public BitmapFont greatFont;
+    public BitmapFont goodFont;
+    public BitmapFont decentFont;
+    public BitmapFont wayOffFont;
+    public BitmapFont missFont;
+
 
     // Menu textures
     public final String defaultBanner = "defaultBanner.png";
@@ -74,22 +85,49 @@ public class AssetsManager {
         parameter.shadowOffsetY = 1;
         parameter.shadowColor = new Color(0, 0, 0, 0.75f);
         pixelFont20 = pixelGenerator.generateFont(parameter);
+        serifFont20 = serifGenerator.generateFont(parameter);
 
         parameter.size = 12;
         pixelFont12 = pixelGenerator.generateFont(parameter);
+        serifFont12 = serifGenerator.generateFont(parameter);
 
         parameter.size = 40;
         parameter.shadowOffsetX = 2;
         parameter.shadowOffsetY = 2;
         pixelFont40 = pixelGenerator.generateFont(parameter);
 
-        parameter.size = 20;
-        parameter.shadowOffsetX = 1;
-        parameter.shadowOffsetY = 1;
-        serifFont20 = serifGenerator.generateFont(parameter);
+        parameter.size = 80;
+        parameter.shadowOffsetX = 3;
+        parameter.shadowOffsetY = 3;
+        pixelFont80 = pixelGenerator.generateFont(parameter);
 
         parameter.size = 12;
-        serifFont12 = serifGenerator.generateFont(parameter);
+        parameter.shadowOffsetX = 0;
+        parameter.shadowOffsetY = 0;
+
+        parameter.color = Judgement.MARVELLOUS.getColor();
+        marvellousFont = pixelGenerator.generateFont(parameter);
+
+        parameter.color = Judgement.FANTASTIC.getColor();
+        fantasticFont = pixelGenerator.generateFont(parameter);
+
+        parameter.color = Judgement.EXCELLENT.getColor();
+        excellentFont = pixelGenerator.generateFont(parameter);
+
+        parameter.color = Judgement.GREAT.getColor();
+        greatFont = pixelGenerator.generateFont(parameter);
+
+        parameter.color = Judgement.GOOD.getColor();
+        goodFont = pixelGenerator.generateFont(parameter);
+
+        parameter.color = Judgement.DECENT.getColor();
+        decentFont = pixelGenerator.generateFont(parameter);
+
+        parameter.color = Judgement.WAY_OFF.getColor();
+        wayOffFont = pixelGenerator.generateFont(parameter);
+
+        parameter.color = Judgement.MISS.getColor();
+        missFont = pixelGenerator.generateFont(parameter);
 
         pixelGenerator.dispose();
         serifGenerator.dispose();
