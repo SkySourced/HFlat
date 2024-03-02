@@ -23,7 +23,7 @@ public class OptionsScreen implements Screen {
     ShapeDrawer drawer;
     NumberFormat formatter = new DecimalFormat("0.00"); // This should be renamed, but I can't think of anything good
     // Counters
-    int optionSelectionIndex = 0;
+    int optionSelectionIndex = 6;
     long lastMenuAction = 0;
     public static final GameState state = GameState.OPTIONS;
 
@@ -162,7 +162,7 @@ public class OptionsScreen implements Screen {
             }
             lastMenuAction = System.nanoTime();
         }
-        if (Gdx.input.isKeyJustPressed(Input.Keys.ENTER) && lastMenuAction + menuActionDelay > System.nanoTime()){
+        if (Gdx.input.isKeyJustPressed(Input.Keys.ENTER) && lastMenuAction + menuActionDelay < System.nanoTime()){
             lastMenuAction = System.nanoTime();
             if (optionSelectionIndex == -1){
                 parent.setState(HFlatGame.GameState.PLAYING);
