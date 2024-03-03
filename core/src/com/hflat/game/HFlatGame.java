@@ -35,12 +35,12 @@ public class HFlatGame extends Game {
     public static final long menuActionDelay = (long) (Math.pow(10, 9) / 8);
     public long loadingStartTime;
 
-    private Screen loadingScreen;
-    private Screen songSelectScreen;
-    private Screen songLoadingScreen;
-    private Screen optionsScreen;
-    private Screen playingScreen;
-    private Screen resultsScreen;
+    private final Screen loadingScreen = new LoadingScreen(this);
+    private final Screen songSelectScreen = new SongSelectScreen(this);
+    private final Screen songLoadingScreen = new SongLoadingScreen(this);
+    private final Screen optionsScreen = new OptionsScreen(this);
+    private final Screen playingScreen = new PlayingScreen(this);
+    private final Screen resultsScreen = new ResultsScreen(this);
     private Viewport viewport;
     public static Song currentSong;
     public static Chart currentChart;
@@ -95,48 +95,21 @@ public class HFlatGame extends Game {
             ScreenUtils.clear(Color.WHITE);
         }
 
-
-
         camera.update();
-
 
         try{
             if(((IHasStaticState) this.getScreen()).getState()  != state) {
                 switch (state) {
-                    case LOADING:
-                        if (loadingScreen == null) loadingScreen = new LoadingScreen(this);
-                        this.setScreen(loadingScreen);
-
-                        break;
-                    case SONG_SELECT:
-                        if (songSelectScreen == null) songSelectScreen = new SongSelectScreen(this);
-                        this.setScreen(songSelectScreen);
-
-                        break;
-                    case SONG_LOADING:
-                        if (songLoadingScreen == null) songLoadingScreen = new SongLoadingScreen(this);
-                        this.setScreen(songLoadingScreen);
-
-                        break;
-                    case OPTIONS:
-                        if (optionsScreen == null) optionsScreen = new OptionsScreen(this);
-                        this.setScreen(optionsScreen);
-
-                        break;
-                    case PLAYING:
-                        if (playingScreen == null) playingScreen = new PlayingScreen(this);
-                        this.setScreen(playingScreen);
-
-                        break;
-                    case RESULTS:
-                        if (resultsScreen == null) resultsScreen = new ResultsScreen(this);
-                        this.setScreen(resultsScreen);
-
-                        break;
+                    case LOADING -> this.setScreen(loadingScreen);
+                    case SONG_SELECT -> this.setScreen(songSelectScreen);
+                    case SONG_LOADING -> this.setScreen(songLoadingScreen);
+                    case OPTIONS -> this.setScreen(optionsScreen);
+                    case PLAYING -> this.setScreen(playingScreen);
+                    case RESULTS -> this.setScreen(resultsScreen);
                 }
+                Gdx.app.debug("Screen management", "Switched to " + state);
             }
-        } catch(ClassCastException e){
-            //Gdx.app.debug("Ha ha ha", "This is so funny...",e);
+        } catch(ClassCastException ignored){
         }
 
         super.render();
