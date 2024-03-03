@@ -18,6 +18,7 @@ public class Play {
     ArrayList<PlayNote> notes = new ArrayList<>();
     ArrayList<PlayNote> remainingNotes = new ArrayList<>();
     Chart chart;
+    HFlatGame parent;
     float rawScore = 0;
     int combo = 0;
     float scorePercentage = 0;
@@ -26,7 +27,8 @@ public class Play {
     double gameTimeNanos = -3 - currentSong.getOffset() * Math.pow(10, 9);
     boolean isPlaying = false;
 
-    public Play(Chart chart) {
+    public Play(Chart chart, HFlatGame parent) {
+        this.parent = parent;
         this.chart = chart;
         Gdx.app.debug("Play-chart" , "Chart has " + chart.getNotes().size() + " notes");
         for (Note pn : chart.getNotes()) {
@@ -42,6 +44,7 @@ public class Play {
 
         // Calculate any missed notes
         while (remainingNotes.get(0).time < gameTimeNanos / Math.pow(10, 9) - Judgement.WAY_OFF.getTimingWindow()) {
+            Gdx.app.debug("Play", "Missed note " + remainingNotes.get(0).getId() + " at " + remainingNotes.get(0).time + " (" + remainingNotes.get(0).time * Math.pow(10, 9) + ")");
             remainingNotes.get(0).setJudgement(Judgement.MISS);
             scores[7]++;
             combo = 0;
@@ -80,6 +83,7 @@ public class Play {
     }
 
     public void judge(Lane lane) {
+        Gdx.app.debug("Play", "Judging lane " + lane + " at " + gameTimeNanos / Math.pow(10, 9));
         for (PlayNote pn : remainingNotes) {
             if (pn.getLane() == lane) {
                 Judgement j = pn.judge((float) (gameTimeNanos / Math.pow(10, 9)));
@@ -102,6 +106,11 @@ public class Play {
             //Gdx.app.debug("Note", "Drawing note at " + y + " (" + gameTimeBars + " - " + pn.barTime + ")" + " (" + options.getNoteSpeed() * options.getMusicRate() * HFlatGame.Ref.VERTICAL_ARROW_SCALAR * pn.getBpm() + ")");
             if (y < 0) break;
             if (y < 800) Note.drawNote(pn.colour.getTexture(), pn.getLane(), batch, y);
+        }
+
+        if (remainingNotes.size() == 0) {
+            isPlaying = false;
+            parent.setState(HFlatGame.GameState.SONG_SELECT);
         }
     }
 

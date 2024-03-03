@@ -219,7 +219,7 @@ public class HFlatGame extends Game {
 
         public static final int DEFAULT_ARROW_SIZE = 80;
         public static final int DEFAULT_ARROW_SPACING = 15;
-        public static final float VERTICAL_ARROW_SCALAR = 1.0f;
+        public static final float VERTICAL_ARROW_SCALAR = 10f;
         public static final int TARGET_ARROW_HEIGHT = 560;
 
         public static final int MAX_FRAMES = 144;

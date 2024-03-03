@@ -72,7 +72,7 @@ public class SongSelectScreen implements Screen, IHasStaticState {
 
         if (Gdx.input.isKeyJustPressed(Input.Keys.ENTER)) {
             parent.setState(HFlatGame.GameState.SONG_LOADING);
-            parent.setCurrentPlay(new Play(currentChart));
+            parent.setCurrentPlay(new Play(currentChart, parent));
             parent.loadingStartTime = System.nanoTime();
         }
 

@@ -51,6 +51,8 @@ public class PlayingScreen implements Screen, IHasStaticState {
     @Override
     public void show() {
 //        escapeHeldDuration = 0;
+        IngameInput input = new IngameInput();
+        Gdx.input.setInputProcessor(input);
     }
 
     @Override
@@ -89,7 +91,7 @@ public class PlayingScreen implements Screen, IHasStaticState {
         upPressed = Gdx.input.isKeyPressed(Input.Keys.UP);
         downPressed = Gdx.input.isKeyPressed(Input.Keys.DOWN);
         rightPressed = Gdx.input.isKeyPressed(Input.Keys.RIGHT);
-        beatTick = (Math.abs(parent.getCurrentPlay().getGameTimeBars()) * 4 % 1 <= 0.1);
+        beatTick = (Math.abs(parent.getCurrentPlay().getGameTimeBars()) * 4 % 1 >= 0.95);
 
         // I love ternary operators, but even I think this is too much
         Note.drawNote(assMan.manager.get(leftPressed ? assMan.targetPressed.address : beatTick ? assMan.targetBeat.address : assMan.targetUnpressed.address), Lane.LEFT, playingBatch);
@@ -138,16 +140,16 @@ public class PlayingScreen implements Screen, IHasStaticState {
 
         @Override
         public boolean keyDown(int keycode) {
-            if (keycode == Input.Keys.LEFT) {
+            if (keycode == Input.Keys.LEFT || keycode == Input.Keys.D) {
                 parent.getCurrentPlay().judge(Lane.LEFT);
             }
-            if (keycode == Input.Keys.UP) {
+            if (keycode == Input.Keys.UP || keycode == Input.Keys.F) {
                 parent.getCurrentPlay().judge(Lane.UP);
             }
-            if (keycode == Input.Keys.DOWN) {
+            if (keycode == Input.Keys.DOWN || keycode == Input.Keys.J) {
                 parent.getCurrentPlay().judge(Lane.DOWN);
             }
-            if (keycode == Input.Keys.RIGHT) {
+            if (keycode == Input.Keys.RIGHT || keycode == Input.Keys.K) {
                 parent.getCurrentPlay().judge(Lane.RIGHT);
             }
             return false;
