@@ -32,7 +32,7 @@ public class AssetsManager {
     public BitmapFont fantasticFont;
     public BitmapFont excellentFont;
     public BitmapFont greatFont;
-    public BitmapFont goodFont;
+    public BitmapFont okFont;
     public BitmapFont decentFont;
     public BitmapFont wayOffFont;
     public BitmapFont missFont;
@@ -117,8 +117,8 @@ public class AssetsManager {
         parameter.color = Judgement.GREAT.getColor();
         greatFont = pixelGenerator.generateFont(parameter);
 
-        parameter.color = Judgement.GOOD.getColor();
-        goodFont = pixelGenerator.generateFont(parameter);
+        parameter.color = Judgement.OK.getColor();
+        okFont = pixelGenerator.generateFont(parameter);
 
         parameter.color = Judgement.DECENT.getColor();
         decentFont = pixelGenerator.generateFont(parameter);

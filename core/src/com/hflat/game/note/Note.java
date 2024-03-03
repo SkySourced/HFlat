@@ -1,10 +1,8 @@
 package com.hflat.game.note;
 
-import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
-import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.hflat.game.HFlatGame;
 
 import static com.hflat.game.HFlatGame.options;
@@ -12,22 +10,34 @@ import static com.hflat.game.HFlatGame.options;
 /**
  * An enum to represent the different types of notes
  */
-public class Note extends Actor {
+public class Note {
 
+    public final int id;
     public Lane lane;
     public float barTime;
     public long time;
-    public int bpm;
+    public float bpm;
     public NoteType type;
     public NoteDenom colour;
 
-    public Note(Lane lane, float barTime, int bpm, NoteType type, NoteDenom colour) {
+    public Note(int id, Lane lane, float barTime, float bpm, NoteType type, NoteDenom colour) {
+        this.id = id;
         this.lane = lane;
         this.barTime = barTime;
         this.bpm = bpm;
         this.time = (long) (barTime * 60 / bpm * 1000); // this I think is in ms, but we might want to make it a bit more precise
         this.type = type;
         this.colour = colour;
+        //if(colour == null) Gdx.app.debug("Note " + id, "Colour is null");
+    }
+
+    /**
+     * Get the id of the note
+     *
+     * @return the id of the note
+     */
+    public int getId() {
+        return id;
     }
 
     /**
@@ -63,6 +73,9 @@ public class Note extends Actor {
      * @return the Judgement for the note
      */
     public Judgement judge(float time) {
+        if (this.barTime - time > Judgement.WAY_OFF.timingWindow) {
+            return null;
+        }
         float diff = Math.abs(this.barTime - time);
         Judgement judgement;
         if (diff < Judgement.MARVELLOUS.timingWindow) {
@@ -73,8 +86,8 @@ public class Note extends Actor {
             judgement = Judgement.EXCELLENT;
         } else if (diff < Judgement.GREAT.timingWindow) {
             judgement = Judgement.GREAT;
-        } else if (diff < Judgement.GOOD.timingWindow) {
-            judgement = Judgement.GOOD;
+        } else if (diff < Judgement.OK.timingWindow) {
+            judgement = Judgement.OK;
         } else if (diff < Judgement.DECENT.timingWindow) {
             judgement = Judgement.DECENT;
         } else if (diff < Judgement.WAY_OFF.timingWindow) {
@@ -85,18 +98,10 @@ public class Note extends Actor {
         return judgement;
     }
 
-    /**
-     * Set the initial position of the note
-     * @return the initial y position of the note
-     */
-    private float setInitialY() {
-        return barTime * bpm * options.getNoteSpeed() * options.getMusicRate() * HFlatGame.NOTE_SPACING;
-    }
-
     public static void drawNote(Texture texture, Lane lane, SpriteBatch batch) {
         Sprite sprite = new Sprite(texture);
-        int firstXCoord = (int) (Gdx.graphics.getWidth() - 4 * HFlatGame.Ref.DEFAULT_ARROW_SIZE * options.getMini() - 3 * HFlatGame.Ref.DEFAULT_ARROW_SPACING * options.getMini()) / 2;
-        sprite.setBounds(firstXCoord + lane.toInt() * 95 * options.getMini(), 560, HFlatGame.Ref.DEFAULT_ARROW_SIZE * options.getMini(), HFlatGame.Ref.DEFAULT_ARROW_SIZE * options.getMini());
+        int firstXCoord = (int) (400 - 4 * HFlatGame.Ref.DEFAULT_ARROW_SIZE * options.getMini() - 3 * HFlatGame.Ref.DEFAULT_ARROW_SPACING * options.getMini()) / 2;
+        sprite.setBounds(firstXCoord + lane.toInt() * 95 * options.getMini(), HFlatGame.Ref.TARGET_ARROW_HEIGHT, HFlatGame.Ref.DEFAULT_ARROW_SIZE * options.getMini(), HFlatGame.Ref.DEFAULT_ARROW_SIZE * options.getMini());
         sprite.setOriginCenter();
         sprite.setRotation(lane.rotation);
         sprite.draw(batch);
@@ -112,5 +117,17 @@ public class Note extends Actor {
 
     public String toString() {
         return "Note: " + lane + " " + barTime + " " + type + " " + colour;
+    }
+
+    public float getBarTime() {
+        return barTime;
+    }
+
+    public float getBpm() {
+        return bpm;
+    }
+
+    public NoteDenom getColour() {
+        return colour;
     }
 }

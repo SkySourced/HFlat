@@ -7,6 +7,7 @@ import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.hflat.game.HFlatGame;
+import com.hflat.game.chart.Play;
 import space.earlygrey.shapedrawer.ShapeDrawer;
 
 import static com.hflat.game.HFlatGame.*;
@@ -69,6 +70,7 @@ public class SongSelectScreen implements Screen {
 
         if (Gdx.input.isKeyJustPressed(Input.Keys.ENTER)) {
             parent.setState(HFlatGame.GameState.SONG_LOADING);
+            parent.setCurrentPlay(new Play(currentChart));
             parent.loadingStartTime = System.nanoTime();
         }
 
@@ -103,6 +105,7 @@ public class SongSelectScreen implements Screen {
         serifFont20.draw(songSelectBatch, currentSong.getName(), 30, 230);
         serifFont12.draw(songSelectBatch, currentSong.getSubtitle(), 30, 210);
         serifFont20.draw(songSelectBatch, currentSong.getArtist(), 30, 190);
+        serifFont20.draw(songSelectBatch, currentSong.getBpm() + " BPM", 30, 170);
 
         songSelectBatch.end();
     }

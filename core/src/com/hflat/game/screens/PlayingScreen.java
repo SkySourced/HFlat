@@ -2,58 +2,49 @@ package com.hflat.game.screens;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
+import com.badlogic.gdx.InputAdapter;
 import com.badlogic.gdx.Screen;
+import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.hflat.game.HFlatGame;
-import com.hflat.game.note.Judgement;
 import com.hflat.game.note.Lane;
 import com.hflat.game.note.Note;
+import space.earlygrey.shapedrawer.ShapeDrawer;
 
 import java.text.DecimalFormat;
 
 import static com.hflat.game.HFlatGame.*;
 
 public class PlayingScreen implements Screen {
+
     // Drawing utils
     HFlatGame parent;
     SpriteBatch playingBatch;
     DecimalFormat scoreFormatter = new DecimalFormat("00.00");
+    ShapeDrawer drawer;
 
     // Counters
     private static float dontGiveUpTime = 0f; // time to show 'Don't give up!' message
     float escapeHeldDuration; // time ESC has been held
-
-    float rawScore = 0;
-    int combo = 0;
-    float scorePercentage = 0;
-    int marvellous = 0;
-    int fantastic = 0;
-    int excellent = 0;
-    int great = 0;
-    int good = 0;
-    int decent = 0;
-    int wayOff = 0;
-    int miss = 0;
+    long lastDraw = System.nanoTime();
 
     // Fonts
     BitmapFont serifFont12 = HFlatGame.assMan.serifFont12;
+    BitmapFont[] judgementFonts = {assMan.marvellousFont, assMan.fantasticFont, assMan.excellentFont, assMan.greatFont, assMan.okFont, assMan.decentFont, assMan.wayOffFont, assMan.missFont};
 
     // Keys pressed
     boolean leftPressed;
     boolean upPressed;
     boolean downPressed;
     boolean rightPressed;
-
     boolean beatTick;
-
-    float gameTimeBars = -3f * currentSong.getBpm() / 60 / 4;
-    double gameTimeNanos = -3 * Math.pow(10, 9);
 
 
     public PlayingScreen(HFlatGame hFlatGame) {
         this.parent = hFlatGame;
         playingBatch = new SpriteBatch();
+        drawer = new ShapeDrawer(playingBatch, textureRegion);
     }
     @Override
     public void show() {
@@ -63,15 +54,15 @@ public class PlayingScreen implements Screen {
     @Override
     public void render(float delta) {
         // Update times
-        gameTimeNanos += delta * Math.pow(10, 9);
-        gameTimeBars += delta * currentSong.getBpm() * options.getMusicRate() / 60 / 4;
+        parent.getCurrentPlay().update(delta);
 
-        // Update scores - this probably doesn't need to happen every frame
-        scorePercentage = rawScore / Judgement.MARVELLOUS.getScore() * currentChart.getNotes().size();
+        if (lastDraw - System.nanoTime() > 1/Ref.MAX_FRAMES) return;
 
         playingBatch.setProjectionMatrix(parent.getCamera().combined);
 
         playingBatch.begin();
+
+        drawer.filledRectangle(0, 0, Gdx.graphics.getWidth(), Gdx.graphics.getHeight(), new Color(0, 0, 0, options.getBackgroundFilter().getOpacity()));
 
         if (Gdx.input.isKeyPressed(Input.Keys.ESCAPE)){
             dontGiveUpTime = 0;
@@ -92,16 +83,11 @@ public class PlayingScreen implements Screen {
             drawCentredText(playingBatch, serifFont12, "Don't give up!", 150);
         }
 
-        // Draw target arrows
-        // if pressed draw pressed arrow
-        // if beat happened within last 0.1 s draw beat arrow
-        // else draw normal arrow
-
         leftPressed = Gdx.input.isKeyPressed(Input.Keys.LEFT);
         upPressed = Gdx.input.isKeyPressed(Input.Keys.UP);
         downPressed = Gdx.input.isKeyPressed(Input.Keys.DOWN);
         rightPressed = Gdx.input.isKeyPressed(Input.Keys.RIGHT);
-        beatTick = (Math.abs(gameTimeBars) * 4 % 1 <= 0.1);
+        beatTick = (Math.abs(parent.getCurrentPlay().getGameTimeBars()) * 4 % 1 <= 0.1);
 
         // I love ternary operators, but even I think this is too much
         Note.drawNote(assMan.manager.get(leftPressed ? assMan.targetPressed.address : beatTick ? assMan.targetBeat.address : assMan.targetUnpressed.address), Lane.LEFT, playingBatch);
@@ -109,18 +95,14 @@ public class PlayingScreen implements Screen {
         Note.drawNote(assMan.manager.get(upPressed ? assMan.targetPressed.address : beatTick ? assMan.targetBeat.address : assMan.targetUnpressed.address), Lane.UP, playingBatch);
         Note.drawNote(assMan.manager.get(rightPressed ? assMan.targetPressed.address : beatTick ? assMan.targetBeat.address : assMan.targetUnpressed.address), Lane.RIGHT, playingBatch);
 
-        assMan.pixelFont40.draw(playingBatch, scoreFormatter.format(scorePercentage), 30, 680);
+        assMan.pixelFont40.draw(playingBatch, scoreFormatter.format(parent.getCurrentPlay().getScorePercentage()), 30, 680);
 
-        drawRightAlignedText(playingBatch, assMan.marvellousFont, String.valueOf(marvellous), 250, 690);
-        drawRightAlignedText(playingBatch, assMan.fantasticFont, String.valueOf(fantastic), 250, 678);
-        drawRightAlignedText(playingBatch, assMan.excellentFont, String.valueOf(excellent), 250, 666);
-        drawRightAlignedText(playingBatch, assMan.greatFont, String.valueOf(great), 250, 654);
-        drawRightAlignedText(playingBatch, assMan.goodFont, String.valueOf(good), 320, 690);
-        drawRightAlignedText(playingBatch, assMan.decentFont, String.valueOf(decent), 320, 678);
-        drawRightAlignedText(playingBatch, assMan.wayOffFont, String.valueOf(wayOff), 320, 666);
-        drawRightAlignedText(playingBatch, assMan.missFont, String.valueOf(miss), 320, 654);
+        for (int i = 0; i < parent.getCurrentPlay().getJudgementScores().length; i++) {
+            int score = parent.getCurrentPlay().getJudgementScores()[i];
+            drawRightAlignedText(playingBatch, judgementFonts[i], String.valueOf(score), i > 3 ? 380 : 320, 690 - 12 * (i % 4));
+        }
 
-        marvellous++;
+        parent.getCurrentPlay().drawNotes(playingBatch);
 
         playingBatch.end();
     }
@@ -148,5 +130,25 @@ public class PlayingScreen implements Screen {
     @Override
     public void dispose() {
         playingBatch.dispose();
+    }
+
+    private class IngameInput extends InputAdapter {
+
+        @Override
+        public boolean keyDown(int keycode) {
+            if (keycode == Input.Keys.LEFT) {
+                parent.getCurrentPlay().judge(Lane.LEFT);
+            }
+            if (keycode == Input.Keys.UP) {
+                parent.getCurrentPlay().judge(Lane.UP);
+            }
+            if (keycode == Input.Keys.DOWN) {
+                parent.getCurrentPlay().judge(Lane.DOWN);
+            }
+            if (keycode == Input.Keys.RIGHT) {
+                parent.getCurrentPlay().judge(Lane.RIGHT);
+            }
+            return false;
+        }
     }
 }

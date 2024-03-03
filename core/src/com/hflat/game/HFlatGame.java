@@ -15,10 +15,7 @@ import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.utils.ScreenUtils;
 import com.badlogic.gdx.utils.viewport.FitViewport;
 import com.badlogic.gdx.utils.viewport.Viewport;
-import com.hflat.game.chart.Chart;
-import com.hflat.game.chart.GameOptions;
-import com.hflat.game.chart.Song;
-import com.hflat.game.chart.SongManager;
+import com.hflat.game.chart.*;
 import com.hflat.game.screens.*;
 import com.hflat.game.ui.AssetsManager;
 
@@ -30,6 +27,7 @@ public class HFlatGame extends Game {
     private GameState state = GameState.LOADING;
     private OrthographicCamera camera;
     public SongManager songs;
+    private Play currentPlay;
     public static TextureRegion textureRegion;
     public static GameOptions options;
     public static AssetsManager assMan = new AssetsManager();
@@ -46,6 +44,14 @@ public class HFlatGame extends Game {
     private Viewport viewport;
     public static Song currentSong;
     public static Chart currentChart;
+
+    public Play getCurrentPlay() {
+        return currentPlay;
+    }
+
+    public void setCurrentPlay(Play currentPlay) {
+        this.currentPlay = currentPlay;
+    }
 
     /**The game's state */
     public enum GameState {
@@ -224,12 +230,16 @@ public class HFlatGame extends Game {
 
         public static final int DEFAULT_ARROW_SIZE = 80;
         public static final int DEFAULT_ARROW_SPACING = 15;
+        public static final float VERTICAL_ARROW_SCALAR = 1.0f;
+        public static final int TARGET_ARROW_HEIGHT = 560;
+
+        public static final int MAX_FRAMES = 144;
 
         public static final Color MARVELLOUS_COLOUR = color(0x3a, 0xe5, 0xfc);
         public static final Color FANTASTIC_COLOUR = color(0xed, 0xfa, 0xfc);
         public static final Color EXCELLENT_COLOUR = color(0xe2, 0xb8, 0x38);
         public static final Color GREAT_COLOUR = color(0xad, 0xf4, 0x66);
-        public static final Color GOOD_COLOUR = color(0x6b, 0x23, 0x62);
+        public static final Color OK_COLOUR = color(0x6b, 0x23, 0x62);
         public static final Color DECENT_COLOUR = color(0xb0, 0x66, 0xf4);
         public static final Color WAY_OFF_COLOUR = color(0x99, 0x49, 0x1b);
         public static final Color MISS_COLOUR = color(0x99, 0x1b, 0x1d);

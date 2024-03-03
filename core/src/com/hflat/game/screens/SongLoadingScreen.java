@@ -49,6 +49,7 @@ public class SongLoadingScreen implements Screen {
             parent.setState(HFlatGame.GameState.SONG_SELECT);
         }
         if (progress >= 1) {
+            parent.getCurrentPlay().setPlaying(true);
             parent.setState(HFlatGame.GameState.PLAYING);
         }
         songLoadingBatch.end();
