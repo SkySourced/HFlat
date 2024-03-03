@@ -35,12 +35,12 @@ public class HFlatGame extends Game {
     public static final long menuActionDelay = (long) (Math.pow(10, 9) / 8);
     public long loadingStartTime;
 
-    private final Screen loadingScreen = new LoadingScreen(this);
-    private final Screen songSelectScreen = new SongSelectScreen(this);
-    private final Screen songLoadingScreen = new SongLoadingScreen(this);
-    private final Screen optionsScreen = new OptionsScreen(this);
-    private final Screen playingScreen = new PlayingScreen(this);
-    private final Screen resultsScreen = new ResultsScreen(this);
+    private Screen loadingScreen;
+    private Screen songSelectScreen;
+    private Screen songLoadingScreen;
+    private Screen optionsScreen;
+    private Screen playingScreen;
+    private Screen resultsScreen;
     private Viewport viewport;
     public static Song currentSong;
     public static Chart currentChart;
@@ -82,6 +82,15 @@ public class HFlatGame extends Game {
 
         assMan.queueAdd();
         assMan.manager.finishLoading();
+
+        loadingScreen = new LoadingScreen(this);
+        songSelectScreen = new SongSelectScreen(this);
+        songLoadingScreen = new SongLoadingScreen(this);
+        optionsScreen = new OptionsScreen(this);
+        playingScreen = new PlayingScreen(this);
+        resultsScreen = new ResultsScreen(this);
+
+        this.setScreen(loadingScreen);
     }
 
 
