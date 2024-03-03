@@ -12,7 +12,7 @@ import space.earlygrey.shapedrawer.ShapeDrawer;
 
 import static com.hflat.game.HFlatGame.*;
 
-public class SongSelectScreen implements Screen {
+public class SongSelectScreen implements Screen, IHasStaticState {
     // Drawing utils
     HFlatGame parent;
     SpriteBatch songSelectBatch;
@@ -25,6 +25,8 @@ public class SongSelectScreen implements Screen {
     BitmapFont pixelFont40 = HFlatGame.assMan.pixelFont40;
     BitmapFont serifFont12 = HFlatGame.assMan.serifFont12;
     BitmapFont serifFont20 = HFlatGame.assMan.serifFont20;
+
+    public static final GameState state = GameState.SONG_SELECT;
 
     public SongSelectScreen(HFlatGame hFlatGame) {
         this.parent = hFlatGame;
@@ -133,5 +135,10 @@ public class SongSelectScreen implements Screen {
     @Override
     public void dispose() {
         songSelectBatch.dispose();
+    }
+
+    @Override
+    public GameState getState() {
+        return state;
     }
 }

@@ -100,38 +100,45 @@ public class HFlatGame extends Game {
         camera.update();
 
 
-        switch (state) {
-            case LOADING:
-                if (loadingScreen == null) loadingScreen = new LoadingScreen(this);
-                this.setScreen(loadingScreen);
+        try{
+            if(((IHasStaticState) this.getScreen()).getState()  != state) {
+                switch (state) {
+                    case LOADING:
+                        if (loadingScreen == null) loadingScreen = new LoadingScreen(this);
+                        this.setScreen(loadingScreen);
 
-                break;
-            case SONG_SELECT:
-                if (songSelectScreen == null) songSelectScreen = new SongSelectScreen(this);
-                this.setScreen(songSelectScreen);
+                        break;
+                    case SONG_SELECT:
+                        if (songSelectScreen == null) songSelectScreen = new SongSelectScreen(this);
+                        this.setScreen(songSelectScreen);
 
-                break;
-            case SONG_LOADING:
-                if (songLoadingScreen == null) songLoadingScreen = new SongLoadingScreen(this);
-                this.setScreen(songLoadingScreen);
+                        break;
+                    case SONG_LOADING:
+                        if (songLoadingScreen == null) songLoadingScreen = new SongLoadingScreen(this);
+                        this.setScreen(songLoadingScreen);
 
-                break;
-            case OPTIONS:
-                if (optionsScreen == null) optionsScreen = new OptionsScreen(this);
-                this.setScreen(optionsScreen);
+                        break;
+                    case OPTIONS:
+                        if (optionsScreen == null) optionsScreen = new OptionsScreen(this);
+                        this.setScreen(optionsScreen);
 
-                break;
-            case PLAYING:
-                if (playingScreen == null) playingScreen = new PlayingScreen(this);
-                this.setScreen(playingScreen);
+                        break;
+                    case PLAYING:
+                        if (playingScreen == null) playingScreen = new PlayingScreen(this);
+                        this.setScreen(playingScreen);
 
-                break;
-            case RESULTS:
-                if (resultsScreen == null) resultsScreen = new ResultsScreen(this);
-                this.setScreen(resultsScreen);
+                        break;
+                    case RESULTS:
+                        if (resultsScreen == null) resultsScreen = new ResultsScreen(this);
+                        this.setScreen(resultsScreen);
 
-                break;
+                        break;
+                }
+            }
+        } catch(ClassCastException e){
+            //Gdx.app.debug("Ha ha ha", "This is so funny...",e);
         }
+
         super.render();
     }
 

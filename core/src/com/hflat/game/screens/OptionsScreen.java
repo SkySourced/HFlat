@@ -14,7 +14,7 @@ import java.text.NumberFormat;
 
 import static com.hflat.game.HFlatGame.*;
 
-public class OptionsScreen implements Screen {
+public class OptionsScreen implements Screen, IHasStaticState {
     // Drawing utils
     HFlatGame parent;
     SpriteBatch optionsBatch;
@@ -196,5 +196,10 @@ public class OptionsScreen implements Screen {
     @Override
     public void dispose() {
         optionsBatch.dispose();
+    }
+
+    @Override
+    public GameState getState() {
+        return state;
     }
 }

@@ -4,9 +4,11 @@ import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.hflat.game.HFlatGame;
 
-public class ResultsScreen implements Screen {
+public class ResultsScreen implements Screen, IHasStaticState {
     HFlatGame parent;
     SpriteBatch resultsBatch;
+
+    public static final HFlatGame.GameState state = HFlatGame.GameState.RESULTS;
     public ResultsScreen(HFlatGame hFlatGame) {
         this.parent = hFlatGame;
         resultsBatch = new SpriteBatch();
@@ -47,5 +49,10 @@ public class ResultsScreen implements Screen {
     @Override
     public void dispose() {
         resultsBatch.dispose();
+    }
+
+    @Override
+    public HFlatGame.GameState getState() {
+        return state;
     }
 }

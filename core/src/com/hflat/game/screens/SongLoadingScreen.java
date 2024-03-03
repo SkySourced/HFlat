@@ -10,11 +10,13 @@ import space.earlygrey.shapedrawer.ShapeDrawer;
 
 import static com.hflat.game.HFlatGame.*;
 
-public class SongLoadingScreen implements Screen {
+public class SongLoadingScreen implements Screen, IHasStaticState {
     SpriteBatch songLoadingBatch;
     ShapeDrawer drawer;
 
     HFlatGame parent;
+
+    public static final GameState state = GameState.SONG_LOADING;
 
     public SongLoadingScreen(HFlatGame hFlatGame) {
         this.parent = hFlatGame;
@@ -78,5 +80,10 @@ public class SongLoadingScreen implements Screen {
     @Override
     public void dispose() {
         songLoadingBatch.dispose();
+    }
+
+    @Override
+    public GameState getState() {
+        return state;
     }
 }

@@ -16,7 +16,7 @@ import java.text.DecimalFormat;
 
 import static com.hflat.game.HFlatGame.*;
 
-public class PlayingScreen implements Screen {
+public class PlayingScreen implements Screen, IHasStaticState {
 
     // Drawing utils
     HFlatGame parent;
@@ -40,6 +40,8 @@ public class PlayingScreen implements Screen {
     boolean rightPressed;
     boolean beatTick;
 
+
+    public static final GameState state = GameState.PLAYING;
 
     public PlayingScreen(HFlatGame hFlatGame) {
         this.parent = hFlatGame;
@@ -150,5 +152,10 @@ public class PlayingScreen implements Screen {
             }
             return false;
         }
+    }
+
+    @Override
+    public GameState getState() {
+        return state;
     }
 }

@@ -11,7 +11,7 @@ import com.hflat.game.HFlatGame.GameState;
 
 import static com.hflat.game.HFlatGame.drawCentredText;
 
-public class LoadingScreen extends ScreenAdapter {
+public class LoadingScreen extends ScreenAdapter implements IHasStaticState{
     HFlatGame parent;
     SpriteBatch loadingBatch = new SpriteBatch();
     Texture logo;
@@ -50,4 +50,8 @@ public class LoadingScreen extends ScreenAdapter {
 
     }
 
+    @Override
+    public GameState getState() {
+        return state;
+    }
 }
