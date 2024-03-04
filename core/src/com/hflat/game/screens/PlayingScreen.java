@@ -99,7 +99,7 @@ public class PlayingScreen implements Screen, IHasStaticState {
         Note.drawNote(assMan.manager.get(upPressed ? assMan.targetPressed.address : beatTick ? assMan.targetBeat.address : assMan.targetUnpressed.address), Lane.UP, playingBatch);
         Note.drawNote(assMan.manager.get(rightPressed ? assMan.targetPressed.address : beatTick ? assMan.targetBeat.address : assMan.targetUnpressed.address), Lane.RIGHT, playingBatch);
 
-        assMan.pixelFont40.draw(playingBatch, scoreFormatter.format(parent.getCurrentPlay().getScorePercentage()), 30, 680);
+        assMan.pixelFont40.draw(playingBatch, scoreFormatter.format(parent.getCurrentPlay().getScorePercentage(true)), 30, 680);
 
         for (int i = 0; i < parent.getCurrentPlay().getJudgementScores().length; i++) {
             int score = parent.getCurrentPlay().getJudgementScores()[i];

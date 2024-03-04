@@ -58,8 +58,8 @@ public class Play {
         return scores;
     }
 
-    public float getScorePercentage(){
-        return scorePercentage;
+    public float getScorePercentage(boolean clampToZero){
+        if (clampToZero && scorePercentage < 0) return 0f; else return scorePercentage;
     }
 
     public float getRawScore(){
