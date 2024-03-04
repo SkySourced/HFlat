@@ -1,5 +1,6 @@
 package com.hflat.game.note;
 
+import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
@@ -74,9 +75,11 @@ public class Note {
      */
     public Judgement judge(float time) {
         if (this.barTime - time > Judgement.WAY_OFF.timingWindow) {
+            Gdx.app.debug("Judge "+this.id, "Note too early to judge");
             return null;
         }
         float diff = Math.abs(this.barTime - time);
+        Gdx.app.debug("Judge "+this.id, "Note judged with diff " + diff + " (" + this.barTime + " - " + time + ")");
         Judgement judgement;
         if (diff < Judgement.MARVELLOUS.timingWindow) {
             judgement = Judgement.MARVELLOUS;

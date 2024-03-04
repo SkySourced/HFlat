@@ -23,8 +23,8 @@ public class Play {
     int combo = 0;
     float scorePercentage = 0;
     int[] scores = new int[8];
-    float gameTimeBars = -3f * currentSong.getBpm() * options.getMusicRate() / 60 / 4;
-    double gameTimeNanos = -3 - currentSong.getOffset() * Math.pow(10, 9);
+    float gameTimeBars = (-3f - currentSong.getOffset()) * currentSong.getBpm() * options.getMusicRate() / 60 / 4;
+    double gameTimeNanos = (-3 - currentSong.getOffset()) * Math.pow(10, 9);
     boolean isPlaying = false;
 
     public Play(Chart chart, HFlatGame parent) {
@@ -34,23 +34,38 @@ public class Play {
         for (Note pn : chart.getNotes()) {
             notes.add(new PlayNote(pn.getId(), pn.getLane(), pn.getBarTime(), currentSong.getBpm(), pn.getType(), pn.getColour(), this));
         }
+        notes.sort((o1, o2) -> (int) (o1.time - o2.time)); // Probably not necessary
         remainingNotes.addAll(notes);
     }
 
     public void update(float delta) {
         gameTimeNanos += delta * Math.pow(10, 9);
         gameTimeBars += delta * currentSong.getBpm() * options.getMusicRate() / 60 / 4;
-        scorePercentage = rawScore / Judgement.MARVELLOUS.getScore() * chart.getNotes().size();
+        scorePercentage = rawScore / (Judgement.MARVELLOUS.getScore() * chart.getNotes().size());
+
+        if (remainingNotes.isEmpty()) {
+            isPlaying = false;
+            parent.setState(HFlatGame.GameState.SONG_SELECT);
+            return;
+        }
 
         // Calculate any missed notes
-        while (remainingNotes.get(0).time < gameTimeNanos / Math.pow(10, 9) - Judgement.WAY_OFF.getTimingWindow()) {
-            Gdx.app.debug("Play", "Missed note " + remainingNotes.get(0).getId() + " at " + remainingNotes.get(0).time + " (" + remainingNotes.get(0).time * Math.pow(10, 9) + ")");
+        Gdx.app.debug("Play", "Checking for missed notes");
+        Gdx.app.debug("Play", "First remaining note time: " + remainingNotes.getFirst().time + "ms, " + remainingNotes.getFirst().time / 1000f + "s");
+        Gdx.app.debug("Play", "Miss time: " + gameTimeNanos / Math.pow(10, 9) + " - " + Judgement.WAY_OFF.getTimingWindow());
+        while (remainingNotes.getFirst().time / 1000f < gameTimeNanos / Math.pow(10, 9) - Judgement.WAY_OFF.getTimingWindow()) {
+            Gdx.app.debug("Play", "Missed note " + remainingNotes.get(0).getId() + " at " + remainingNotes.get(0).time + " (" + remainingNotes.get(0).time * Math.pow(10, 6) + ")");
             remainingNotes.get(0).setJudgement(Judgement.MISS);
             scores[7]++;
             combo = 0;
             rawScore += Judgement.MISS.getScore();
             notes.get(remainingNotes.get(0).getId()).setJudgement(Judgement.MISS);
             remainingNotes.remove(0);
+            if (remainingNotes.isEmpty()) {
+                isPlaying = false;
+                parent.setState(HFlatGame.GameState.SONG_SELECT);
+                return;
+            }
         }
     }
 
@@ -83,10 +98,11 @@ public class Play {
     }
 
     public void judge(Lane lane) {
-        Gdx.app.debug("Play", "Judging lane " + lane + " at " + gameTimeNanos / Math.pow(10, 9));
+        //Gdx.app.debug("Play", "Judging lane " + lane + " at " + gameTimeNanos / Math.pow(10, 9));
         for (PlayNote pn : remainingNotes) {
             if (pn.getLane() == lane) {
                 Judgement j = pn.judge((float) (gameTimeNanos / Math.pow(10, 9)));
+                //Gdx.app.debug("Play", "Judged note " + pn.getId() + " with " + j + " at " + gameTimeNanos / Math.pow(10, 9) + " (" + j.getScore() + " points");
                 if (j == null) break; // If the note is too early to judge, don't judge it
                 notes.get(pn.getId()).setJudgement(j);
                 scores[j.ordinal()]++;
@@ -106,11 +122,6 @@ public class Play {
             //Gdx.app.debug("Note", "Drawing note at " + y + " (" + gameTimeBars + " - " + pn.barTime + ")" + " (" + options.getNoteSpeed() * options.getMusicRate() * HFlatGame.Ref.VERTICAL_ARROW_SCALAR * pn.getBpm() + ")");
             if (y < 0) break;
             if (y < 800) Note.drawNote(pn.colour.getTexture(), pn.getLane(), batch, y);
-        }
-
-        if (remainingNotes.size() == 0) {
-            isPlaying = false;
-            parent.setState(HFlatGame.GameState.SONG_SELECT);
         }
     }
 
