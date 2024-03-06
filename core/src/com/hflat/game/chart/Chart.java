@@ -128,7 +128,7 @@ public class Chart {
             //Gdx.app.debug("Chart -num notes", String.valueOf(rawNotes.size()));
             // Quantization
             for (int i = 0; i < rawNotes.size(); i++) {
-                float beat = (float) Math.round((float) Math.pow(10, DENOM_ROUND_PLACES) * ((float) i + 1f) / (float) rawNotes.size()) / (float) Math.pow(10, DENOM_ROUND_PLACES);
+                float beat = (float) Math.round((float) Math.pow(10, DENOM_ROUND_PLACES) * ((float) i) / (float) rawNotes.size()) / (float) Math.pow(10, DENOM_ROUND_PLACES);
                 //Gdx.app.debug("Chart -q", String.valueOf(beat));
                 NoteDenom quantization = NoteDenom.fromLength(beat);
                 //String quantizationString = (quantization == null) ? "null" : quantization.toString();

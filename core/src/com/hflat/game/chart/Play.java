@@ -51,16 +51,17 @@ public class Play {
 
         // Calculate any missed notes
         Gdx.app.debug("Play", "Checking for missed notes");
-        Gdx.app.debug("Play", "First remaining note time: " + remainingNotes.getFirst().time + "ms, " + remainingNotes.getFirst().time / 1000f + "s");
+        Gdx.app.debug("Play", "First remaining note time: " + remainingNotes.getFirst().time + "ms, " + remainingNotes.getFirst().barTime + " bars");
+        Gdx.app.debug("Play", "Last remaining note time: " + remainingNotes.getLast().time + "ms, " + remainingNotes.getLast().barTime + " bars");
         Gdx.app.debug("Play", "Miss time: " + gameTimeNanos / Math.pow(10, 9) + " - " + Judgement.WAY_OFF.getTimingWindow());
         while (remainingNotes.getFirst().time / 1000f < gameTimeNanos / Math.pow(10, 9) - Judgement.WAY_OFF.getTimingWindow()) {
-            Gdx.app.debug("Play", "Missed note " + remainingNotes.get(0).getId() + " at " + remainingNotes.get(0).time + " (" + remainingNotes.get(0).time * Math.pow(10, 6) + ")");
-            remainingNotes.get(0).setJudgement(Judgement.MISS);
+            Gdx.app.debug("Play", "Missed note " + remainingNotes.getFirst().getId() + " at " + remainingNotes.getFirst().time + " (" + remainingNotes.getFirst().time * Math.pow(10, 6) + ")");
+            remainingNotes.getFirst().setJudgement(Judgement.MISS);
             scores[7]++;
             combo = 0;
             rawScore += Judgement.MISS.getScore();
-            notes.get(remainingNotes.get(0).getId()).setJudgement(Judgement.MISS);
-            remainingNotes.remove(0);
+            notes.get(remainingNotes.getFirst().getId()).setJudgement(Judgement.MISS);
+            remainingNotes.removeFirst();
             if (remainingNotes.isEmpty()) {
                 isPlaying = false;
                 parent.setState(HFlatGame.GameState.SONG_SELECT);
@@ -118,9 +119,9 @@ public class Play {
     public void drawNotes(SpriteBatch batch) {
         // Draw the notes
         for (PlayNote pn : remainingNotes) {
-            int y = (int) ((-pn.barTime + gameTimeBars) * (options.getNoteSpeed() * options.getMusicRate() * HFlatGame.Ref.VERTICAL_ARROW_SCALAR * pn.getBpm()));
-            //Gdx.app.debug("Note", "Drawing note at " + y + " (" + gameTimeBars + " - " + pn.barTime + ")" + " (" + options.getNoteSpeed() * options.getMusicRate() * HFlatGame.Ref.VERTICAL_ARROW_SCALAR * pn.getBpm() + ")");
-            if (y < 0) break;
+            int y = (int) ((gameTimeBars - pn.barTime) * (options.getNoteSpeed() * options.getMusicRate() * HFlatGame.Ref.VERTICAL_ARROW_SCALAR * pn.getBpm()));
+//            if (y < 0) break;
+            Gdx.app.debug("Note", "Drawing note at " + y + " (" + gameTimeBars + " - " + pn.barTime + ")" + " (" + options.getNoteSpeed() * options.getMusicRate() * HFlatGame.Ref.VERTICAL_ARROW_SCALAR * pn.getBpm() + ")");
             if (y < 800) Note.drawNote(pn.colour.getTexture(), pn.getLane(), batch, y);
         }
     }

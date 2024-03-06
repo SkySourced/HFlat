@@ -26,7 +26,7 @@ public class Note {
         this.lane = lane;
         this.barTime = barTime;
         this.bpm = bpm;
-        this.time = (long) (barTime * 60 / bpm * 1000); // this I think is in ms, but we might want to make it a bit more precise
+        this.time = (long) ((60 * barTime / bpm) * 1000); // this I think is in ms, but we might want to make it a bit more precise
         this.type = type;
         this.colour = colour;
         //if(colour == null) Gdx.app.debug("Note " + id, "Colour is null");
