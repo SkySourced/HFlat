@@ -16,34 +16,46 @@ import static com.hflat.game.HFlatGame.options;
 public class Play {
 
     public enum LetterGrade{
-        F(0),
-        D(0),
-        C_MINUS(55),
-        C(60),
-        C_PLUS(64),
-        B_MINUS(68),
-        B(72),
-        B_PLUS(76),
-        A_MINUS(83),
-        A(86),
-        A_PLUS(89),
-        S_MINUS(89),
-        S(92),
-        S_PLUS(94),
-        SINGLE(96),
-        DOUBLE(97),
-        TRIPLE(98),
-        QUAD(99),
-        QUINT(100);
+        QUINT(100,"quint"),
+        QUAD(99,"quad"),
+        TRIPLE(98,"triple"),
+        DOUBLE(97,"double"),
+        SINGLE(96,"single"),
+        S_PLUS(94,"s-plus"),
+        S(92,"s"),
+        S_MINUS(90,"s-minus"),
+        A_PLUS(89,"a-plus"),
+        A(86,"a"),
+        A_MINUS(83,"a-minus"),
+        B_PLUS(76,"b-plus"),
+        B(72,"b"),
+        B_MINUS(68,"b-minus"),
+        C_PLUS(64,"c-plus"),
+        C(60,"c"),
+        C_MINUS(55,"c-minus"),
+        D(0,"d"),
+        F(0,"f");
 
         final int minimumScore;
+        final String assetPath;
 
-        LetterGrade(int minimumScore){
+        LetterGrade(int minimumScore, String assetPath){
             this.minimumScore = minimumScore;
+            this.assetPath = String.format("grades/%s.png", assetPath);
         }
 
         public int getMinimumScore(){
             return this.minimumScore;
+        }
+
+        public String getGradeAsset(){
+            return assetPath;
+        }
+        public static LetterGrade getGrade(float score){
+            for (LetterGrade lg : LetterGrade.values()){
+                if (score >= lg.getMinimumScore()) return lg;
+            }
+            return F;
         }
     }
 
