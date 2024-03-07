@@ -86,8 +86,8 @@ public class Play {
         Gdx.app.debug("Play", "First remaining note time: " + remainingNotes.getFirst().time + "ms, " + remainingNotes.getFirst().barTime + " bars");
         Gdx.app.debug("Play", "Last remaining note time: " + remainingNotes.getLast().time + "ms, " + remainingNotes.getLast().barTime + " bars");
         Gdx.app.debug("Play", "Miss time: " + gameTimeNanos / Math.pow(10, 9) + " - " + Judgement.WAY_OFF.getTimingWindow());
-        while (remainingNotes.getFirst().time / 1000f < gameTimeNanos / Math.pow(10, 9) - Judgement.WAY_OFF.getTimingWindow()) {
-            //Gdx.app.debug("Play", "Missed note " + remainingNotes.getFirst().getId() + " at " + remainingNotes.getFirst().time + " (" + remainingNotes.getFirst().time * Math.pow(10, 6) + ")");
+        while ((remainingNotes.getFirst().time / 1000f) + Judgement.WAY_OFF.getTimingWindow() < gameTimeNanos / Math.pow(10, 9)) {
+            Gdx.app.debug("Play", "Missed note " + remainingNotes.getFirst().getId() + " at " + remainingNotes.getFirst().time + " (" + remainingNotes.getFirst().time * Math.pow(10, 6) + ")");
             remainingNotes.getFirst().setJudgement(Judgement.MISS);
             scores[7]++;
             combo = 0;
@@ -156,7 +156,7 @@ public class Play {
         // Draw the notes
         for (PlayNote pn : remainingNotes) {
             int y = (int) ((gameTimeBars - pn.barTime) * (options.getNoteSpeed() * options.getMusicRate() * HFlatGame.Ref.VERTICAL_ARROW_SCALAR * pn.getBpm()));
-//            if (y < 0) break;
+            if (y < 0) break;
             Gdx.app.debug("Note", "Drawing note at " + y + " (" + gameTimeBars + " - " + pn.barTime + ")" + " (" + options.getNoteSpeed() * options.getMusicRate() * HFlatGame.Ref.VERTICAL_ARROW_SCALAR * pn.getBpm() + ")");
             if (y < 800) Note.drawNote(pn.colour.getTexture(), pn.getLane(), batch, y);
         }
