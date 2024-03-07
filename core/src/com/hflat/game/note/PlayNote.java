@@ -8,6 +8,7 @@ public class PlayNote extends Note {
 
     private Judgement judgement;
     Play parent;
+    private final long time;
 
     public PlayNote(int id, Lane lane, float barTime, float bpm, NoteType type, NoteDenom colour, Play parent) {
         super(id, lane, barTime, bpm, type, colour);
@@ -21,5 +22,9 @@ public class PlayNote extends Note {
 
     public void setJudgement(Judgement judgement) {
         this.judgement = judgement;
+    }
+
+    public float getTime() {
+        return time;
     }
 }

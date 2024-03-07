@@ -14,12 +14,12 @@ import static com.hflat.game.HFlatGame.options;
 public class Note {
 
     public final int id;
-    public Lane lane;
-    public float barTime;
-    public long time;
-    public float bpm;
-    public NoteType type;
-    public NoteDenom colour;
+    private final Lane lane;
+    private final float barTime;
+    private final long time;
+    private final float bpm;
+    private final NoteType type;
+    private final NoteDenom colour;
 
     public Note(int id, Lane lane, float barTime, float bpm, NoteType type, NoteDenom colour) {
         this.id = id;

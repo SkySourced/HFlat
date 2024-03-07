@@ -66,7 +66,7 @@ public class Play {
         for (Note pn : chart.getNotes()) {
             notes.add(new PlayNote(pn.getId(), pn.getLane(), pn.getBarTime(), currentSong.getBpm(), pn.getType(), pn.getColour(), this));
         }
-        notes.sort((o1, o2) -> (int) (o1.time - o2.time)); // Probably not necessary
+        notes.sort((o1, o2) -> (int) (o1.getTime() - o2.getTime())); // Probably not necessary
         remainingNotes.addAll(notes);
     }
 
@@ -82,11 +82,10 @@ public class Play {
         }
 
         // Calculate any missed notes
-        Gdx.app.debug("Play", "Checking for missed notes");
-        Gdx.app.debug("Play", "First remaining note time: " + remainingNotes.getFirst().time + "ms, " + remainingNotes.getFirst().barTime + " bars");
-        Gdx.app.debug("Play", "Last remaining note time: " + remainingNotes.getLast().time + "ms, " + remainingNotes.getLast().barTime + " bars");
+        Gdx.app.debug("Play", "First remaining note time: " + remainingNotes.getFirst().getTime() + "ms, " + remainingNotes.getFirst().getBarTime() + " bars");
+        Gdx.app.debug("Play", "Last remaining note time: " + remainingNotes.getLast().getTime() + "ms, " + remainingNotes.getLast().getBarTime() + " bars");
         Gdx.app.debug("Play", "Miss time: " + gameTimeNanos / Math.pow(10, 9) + " - " + Judgement.WAY_OFF.getTimingWindow());
-        while (remainingNotes.getFirst().time / 1000f < gameTimeNanos / Math.pow(10, 9) - Judgement.WAY_OFF.getTimingWindow()) {
+        while (remainingNotes.getFirst().getTime() / 1000f < gameTimeNanos / Math.pow(10, 9) - Judgement.WAY_OFF.getTimingWindow()) {
             //Gdx.app.debug("Play", "Missed note " + remainingNotes.getFirst().getId() + " at " + remainingNotes.getFirst().time + " (" + remainingNotes.getFirst().time * Math.pow(10, 6) + ")");
             remainingNotes.getFirst().setJudgement(Judgement.MISS);
             scores[7]++;
@@ -96,7 +95,7 @@ public class Play {
             remainingNotes.removeFirst();
             if (remainingNotes.isEmpty()) {
                 isPlaying = false;
-                    parent.setState(HFlatGame.GameState.RESULTS);
+                parent.setState(HFlatGame.GameState.RESULTS);
                 return;
             }
         }
@@ -110,9 +109,9 @@ public class Play {
         if (clampToZero && scorePercentage < 0) return 0f; else return scorePercentage;
     }
 
-    public float getScorePercentage(){
+    public float getScorePercentage() {
         return getScorePercentage(false);
-    };
+    }
 
     public float getRawScore(){
         return rawScore;
@@ -155,10 +154,10 @@ public class Play {
     public void drawNotes(SpriteBatch batch) {
         // Draw the notes
         for (PlayNote pn : remainingNotes) {
-            int y = (int) ((gameTimeBars - pn.barTime) * (options.getNoteSpeed() * options.getMusicRate() * HFlatGame.Ref.VERTICAL_ARROW_SCALAR * pn.getBpm()));
+            int y = (int) ((gameTimeBars - pn.getBarTime()) * (options.getNoteSpeed() / options.getMusicRate() * HFlatGame.Ref.VERTICAL_ARROW_SCALAR * pn.getBpm()));
 //            if (y < 0) break;
-            Gdx.app.debug("Note", "Drawing note at " + y + " (" + gameTimeBars + " - " + pn.barTime + ")" + " (" + options.getNoteSpeed() * options.getMusicRate() * HFlatGame.Ref.VERTICAL_ARROW_SCALAR * pn.getBpm() + ")");
-            if (y < 800) Note.drawNote(pn.colour.getTexture(), pn.getLane(), batch, y);
+            Gdx.app.debug("Note", "Drawing note at " + y + " (" + gameTimeBars + " - " + pn.getBarTime() + ")" + " (" + options.getNoteSpeed() / options.getMusicRate() * HFlatGame.Ref.VERTICAL_ARROW_SCALAR * pn.getBpm() + ")");
+            if (y < 800) Note.drawNote(pn.getColour().getTexture(), pn.getLane(), batch, y);
         }
     }
 
