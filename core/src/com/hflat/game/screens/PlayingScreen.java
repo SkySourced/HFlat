@@ -31,7 +31,7 @@ public class PlayingScreen implements Screen, IHasStaticState {
 
     // Fonts
     BitmapFont serifFont12 = HFlatGame.assMan.serifFont12;
-    BitmapFont[] judgementFonts = {assMan.marvellousFont, assMan.fantasticFont, assMan.excellentFont, assMan.greatFont, assMan.okFont, assMan.decentFont, assMan.wayOffFont, assMan.missFont};
+    BitmapFont[] judgementFonts12 = {assMan.marvellousFont12, assMan.fantasticFont12, assMan.excellentFont12, assMan.greatFont12, assMan.okFont12, assMan.decentFont12, assMan.wayOffFont12, assMan.missFont12};
 
     // Keys pressed
     boolean leftPressed;

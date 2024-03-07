@@ -1,6 +1,9 @@
 package com.hflat.game.screens;
 
+import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.Input;
 import com.badlogic.gdx.Screen;
+import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.hflat.game.HFlatGame;
 import com.hflat.game.chart.Play;
@@ -27,7 +30,7 @@ public class ResultsScreen implements Screen, IHasStaticState {
     }
     @Override
     public void show() {
-
+        play = parent.getCurrentPlay();
     }
 
     @Override
