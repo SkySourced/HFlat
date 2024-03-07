@@ -48,7 +48,7 @@ public class ResultsScreen implements Screen, IHasStaticState {
 
         // Draw score percentage
 
-        assMan.pixelFont40.draw(resultsBatch, scoreFormatter.format(play.getScorePercentage()),50,275);
+        assMan.pixelFont40.draw(resultsBatch, scoreFormatter.format(play.getScorePercentage(true)),50,275);
         HFlatGame.drawCentredText(resultsBatch, assMan.pixelFont20,"Press enter",50);
 
 

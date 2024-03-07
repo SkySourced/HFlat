@@ -30,7 +30,8 @@ public class PlayingScreen implements Screen, IHasStaticState {
     long lastDraw = System.nanoTime();
 
     // Fonts
-    BitmapFont serifFont12 = HFlatGame.assMan.serifFont12;
+    BitmapFont serifFont12 = assMan.serifFont12;
+    BitmapFont pixelFont20 = assMan.pixelFont20;
     BitmapFont[] judgementFonts12 = {assMan.marvellousFont12, assMan.fantasticFont12, assMan.excellentFont12, assMan.greatFont12, assMan.okFont12, assMan.decentFont12, assMan.wayOffFont12, assMan.missFont12};
 
     // Keys pressed
@@ -100,6 +101,9 @@ public class PlayingScreen implements Screen, IHasStaticState {
         Note.drawNote(assMan.manager.get(rightPressed ? assMan.targetPressed.address : beatTick ? assMan.targetBeat.address : assMan.targetUnpressed.address), Lane.RIGHT, playingBatch);
 
         assMan.pixelFont40.draw(playingBatch, scoreFormatter.format(parent.getCurrentPlay().getScorePercentage(true)), 30, 680);
+
+        // Combo - could be upgraded later to add colour if all marvellous/fantastic/excellent
+        drawCentredText(playingBatch, pixelFont20, String.valueOf(parent.getCurrentPlay().getCombo()), 350);
 
         for (int i = 0; i < parent.getCurrentPlay().getJudgementScores().length; i++) {
             int score = parent.getCurrentPlay().getJudgementScores()[i];
