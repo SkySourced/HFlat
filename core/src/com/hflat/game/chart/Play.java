@@ -97,20 +97,20 @@ public class Play {
         Gdx.app.debug("Play", "First remaining note time: " + remainingNotes.getFirst().getTime() + "ms, " + remainingNotes.getFirst().getBarTime() + " bars");
         Gdx.app.debug("Play", "Last remaining note time: " + remainingNotes.getLast().getTime() + "ms, " + remainingNotes.getLast().getBarTime() + " bars");
         Gdx.app.debug("Play", "Miss time: " + gameTimeNanos / Math.pow(10, 9) + " - " + Judgement.WAY_OFF.getTimingWindow());
-        while (remainingNotes.getFirst().getTime() / 1000f < gameTimeNanos / Math.pow(10, 9) - Judgement.WAY_OFF.getTimingWindow()) {
-            //Gdx.app.debug("Play", "Missed note " + remainingNotes.getFirst().getId() + " at " + remainingNotes.getFirst().time + " (" + remainingNotes.getFirst().time * Math.pow(10, 6) + ")");
-            remainingNotes.getFirst().setJudgement(Judgement.MISS);
-            scores[7]++;
-            combo = 0;
-            rawScore += Judgement.MISS.getScore();
-            notes.get(remainingNotes.getFirst().getId()).setJudgement(Judgement.MISS);
-            remainingNotes.removeFirst();
-            if (remainingNotes.isEmpty()) {
-                isPlaying = false;
-                parent.setState(HFlatGame.GameState.RESULTS);
-                return;
-            }
-        }
+        //while (remainingNotes.getFirst().getTime() / 1000f < gameTimeNanos / Math.pow(10, 9) - Judgement.WAY_OFF.getTimingWindow()) {
+        //    //Gdx.app.debug("Play", "Missed note " + remainingNotes.getFirst().getId() + " at " + remainingNotes.getFirst().time + " (" + remainingNotes.getFirst().time * Math.pow(10, 6) + ")");
+        //    remainingNotes.getFirst().setJudgement(Judgement.MISS);
+        //    scores[7]++;
+        //    combo = 0;
+        //    rawScore += Judgement.MISS.getScore();
+        //    notes.get(remainingNotes.getFirst().getId()).setJudgement(Judgement.MISS);
+        //    remainingNotes.removeFirst();
+        //    if (remainingNotes.isEmpty()) {
+        //        isPlaying = false;
+        //        parent.setState(HFlatGame.GameState.RESULTS);
+        //        return;
+        //    }
+        //}
     }
 
     public int[] getJudgementScores(){
@@ -168,7 +168,7 @@ public class Play {
         for (PlayNote pn : remainingNotes) {
             int y = (int) ((gameTimeBars - pn.getBarTime()) * (options.getNoteSpeed() / options.getMusicRate() * HFlatGame.Ref.VERTICAL_ARROW_SCALAR * pn.getBpm()));
 //            if (y < 0) break;
-            Gdx.app.debug("Note", "Drawing note at " + y + " (" + gameTimeBars + " - " + pn.getBarTime() + ")" + " (" + options.getNoteSpeed() / options.getMusicRate() * HFlatGame.Ref.VERTICAL_ARROW_SCALAR * pn.getBpm() + ")");
+            //Gdx.app.debug("Note", "Drawing note at " + y + " (" + gameTimeBars + " - " + pn.getBarTime() + ")" + " (" + options.getNoteSpeed() / options.getMusicRate() * HFlatGame.Ref.VERTICAL_ARROW_SCALAR * pn.getBpm() + ")");
             if (y < 800) Note.drawNote(pn.getColour().getTexture(), pn.getLane(), batch, y);
         }
     }
