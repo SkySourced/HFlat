@@ -55,7 +55,7 @@ public class Play {
         Gdx.app.debug("Play", "Last remaining note time: " + remainingNotes.getLast().time + "ms, " + remainingNotes.getLast().barTime + " bars");
         Gdx.app.debug("Play", "Miss time: " + gameTimeNanos / Math.pow(10, 9) + " - " + Judgement.WAY_OFF.getTimingWindow());
         while (remainingNotes.getFirst().time / 1000f < gameTimeNanos / Math.pow(10, 9) - Judgement.WAY_OFF.getTimingWindow()) {
-            Gdx.app.debug("Play", "Missed note " + remainingNotes.getFirst().getId() + " at " + remainingNotes.getFirst().time + " (" + remainingNotes.getFirst().time * Math.pow(10, 6) + ")");
+            //Gdx.app.debug("Play", "Missed note " + remainingNotes.getFirst().getId() + " at " + remainingNotes.getFirst().time + " (" + remainingNotes.getFirst().time * Math.pow(10, 6) + ")");
             remainingNotes.getFirst().setJudgement(Judgement.MISS);
             scores[7]++;
             combo = 0;
@@ -64,7 +64,7 @@ public class Play {
             remainingNotes.removeFirst();
             if (remainingNotes.isEmpty()) {
                 isPlaying = false;
-                parent.setState(HFlatGame.GameState.SONG_SELECT);
+                    parent.setState(HFlatGame.GameState.RESULTS);
                 return;
             }
         }
@@ -77,6 +77,10 @@ public class Play {
     public float getScorePercentage(boolean clampToZero){
         if (clampToZero && scorePercentage < 0) return 0f; else return scorePercentage;
     }
+
+    public float getScorePercentage(){
+        return getScorePercentage(false);
+    };
 
     public float getRawScore(){
         return rawScore;
