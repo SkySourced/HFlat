@@ -15,6 +15,38 @@ import static com.hflat.game.HFlatGame.options;
 
 public class Play {
 
+    public enum LetterGrade{
+        A_PLUS(89),
+        A(86),
+        A_MINUS(83),
+        B_PLUS(76),
+        B(72),
+        B_MINUS(68),
+        C_PLUS(64),
+        C(60),
+        C_MINUS(55),
+        D(0),
+        F(0),
+        S_PLUS(94),
+        S(92),
+        S_MINUS(89),
+        SINGLE(96),
+        DOUBLE(97),
+        TRIPLE(98),
+        QUAD(99),
+        QUINT(100);
+
+        int minimumScore;
+
+        LetterGrade(int minimumScore){
+            this.minimumScore = minimumScore;
+        }
+
+        public int getMinimumScore(){
+            return this.minimumScore;
+        }
+    }
+
     ArrayList<PlayNote> notes = new ArrayList<>();
     ArrayList<PlayNote> remainingNotes = new ArrayList<>();
     Chart chart;
@@ -136,5 +168,9 @@ public class Play {
 
     public ArrayList<PlayNote> getRemainingNotes() {
         return remainingNotes;
+    }
+
+    public int[] getScores(){
+        return this.scores;
     }
 }

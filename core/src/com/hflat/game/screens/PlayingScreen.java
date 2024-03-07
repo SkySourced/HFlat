@@ -103,7 +103,7 @@ public class PlayingScreen implements Screen, IHasStaticState {
 
         for (int i = 0; i < parent.getCurrentPlay().getJudgementScores().length; i++) {
             int score = parent.getCurrentPlay().getJudgementScores()[i];
-            drawRightAlignedText(playingBatch, judgementFonts[i], String.valueOf(score), i > 3 ? 380 : 320, 690 - 12 * (i % 4));
+            drawRightAlignedText(playingBatch, judgementFonts12[i], String.valueOf(score), i > 3 ? 380 : 320, 690 - 12 * (i % 4));
         }
 
         parent.getCurrentPlay().drawNotes(playingBatch);
