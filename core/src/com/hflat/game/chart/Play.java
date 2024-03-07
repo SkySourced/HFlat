@@ -16,27 +16,27 @@ import static com.hflat.game.HFlatGame.options;
 public class Play {
 
     public enum LetterGrade{
-        A_PLUS(89),
-        A(86),
-        A_MINUS(83),
-        B_PLUS(76),
-        B(72),
-        B_MINUS(68),
-        C_PLUS(64),
-        C(60),
-        C_MINUS(55),
-        D(0),
         F(0),
-        S_PLUS(94),
-        S(92),
+        D(0),
+        C_MINUS(55),
+        C(60),
+        C_PLUS(64),
+        B_MINUS(68),
+        B(72),
+        B_PLUS(76),
+        A_MINUS(83),
+        A(86),
+        A_PLUS(89),
         S_MINUS(89),
+        S(92),
+        S_PLUS(94),
         SINGLE(96),
         DOUBLE(97),
         TRIPLE(98),
         QUAD(99),
         QUINT(100);
 
-        int minimumScore;
+        final int minimumScore;
 
         LetterGrade(int minimumScore){
             this.minimumScore = minimumScore;
