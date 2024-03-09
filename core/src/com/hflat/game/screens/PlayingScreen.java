@@ -24,6 +24,9 @@ public class PlayingScreen implements Screen, IHasStaticState {
     DecimalFormat scoreFormatter = new DecimalFormat("00.00");
     ShapeDrawer drawer;
 
+    int rainbowCycle = 0;
+    Color rainbowColor;
+
     // Counters
     private static float dontGiveUpTime = 0f; // time to show 'Don't give up!' message
     float escapeHeldDuration; // time ESC has been held
@@ -59,6 +62,8 @@ public class PlayingScreen implements Screen, IHasStaticState {
     public void render(float delta) {
         // Update times
         parent.getCurrentPlay().update(delta);
+        rainbowColor = new Color(java.awt.Color.HSBtoRGB(rainbowCycle, 50, 50));
+        rainbowCycle += delta * 10;
 
         if (lastDraw - System.nanoTime() > 1/Ref.MAX_FRAMES) return;
 
@@ -105,6 +110,9 @@ public class PlayingScreen implements Screen, IHasStaticState {
             int score = parent.getCurrentPlay().getJudgementScores()[i];
             drawRightAlignedText(playingBatch, judgementFonts12[i], String.valueOf(score), i > 3 ? 380 : 320, 690 - 12 * (i % 4));
         }
+
+        drawer.rectangle(15, 100, 30, 300, Color.BLACK);
+        drawer.filledRectangle(15, 100, 30, 300 * parent.getCurrentPlay().getLifeMeter() / 100, rainbowColor);
 
         parent.getCurrentPlay().drawNotes(playingBatch);
 

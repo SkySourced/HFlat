@@ -33,7 +33,7 @@ public class ResultsScreen implements Screen, IHasStaticState {
     @Override
     public void show() {
         play = parent.getCurrentPlay();
-        Play.LetterGrade grade = Play.LetterGrade.getGrade(play.getScorePercentage());
+        Play.LetterGrade grade = Play.LetterGrade.getGrade(play.getScorePercentage(), play.getLifeMeter());
         gradeAsset = new Texture(grade.getGradeAsset());
     }
 

@@ -110,6 +110,14 @@ public class Note {
         sprite.draw(batch);
     }
 
+    public void drawNote(Lane lane, SpriteBatch batch){
+        drawNote(colour.getTexture(), lane, batch);
+    }
+
+    public void drawNote(Lane lane, SpriteBatch batch, int y){
+        drawNote(colour.getTexture(), lane, batch, y);
+    }
+
     public static void drawNote(Texture texture, Lane lane, SpriteBatch batch, int y) {
         Sprite sprite = new Sprite(texture);
         sprite.setBounds(20 + lane.toInt() * 95, y, 80 * options.getMini(), 80 * options.getMini());

@@ -51,7 +51,8 @@ public class Play {
         public String getGradeAsset(){
             return assetPath;
         }
-        public static LetterGrade getGrade(float score){
+        public static LetterGrade getGrade(float score, float life){
+            if (life < 0) return F;
             for (LetterGrade lg : LetterGrade.values()){
                 if (score >= lg.getMinimumScore()) return lg;
             }
@@ -66,6 +67,7 @@ public class Play {
     float rawScore = 0;
     int combo = 0;
     float scorePercentage = 0;
+    float lifeMeter = 50f;
     int[] scores = new int[8];
     float gameTimeBars = (-3f - currentSong.getOffset()) * currentSong.getBpm() * options.getMusicRate() / 60 / 4;
     double gameTimeNanos = (-3 - currentSong.getOffset()) * Math.pow(10, 9);
@@ -97,20 +99,20 @@ public class Play {
         Gdx.app.debug("Play", "First remaining note time: " + remainingNotes.getFirst().getTime() + "ms, " + remainingNotes.getFirst().getBarTime() + " bars");
         Gdx.app.debug("Play", "Last remaining note time: " + remainingNotes.getLast().getTime() + "ms, " + remainingNotes.getLast().getBarTime() + " bars");
         Gdx.app.debug("Play", "Miss time: " + gameTimeNanos / Math.pow(10, 9) + " - " + Judgement.WAY_OFF.getTimingWindow());
-        //while (remainingNotes.getFirst().getTime() / 1000f < gameTimeNanos / Math.pow(10, 9) - Judgement.WAY_OFF.getTimingWindow()) {
-        //    //Gdx.app.debug("Play", "Missed note " + remainingNotes.getFirst().getId() + " at " + remainingNotes.getFirst().time + " (" + remainingNotes.getFirst().time * Math.pow(10, 6) + ")");
-        //    remainingNotes.getFirst().setJudgement(Judgement.MISS);
-        //    scores[7]++;
-        //    combo = 0;
-        //    rawScore += Judgement.MISS.getScore();
-        //    notes.get(remainingNotes.getFirst().getId()).setJudgement(Judgement.MISS);
-        //    remainingNotes.removeFirst();
-        //    if (remainingNotes.isEmpty()) {
-        //        isPlaying = false;
-        //        parent.setState(HFlatGame.GameState.RESULTS);
-        //        return;
-        //    }
-        //}
+        while (remainingNotes.getFirst().getTime() / 1000f < gameTimeNanos / Math.pow(10, 9) - Judgement.WAY_OFF.getTimingWindow()) {
+            //Gdx.app.debug("Play", "Missed note " + remainingNotes.getFirst().getId() + " at " + remainingNotes.getFirst().time + " (" + remainingNotes.getFirst().time * Math.pow(10, 6) + ")");
+            remainingNotes.getFirst().setJudgement(Judgement.MISS);
+            scores[7]++;
+            combo = 0;
+            rawScore += Judgement.MISS.getScore();
+            notes.get(remainingNotes.getFirst().getId()).setJudgement(Judgement.MISS);
+            remainingNotes.removeFirst();
+            if (remainingNotes.isEmpty()) {
+                isPlaying = false;
+                parent.setState(HFlatGame.GameState.RESULTS);
+                return;
+            }
+        }
     }
 
     public int[] getJudgementScores(){
@@ -155,9 +157,12 @@ public class Play {
                 notes.get(pn.getId()).setJudgement(j);
                 scores[j.ordinal()]++;
                 rawScore += j.getScore();
+                lifeMeter += j.getLifeImpact();
                 if (j.ordinal() < 4) {
                     combo++;
                 }
+                if (lifeMeter > 100) lifeMeter = 100;
+                if (lifeMeter < 0) parent.setState(HFlatGame.GameState.RESULTS);
                 break;
             }
         }
@@ -169,7 +174,7 @@ public class Play {
             int y = (int) ((gameTimeBars - pn.getBarTime()) * (options.getNoteSpeed() / options.getMusicRate() * HFlatGame.Ref.VERTICAL_ARROW_SCALAR * pn.getBpm()));
 //            if (y < 0) break;
             //Gdx.app.debug("Note", "Drawing note at " + y + " (" + gameTimeBars + " - " + pn.getBarTime() + ")" + " (" + options.getNoteSpeed() / options.getMusicRate() * HFlatGame.Ref.VERTICAL_ARROW_SCALAR * pn.getBpm() + ")");
-            if (y < 800) Note.drawNote(pn.getColour().getTexture(), pn.getLane(), batch, y);
+            if (y < 800) pn.drawNote(pn.getLane(), batch, y);
         }
     }
 
@@ -183,5 +188,13 @@ public class Play {
 
     public int[] getScores(){
         return this.scores;
+    }
+
+    public float getLifeMeter() {
+        return lifeMeter;
+    }
+
+    public void setLifeMeter(float lifeMeter) {
+        this.lifeMeter = lifeMeter;
     }
 }
