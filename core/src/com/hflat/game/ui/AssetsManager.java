@@ -89,8 +89,6 @@ public class AssetsManager {
         FreeTypeFontGenerator.FreeTypeFontParameter parameter = new FreeTypeFontGenerator.FreeTypeFontParameter();
         parameter.color = Color.BLACK;
         parameter.size = 20;
-        parameter.shadowOffsetX = 1;
-        parameter.shadowOffsetY = 1;
         parameter.shadowColor = new Color(0, 0, 0, 0.75f);
         pixelFont20 = pixelGenerator.generateFont(parameter);
         serifFont20 = serifGenerator.generateFont(parameter);
@@ -100,18 +98,12 @@ public class AssetsManager {
         serifFont12 = serifGenerator.generateFont(parameter);
 
         parameter.size = 40;
-        parameter.shadowOffsetX = 2;
-        parameter.shadowOffsetY = 2;
         pixelFont40 = pixelGenerator.generateFont(parameter);
 
         parameter.size = 80;
-        parameter.shadowOffsetX = 3;
-        parameter.shadowOffsetY = 3;
         pixelFont80 = pixelGenerator.generateFont(parameter);
 
         parameter.size = 12;
-        parameter.shadowOffsetX = 0;
-        parameter.shadowOffsetY = 0;
 
         parameter.color = Judgement.MARVELLOUS.getColor();
         marvellousFont12 = pixelGenerator.generateFont(parameter);
