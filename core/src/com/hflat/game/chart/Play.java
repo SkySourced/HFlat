@@ -67,8 +67,8 @@ public class Play {
     int combo = 0;
     float scorePercentage = 0;
     int[] scores = new int[8];
-    float gameTimeBars = (-3f - currentSong.getOffset()) * currentSong.getBpm() * options.getMusicRate() / 60 / 4;
-    double gameTimeNanos = (-3 - currentSong.getOffset()) * Math.pow(10, 9);
+    float gameTimeBars = (-3f + currentSong.getOffset()) * currentSong.getBpm() * options.getMusicRate() / 60 / 4;
+    double gameTimeNanos = (-3 + currentSong.getOffset()) * Math.pow(10, 9);
     boolean isPlaying = false;
 
     public Play(Chart chart, HFlatGame parent) {
@@ -97,20 +97,20 @@ public class Play {
         Gdx.app.debug("Play", "First remaining note time: " + remainingNotes.getFirst().getTime() + "ms, " + remainingNotes.getFirst().getBarTime() + " bars");
         Gdx.app.debug("Play", "Last remaining note time: " + remainingNotes.getLast().getTime() + "ms, " + remainingNotes.getLast().getBarTime() + " bars");
         Gdx.app.debug("Play", "Miss time: " + gameTimeNanos / Math.pow(10, 9) + " - " + Judgement.WAY_OFF.getTimingWindow());
-        //while (remainingNotes.getFirst().getTime() / 1000f < gameTimeNanos / Math.pow(10, 9) - Judgement.WAY_OFF.getTimingWindow()) {
-        //    //Gdx.app.debug("Play", "Missed note " + remainingNotes.getFirst().getId() + " at " + remainingNotes.getFirst().time + " (" + remainingNotes.getFirst().time * Math.pow(10, 6) + ")");
-        //    remainingNotes.getFirst().setJudgement(Judgement.MISS);
-        //    scores[7]++;
-        //    combo = 0;
-        //    rawScore += Judgement.MISS.getScore();
-        //    notes.get(remainingNotes.getFirst().getId()).setJudgement(Judgement.MISS);
-        //    remainingNotes.removeFirst();
-        //    if (remainingNotes.isEmpty()) {
-        //        isPlaying = false;
-        //        parent.setState(HFlatGame.GameState.RESULTS);
-        //        return;
-        //    }
-        //}
+        while (remainingNotes.getFirst().getTime() / 1000f < gameTimeNanos / Math.pow(10, 9) - Judgement.WAY_OFF.getTimingWindow()) {
+            //Gdx.app.debug("Play", "Missed note " + remainingNotes.getFirst().getId() + " at " + remainingNotes.getFirst().time + " (" + remainingNotes.getFirst().time * Math.pow(10, 6) + ")");
+            remainingNotes.getFirst().setJudgement(Judgement.MISS);
+            scores[7]++;
+            combo = 0;
+            rawScore += Judgement.MISS.getScore();
+            notes.get(remainingNotes.getFirst().getId()).setJudgement(Judgement.MISS);
+            remainingNotes.removeFirst(); // commenting this line out makes the game crash. ?
+            if (remainingNotes.isEmpty()) {
+                isPlaying = false;
+                parent.setState(HFlatGame.GameState.RESULTS);
+                return;
+            }
+        }
     }
 
     public int[] getJudgementScores(){
@@ -183,5 +183,9 @@ public class Play {
 
     public int[] getScores(){
         return this.scores;
+    }
+
+    public Chart getChart() {
+        return chart;
     }
 }
