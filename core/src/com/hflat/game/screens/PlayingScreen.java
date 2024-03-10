@@ -74,7 +74,7 @@ public class PlayingScreen implements Screen, IHasStaticState {
             escapeHeldDuration += Gdx.graphics.getDeltaTime();
             drawCentredText(playingBatch, serifFont12, "Hold ESC to quit", 150);
             // seconds
-            int escapeHeldThreshold = 2;
+            int escapeHeldThreshold = 1;
             if (escapeHeldDuration > escapeHeldThreshold){
                 parent.setState(GameState.RESULTS);
             }

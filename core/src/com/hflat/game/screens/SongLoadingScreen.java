@@ -32,8 +32,8 @@ public class SongLoadingScreen implements Screen, IHasStaticState {
     public void render(float delta) {
         songLoadingBatch.setProjectionMatrix(parent.getCamera().combined);
 
-        long loadingTime = 3000;
-        float progress = (System.nanoTime() - parent.loadingStartTime) / (float) (loadingTime * Math.pow(10, 6));
+        long loadingTime = 2;
+        float progress = (System.nanoTime() - parent.loadingStartTime) / (float) (loadingTime * Math.pow(10, 9));
 
         songLoadingBatch.begin();
 
