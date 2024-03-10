@@ -3,6 +3,7 @@ package com.hflat.game.screens;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
 import com.badlogic.gdx.Screen;
+import com.badlogic.gdx.graphics.Pixmap;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
@@ -49,7 +50,10 @@ public class ResultsScreen implements Screen, IHasStaticState {
         }
 
 
-        resultsBatch.draw(gradeAsset, 50, 50, 100, 100);
+
+        //resultsBatch.draw(play.getChart().getSong().getTexture(), 25, 300,350,350);
+        resultsBatch.draw(gradeAsset, 50, 300, 100, 100);
+
 
         // Draw song info
 
