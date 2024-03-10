@@ -76,7 +76,7 @@ public class PlayingScreen implements Screen, IHasStaticState {
             // seconds
             int escapeHeldThreshold = 2;
             if (escapeHeldDuration > escapeHeldThreshold){
-                parent.setState(HFlatGame.GameState.SONG_SELECT);
+                parent.setState(GameState.RESULTS);
             }
         } else {
             if (escapeHeldDuration > 0) dontGiveUpTime = 1.5f;
@@ -88,10 +88,10 @@ public class PlayingScreen implements Screen, IHasStaticState {
             drawCentredText(playingBatch, serifFont12, "Don't give up!", 150);
         }
 
-        leftPressed = Gdx.input.isKeyPressed(Input.Keys.LEFT);
-        upPressed = Gdx.input.isKeyPressed(Input.Keys.UP);
-        downPressed = Gdx.input.isKeyPressed(Input.Keys.DOWN);
-        rightPressed = Gdx.input.isKeyPressed(Input.Keys.RIGHT);
+        leftPressed = Gdx.input.isKeyPressed(Input.Keys.LEFT) || Gdx.input.isKeyPressed(Input.Keys.D);
+        upPressed = Gdx.input.isKeyPressed(Input.Keys.UP) || Gdx.input.isKeyPressed(Input.Keys.J);
+        downPressed = Gdx.input.isKeyPressed(Input.Keys.DOWN) || Gdx.input.isKeyPressed(Input.Keys.F);
+        rightPressed = Gdx.input.isKeyPressed(Input.Keys.RIGHT) || Gdx.input.isKeyPressed(Input.Keys.K);
         beatTick = (Math.abs(parent.getCurrentPlay().getGameTimeBars()) * 4 % 1 >= 0.95);
 
         // I love ternary operators, but even I think this is too much

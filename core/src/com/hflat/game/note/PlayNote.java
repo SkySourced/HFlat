@@ -1,6 +1,5 @@
 package com.hflat.game.note;
 
-import com.badlogic.gdx.Gdx;
 import com.hflat.game.chart.Play;
 
 import static com.hflat.game.HFlatGame.options;
@@ -9,12 +8,12 @@ public class PlayNote extends Note {
 
     private Judgement judgement;
     Play parent;
+    private final long time;
 
     public PlayNote(int id, Lane lane, float barTime, float bpm, NoteType type, NoteDenom colour, Play parent) {
         super(id, lane, barTime, bpm, type, colour);
         this.parent = parent;
-        Gdx.app.debug("PlayNote", "Created note with time " + time + " bartime " + barTime + " and bpm " + bpm);
-        this.time = (long) (this.time / options.getMusicRate()); // in ms
+        this.time = (long) (barTime * 60 /(4/bpm) * 1000 * options.getMusicRate()); // in ms
     }
 
     public Judgement getJudgement() {
@@ -23,5 +22,9 @@ public class PlayNote extends Note {
 
     public void setJudgement(Judgement judgement) {
         this.judgement = judgement;
+    }
+
+    public float getTime() {
+        return time;
     }
 }

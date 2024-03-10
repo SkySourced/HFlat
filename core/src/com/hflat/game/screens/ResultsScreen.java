@@ -3,6 +3,7 @@ package com.hflat.game.screens;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
 import com.badlogic.gdx.Screen;
+import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.hflat.game.HFlatGame;
@@ -18,6 +19,7 @@ public class ResultsScreen implements Screen, IHasStaticState {
     DecimalFormat decimalFormatter = new DecimalFormat("0000");
     DecimalFormat scoreFormatter = new DecimalFormat("00.00");
     Play play;
+    Texture gradeAsset;
 
     BitmapFont[] judgementFonts = {assMan.marvellousFont20, assMan.fantasticFont20, assMan.excellentFont20, assMan.greatFont20, assMan.okFont20, assMan.decentFont20, assMan.wayOffFont20, assMan.missFont20};
     String[] judgementNames = {"Marvellous", "Fantastic", "Excellent", "Great", "OK", "Decent", "Way Off", "Miss"};
@@ -31,6 +33,8 @@ public class ResultsScreen implements Screen, IHasStaticState {
     @Override
     public void show() {
         play = parent.getCurrentPlay();
+        Play.LetterGrade grade = Play.LetterGrade.getGrade(play.getScorePercentage());
+        gradeAsset = new Texture(grade.getGradeAsset());
     }
 
     @Override
@@ -42,6 +46,9 @@ public class ResultsScreen implements Screen, IHasStaticState {
         for (int i = 0; i < judgementFonts.length; i++){
             judgementFonts[i].draw(resultsBatch, String.format("%s %s", decimalFormatter.format(play.getScores()[i]), judgementNames[i]), 50, 230 - 20 * i);
         }
+
+
+        resultsBatch.draw(gradeAsset, 50, 50, 100, 100);
 
         // Draw song info
 

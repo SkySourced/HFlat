@@ -90,6 +90,7 @@ public class HFlatGame extends Game {
         playingScreen = new PlayingScreen(this);
         resultsScreen = new ResultsScreen(this);
 
+
         this.setScreen(loadingScreen);
     }
 
