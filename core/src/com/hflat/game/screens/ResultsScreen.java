@@ -32,6 +32,7 @@ public class ResultsScreen implements Screen, IHasStaticState {
     }
     @Override
     public void show() {
+        Gdx.input.setInputProcessor(null);
         play = parent.getCurrentPlay();
         Play.LetterGrade grade = Play.LetterGrade.getGrade(play.getScorePercentage(), play.getLifeMeter());
         gradeAsset = new Texture(grade.getGradeAsset());

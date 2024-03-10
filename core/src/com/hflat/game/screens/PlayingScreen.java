@@ -68,8 +68,11 @@ public class PlayingScreen implements Screen, IHasStaticState {
         Gdx.input.setInputProcessor(input);
         play = parent.getCurrentPlay();
         String songPath = play.getChart().getSong().getPath();
-        String songDirectory = String.join("/", Arrays.copyOfRange(songPath.split("\\\\"), 0, songPath.split("\\\\").length-1));
+        String songDirectory;
+        if (System.getProperty("os.name").startsWith("Windows")) songDirectory = String.join("/", Arrays.copyOfRange(songPath.split("\\\\"), 0, songPath.split("\\\\").length-1));
+        else songDirectory = String.join("/", Arrays.copyOfRange(songPath.split("/"), 0, songPath.split("/").length-1));
         String audioPath = songDirectory + "/" + play.getChart().getSong().getSoundPath();
+        Gdx.app.debug("audioPath", audioPath);
         track = Gdx.audio.newMusic(Gdx.files.internal(audioPath));
     }
 

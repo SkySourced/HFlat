@@ -106,6 +106,7 @@ public class Play {
             combo = 0;
             rawScore += Judgement.MISS.getScore();
             notes.get(remainingNotes.getFirst().getId()).setJudgement(Judgement.MISS);
+            lifeMeter += Judgement.MISS.getLifeImpact();
             remainingNotes.removeFirst();
             if (remainingNotes.isEmpty()) {
                 isPlaying = false;
@@ -192,10 +193,6 @@ public class Play {
 
     public float getLifeMeter() {
         return lifeMeter;
-    }
-
-    public void setLifeMeter(float lifeMeter) {
-        this.lifeMeter = lifeMeter;
     }
 
     public Chart getChart() {
