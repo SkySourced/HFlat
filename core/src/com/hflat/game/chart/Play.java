@@ -69,8 +69,8 @@ public class Play {
     float scorePercentage = 0;
     float lifeMeter = 50f;
     int[] scores = new int[8];
-    float gameTimeBars = (-3f - currentSong.getOffset()) * currentSong.getBpm() * options.getMusicRate() / 60 / 4;
-    double gameTimeNanos = (-3 - currentSong.getOffset()) * Math.pow(10, 9);
+    float gameTimeBars = (-3f + currentSong.getOffset()) * currentSong.getBpm() * options.getMusicRate() / 60 / 4;
+    double gameTimeNanos = (-3 + currentSong.getOffset()) * Math.pow(10, 9);
     boolean isPlaying = false;
 
     public Play(Chart chart, HFlatGame parent) {
@@ -196,5 +196,9 @@ public class Play {
 
     public void setLifeMeter(float lifeMeter) {
         this.lifeMeter = lifeMeter;
+    }
+
+    public Chart getChart() {
+        return chart;
     }
 }

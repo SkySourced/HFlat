@@ -4,15 +4,18 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
 import com.badlogic.gdx.InputAdapter;
 import com.badlogic.gdx.Screen;
+import com.badlogic.gdx.audio.Music;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.hflat.game.HFlatGame;
+import com.hflat.game.chart.Play;
 import com.hflat.game.note.Lane;
 import com.hflat.game.note.Note;
 import space.earlygrey.shapedrawer.ShapeDrawer;
 
 import java.text.DecimalFormat;
+import java.util.Arrays;
 
 import static com.hflat.game.HFlatGame.*;
 
@@ -23,6 +26,12 @@ public class PlayingScreen implements Screen, IHasStaticState {
     SpriteBatch playingBatch;
     DecimalFormat scoreFormatter = new DecimalFormat("00.00");
     ShapeDrawer drawer;
+    Play play;
+
+    // Music
+    Music track;
+    float volume = 0.5f;
+    boolean started = false;
 
     int rainbowCycle = 0;
     Color rainbowColor;
@@ -33,7 +42,8 @@ public class PlayingScreen implements Screen, IHasStaticState {
     long lastDraw = System.nanoTime();
 
     // Fonts
-    BitmapFont serifFont12 = HFlatGame.assMan.serifFont12;
+    BitmapFont serifFont12 = assMan.serifFont12;
+    BitmapFont pixelFont20 = assMan.pixelFont20;
     BitmapFont[] judgementFonts12 = {assMan.marvellousFont12, assMan.fantasticFont12, assMan.excellentFont12, assMan.greatFont12, assMan.okFont12, assMan.decentFont12, assMan.wayOffFont12, assMan.missFont12};
 
     // Keys pressed
@@ -56,12 +66,22 @@ public class PlayingScreen implements Screen, IHasStaticState {
 //        escapeHeldDuration = 0;
         IngameInput input = new IngameInput();
         Gdx.input.setInputProcessor(input);
+        play = parent.getCurrentPlay();
+        String songPath = play.getChart().getSong().getPath();
+        String songDirectory = String.join("/", Arrays.copyOfRange(songPath.split("\\\\"), 0, songPath.split("\\\\").length-1));
+        String audioPath = songDirectory + "/" + play.getChart().getSong().getSoundPath();
+        track = Gdx.audio.newMusic(Gdx.files.internal(audioPath));
     }
 
     @Override
     public void render(float delta) {
+        if (!track.isPlaying() && play.getGameTimeNanos() > 0 && !started) {
+            track.play();
+            started = true;
+        }
+
         // Update times
-        parent.getCurrentPlay().update(delta);
+        play.update(delta);
         rainbowColor = new Color(java.awt.Color.HSBtoRGB(rainbowCycle, 50, 50));
         rainbowCycle += delta * 10;
 
@@ -78,8 +98,9 @@ public class PlayingScreen implements Screen, IHasStaticState {
             escapeHeldDuration += Gdx.graphics.getDeltaTime();
             drawCentredText(playingBatch, serifFont12, "Hold ESC to quit", 150);
             // seconds
-            int escapeHeldThreshold = 2;
+            int escapeHeldThreshold = 1;
             if (escapeHeldDuration > escapeHeldThreshold){
+                track.stop();
                 parent.setState(GameState.RESULTS);
             }
         } else {
@@ -96,7 +117,7 @@ public class PlayingScreen implements Screen, IHasStaticState {
         upPressed = Gdx.input.isKeyPressed(Input.Keys.UP) || Gdx.input.isKeyPressed(Input.Keys.J);
         downPressed = Gdx.input.isKeyPressed(Input.Keys.DOWN) || Gdx.input.isKeyPressed(Input.Keys.F);
         rightPressed = Gdx.input.isKeyPressed(Input.Keys.RIGHT) || Gdx.input.isKeyPressed(Input.Keys.K);
-        beatTick = (Math.abs(parent.getCurrentPlay().getGameTimeBars()) * 4 % 1 >= 0.95);
+        beatTick = (Math.abs(play.getGameTimeBars()) * 4 % 1 >= 0.95);
 
         // I love ternary operators, but even I think this is too much
         Note.drawNote(assMan.manager.get(leftPressed ? assMan.targetPressed.address : beatTick ? assMan.targetBeat.address : assMan.targetUnpressed.address), Lane.LEFT, playingBatch);
@@ -104,17 +125,20 @@ public class PlayingScreen implements Screen, IHasStaticState {
         Note.drawNote(assMan.manager.get(upPressed ? assMan.targetPressed.address : beatTick ? assMan.targetBeat.address : assMan.targetUnpressed.address), Lane.UP, playingBatch);
         Note.drawNote(assMan.manager.get(rightPressed ? assMan.targetPressed.address : beatTick ? assMan.targetBeat.address : assMan.targetUnpressed.address), Lane.RIGHT, playingBatch);
 
-        assMan.pixelFont40.draw(playingBatch, scoreFormatter.format(parent.getCurrentPlay().getScorePercentage(true)), 30, 680);
+        assMan.pixelFont40.draw(playingBatch, scoreFormatter.format(play.getScorePercentage(true)), 30, 680);
 
-        for (int i = 0; i < parent.getCurrentPlay().getJudgementScores().length; i++) {
-            int score = parent.getCurrentPlay().getJudgementScores()[i];
+        // Combo - could be upgraded later to add colour if all marvellous/fantastic/excellent
+        if (play.getCombo() > 0) drawCentredText(playingBatch, pixelFont20, String.valueOf(play.getCombo()), 350);
+
+        for (int i = 0; i < play.getJudgementScores().length; i++) {
+            int score = play.getJudgementScores()[i];
             drawRightAlignedText(playingBatch, judgementFonts12[i], String.valueOf(score), i > 3 ? 380 : 320, 690 - 12 * (i % 4));
         }
 
         drawer.rectangle(15, 100, 30, 300, Color.BLACK);
         drawer.filledRectangle(15, 100, 30, 300 * parent.getCurrentPlay().getLifeMeter() / 100, rainbowColor);
 
-        parent.getCurrentPlay().drawNotes(playingBatch);
+        play.drawNotes(playingBatch);
 
         playingBatch.end();
     }
@@ -142,6 +166,7 @@ public class PlayingScreen implements Screen, IHasStaticState {
     @Override
     public void dispose() {
         playingBatch.dispose();
+        track.dispose();
     }
 
     private class IngameInput extends InputAdapter {
@@ -149,16 +174,16 @@ public class PlayingScreen implements Screen, IHasStaticState {
         @Override
         public boolean keyDown(int keycode) {
             if (keycode == Input.Keys.LEFT || keycode == Input.Keys.D) {
-                parent.getCurrentPlay().judge(Lane.LEFT);
+                play.judge(Lane.LEFT);
             }
             if (keycode == Input.Keys.UP || keycode == Input.Keys.F) {
-                parent.getCurrentPlay().judge(Lane.UP);
+                play.judge(Lane.UP);
             }
             if (keycode == Input.Keys.DOWN || keycode == Input.Keys.J) {
-                parent.getCurrentPlay().judge(Lane.DOWN);
+                play.judge(Lane.DOWN);
             }
             if (keycode == Input.Keys.RIGHT || keycode == Input.Keys.K) {
-                parent.getCurrentPlay().judge(Lane.RIGHT);
+                play.judge(Lane.RIGHT);
             }
             return false;
         }
