@@ -53,6 +53,7 @@ public class Play {
         }
         public static LetterGrade getGrade(float score, float life){
             if (life < 0) return F;
+            if (score < 0) score = 0;
             for (LetterGrade lg : LetterGrade.values()){
                 if (score >= lg.getMinimumScore()) return lg;
             }
@@ -95,18 +96,24 @@ public class Play {
             return;
         }
 
+        if (lifeMeter <= 0) {
+            parent.setState(HFlatGame.GameState.RESULTS);
+            return;
+        }
+
         // Calculate any missed notes
-        Gdx.app.debug("Play", "First remaining note time: " + remainingNotes.getFirst().getTime() + "ms, " + remainingNotes.getFirst().getBarTime() + " bars");
-        Gdx.app.debug("Play", "Last remaining note time: " + remainingNotes.getLast().getTime() + "ms, " + remainingNotes.getLast().getBarTime() + " bars");
-        Gdx.app.debug("Play", "Miss time: " + gameTimeNanos / Math.pow(10, 9) + " - " + Judgement.WAY_OFF.getTimingWindow());
+
         while (remainingNotes.getFirst().getTime() / 1000f < gameTimeNanos / Math.pow(10, 9) - Judgement.WAY_OFF.getTimingWindow()) {
-            //Gdx.app.debug("Play", "Missed note " + remainingNotes.getFirst().getId() + " at " + remainingNotes.getFirst().time + " (" + remainingNotes.getFirst().time * Math.pow(10, 6) + ")");
+            Gdx.app.debug("Play", "Missed note " + remainingNotes.getFirst().getId() + " at " + remainingNotes.getFirst().getTime() + " (" + remainingNotes.getFirst().getTime() * Math.pow(10, 6) + ")");
+            Gdx.app.debug("Play", "First remaining note time: " + remainingNotes.getFirst().getTime() + "ms, " + remainingNotes.getFirst().getBarTime() + " bars");
+            Gdx.app.debug("Play", "Last remaining note time: " + remainingNotes.getLast().getTime() + "ms, " + remainingNotes.getLast().getBarTime() + " bars");
+            Gdx.app.debug("Play", "Miss time: " + gameTimeNanos / Math.pow(10, 9) + " - " + Judgement.WAY_OFF.getTimingWindow());
             remainingNotes.getFirst().setJudgement(Judgement.MISS);
             scores[7]++;
             combo = 0;
             rawScore += Judgement.MISS.getScore();
             notes.get(remainingNotes.getFirst().getId()).setJudgement(Judgement.MISS);
-            lifeMeter += Judgement.MISS.getLifeImpact();
+            //lifeMeter += Judgement.MISS.getLifeImpact();
             remainingNotes.removeFirst();
             if (remainingNotes.isEmpty()) {
                 isPlaying = false;
@@ -163,7 +170,7 @@ public class Play {
                     combo++;
                 }
                 if (lifeMeter > 100) lifeMeter = 100;
-                if (lifeMeter < 0) parent.setState(HFlatGame.GameState.RESULTS);
+                if (lifeMeter <= 0) parent.setState(HFlatGame.GameState.RESULTS);
                 break;
             }
         }
@@ -193,6 +200,10 @@ public class Play {
 
     public float getLifeMeter() {
         return lifeMeter;
+    }
+
+    public void setLifeMeter(float lifeMeter) {
+        this.lifeMeter = lifeMeter;
     }
 
     public Chart getChart() {

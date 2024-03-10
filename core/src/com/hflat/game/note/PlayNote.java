@@ -13,7 +13,7 @@ public class PlayNote extends Note {
     public PlayNote(int id, Lane lane, float barTime, float bpm, NoteType type, NoteDenom colour, Play parent) {
         super(id, lane, barTime, bpm, type, colour);
         this.parent = parent;
-        this.time = (long) (barTime * 60 /(4/bpm) * options.getMusicRate()); // in ms
+        this.time = (long) (barTime /(4/bpm) * 60 * options.getMusicRate()); // in ms
     }
 
     public Judgement getJudgement() {

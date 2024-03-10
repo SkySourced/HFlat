@@ -136,14 +136,7 @@ public class Chart {
                 for (int noteId = 0; noteId < 4; noteId++) {
                     if (rawNotes.get(i).charAt(noteId) != '0') {
                         //Gdx.app.debug("Chart -note", "Lane: " + i + ", Beat: " + beat + ", BPM: " + bpm + ", Type: " + rawNotes.get(i).charAt(noteId) + ", Quantization: " + quantizationString);
-                        notes.add(new Note(
-                                notesAdded,
-                                Lane.fromInt(noteId),
-                                barIndex + beat,
-                                (int) bpm,
-                                NoteType.fromChar(rawNotes.get(i).charAt(noteId)),
-                                quantization
-                        ));
+                        notes.add(new Note(notesAdded, Lane.fromInt(noteId), barIndex + beat, (int) bpm, NoteType.fromChar(rawNotes.get(i).charAt(noteId)), quantization));
                         notesAdded++;
                     }
                 }

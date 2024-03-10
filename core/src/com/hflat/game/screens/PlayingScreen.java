@@ -10,6 +10,7 @@ import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.hflat.game.HFlatGame;
 import com.hflat.game.chart.Play;
+import com.hflat.game.note.Judgement;
 import com.hflat.game.note.Lane;
 import com.hflat.game.note.Note;
 import space.earlygrey.shapedrawer.ShapeDrawer;
@@ -104,6 +105,7 @@ public class PlayingScreen implements Screen, IHasStaticState {
             int escapeHeldThreshold = 1;
             if (escapeHeldDuration > escapeHeldThreshold){
                 track.stop();
+                play.setLifeMeter(-1);
                 parent.setState(GameState.RESULTS);
             }
         } else {
@@ -163,7 +165,7 @@ public class PlayingScreen implements Screen, IHasStaticState {
 
     @Override
     public void hide() {
-
+        track.stop();
     }
 
     @Override
@@ -189,6 +191,10 @@ public class PlayingScreen implements Screen, IHasStaticState {
                 play.judge(Lane.RIGHT);
             }
             return false;
+        }
+
+        public static void showJudgement(Judgement j){
+
         }
     }
 
